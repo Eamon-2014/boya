@@ -1,0 +1,267 @@
+<!--pages/data-report/data-report.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 顶部周期切换 -->
+  <view class="header-bar">
+    <view class="period-selector">
+      <picker mode="selector" range="{{periods}}" value="{{periodIndex}}" bindchange="onPeriodChange">
+        <view class="period-display">
+          <text class="period-text">{{periods[periodIndex]}}</text>
+          <text class="period-arrow">▾</text>
+        </view>
+      </picker>
+      <text class="period-hint">{{texts.periodHint}}</text>
+    </view>
+    <view class="export-btn" bindtap="onExport">
+      <text>📤 {{texts.export}}</text>
+    </view>
+  </view>
+
+  <!-- 核心指标 -->
+  <view class="summary-grid" wx:if="{{summary}}">
+    <view class="summary-card card-blue">
+      <text class="summary-value">{{summary.totalCustomers}}</text>
+      <text class="summary-label">{{texts.totalCustomers}}</text>
+      <text class="summary-trend">{{texts.monthNewPrefix}}{{summary.monthNewCustomers}}</text>
+    </view>
+    <view class="summary-card card-green">
+      <text class="summary-value">{{summary.conversionRate}}%</text>
+      <text class="summary-label">{{texts.conversionRate}}</text>
+      <text class="summary-trend">{{texts.convertedTitle}} {{summary.converted}}</text>
+    </view>
+    <view class="summary-card card-orange">
+      <text class="summary-value">{{summary.totalReports}}</text>
+      <text class="summary-label">{{texts.reportTitle}}</text>
+      <text class="summary-trend">{{summary.pendingReports}} {{texts.pendingReports}}</text>
+    </view>
+    <view class="summary-card card-purple">
+      <text class="summary-value">{{summary.readyAi}}/{{summary.aiTeachers}}</text>
+      <text class="summary-label">{{texts.aiTeacher}}</text>
+      <text class="summary-trend">{{texts.aiReady}}</text>
+    </view>
+  </view>
+
+  <!-- 月度趋势 -->
+  <view class="card">
+    <view class="card-title-row">
+      <text class="card-title">📈 {{texts.trend}}</text>
+      <view class="legend">
+        <view class="legend-item"><view class="legend-dot" style="background: {{themeColors.primaryLight}}"></view><text>{{texts.customers}}</text></view>
+        <view class="legend-item"><view class="legend-dot" style="background:#F59E0B"></view><text>{{texts.reports}}</text></view>
+        <view class="legend-item"><view class="legend-dot" style="background:#10B981"></view><text>{{texts.converted}}</text></view>
+      </view>
+    </view>
+    <view class="chart-bars">
+      <view wx:for="{{monthlyTrend}}" wx:key="month" class="bar-group">
+        <view class="bar-stack">
+          <view class="bar bar-customers" style="height: {{item.customersHeight}}%"></view>
+          <view class="bar bar-reports" style="height: {{item.reportsHeight}}%"></view>
+          <view class="bar bar-converted" style="height: {{item.convertedHeight}}%"></view>
+        </view>
+        <text class="bar-label">{{item.month}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 转化漏斗 -->
+  <view class="card funnel-card-enhanced" wx:if="{{funnelStats}}">
+    <view class="funnel-header-row">
+      <text class="card-title">🔄 {{texts.funnel}}</text>
+      <view class="funnel-overall-rate">
+        <text class="rate-num">{{summary.conversionRate}}%</text>
+        <text class="rate-label">{{texts.overallConversionRate}}</text>
+      </view>
+    </view>
+    <view class="funnel-visual">
+      <view wx:for="{{funnelStats.stages}}" wx:key="label" class="funnel-visual-stage">
+        <view class="funnel-stage-top" style="background: {{item.color}}20">
+          <view class="funnel-stage-bar" style="width: {{item.width}}%; background: {{item.color}}"></view>
+        </view>
+        <view class="funnel-stage-info">
+          <text class="funnel-stage-count" style="color: {{item.color}}">{{item.count}}</text>
+          <text class="funnel-stage-label">{{item.label}}</text>
+          <view wx:if="{{index > 0}}" class="funnel-stage-rate">
+            <text class="rate-arrow">↓</text>
+            <text class="rate-text">{{item.rate}}%</text>
+          </view>
+          <text wx:else class="funnel-stage-rate origin">{{texts.funnelOrigin}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 客户状态分布 -->
+  <view class="card" wx:if="{{customerStats}}">
+    <text class="card-title">👥 {{texts.customerStatus}}</text>
+    <view class="status-list">
+      <view wx:for="{{customerStats.distribution}}" wx:key="key" class="status-row">
+        <view class="status-info">
+          <view class="status-dot" style="background: {{item.color}}"></view>
+          <text class="status-label">{{item.label}}</text>
+          <text class="status-count">{{item.count}}</text>
+        </view>
+        <view class="status-bar-wrap">
+          <view class="status-bar" style="width: {{item.percent}}%; background: {{item.color}}"></view>
+        </view>
+        <text class="status-percent">{{item.percent}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 语言分布 -->
+  <view class="card">
+    <text class="card-title">🌍 {{texts.langDistribution}}</text>
+    <view class="lang-tags">
+      <view wx:for="{{languageStats}}" wx:key="key" class="lang-item"
+        style="background: {{item.bg}}; color: {{item.color}}">
+        <text class="lang-name">{{item.label}}</text>
+        <text class="lang-count">{{item.count}} ({{item.percent}}%)</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 客户来源 -->
+  <view class="card">
+    <text class="card-title">📡 {{texts.source}}</text>
+    <view class="source-list">
+      <view wx:for="{{sourceStats}}" wx:key="label" class="source-row">
+        <view class="source-info">
+          <view class="source-dot" style="background: {{item.color}}"></view>
+          <text class="source-label">{{item.label}}</text>
+        </view>
+        <view class="source-bar-wrap">
+          <view class="source-bar" style="width: {{item.percent}}%; background: {{item.color}}"></view>
+        </view>
+        <text class="source-count">{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报告统计 -->
+  <view class="card" wx:if="{{reportStats}}">
+    <view class="card-title-row">
+      <text class="card-title">📊 {{texts.reportAnalysis}}</text>
+      <view class="avg-score-badge">
+        <text>{{texts.avgScore}} {{reportStats.avgScore}}</text>
+      </view>
+    </view>
+    <view class="report-status-list">
+      <view wx:for="{{reportStats.distribution}}" wx:key="key" class="report-status-item">
+        <view class="report-status-info">
+          <view class="report-status-dot" style="background: {{item.color}}"></view>
+          <text class="report-status-label">{{item.label}}</text>
+        </view>
+        <text class="report-status-count">{{item.count}} ({{item.percent}}%)</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 问卷统计 -->
+  <view class="card" wx:if="{{questionnaireStats}}">
+    <text class="card-title">📝 {{texts.questionnaireEfficiency}}</text>
+    <view class="questionnaire-metrics">
+      <view class="q-metric">
+        <text class="q-value">{{questionnaireStats.totalTemplates}}</text>
+        <text class="q-label">{{texts.totalTemplates}}</text>
+      </view>
+      <view class="q-metric">
+        <text class="q-value">{{questionnaireStats.totalUsage}}</text>
+        <text class="q-label">{{texts.totalUsage}}</text>
+      </view>
+      <view class="q-metric">
+        <text class="q-value">{{questionnaireStats.completedRate}}%</text>
+        <text class="q-label">{{texts.completionRate}}</text>
+      </view>
+    </view>
+    <view class="top-templates">
+      <text class="subtitle">{{texts.topTemplates}}</text>
+      <view wx:for="{{questionnaireStats.topTemplates}}" wx:key="name" class="template-rank">
+        <view class="rank-num rank-{{index + 1}}">{{index + 1}}</view>
+        <view class="rank-info">
+          <text class="rank-name">{{item.name}}</text>
+          <text class="rank-meta">{{item.languageLabel}} · {{item.usageCountText}} · {{item.statusLabel}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI教师效能 -->
+  <view class="card">
+    <text class="card-title">🤖 {{texts.aiTeacherEfficiency}}</text>
+    <view class="ai-rank-list">
+      <view wx:for="{{aiTeacherStats}}" wx:key="id" class="ai-rank-item">
+        <view class="ai-rank-num">{{index + 1}}</view>
+        <view class="ai-rank-main">
+          <view class="ai-rank-header">
+            <text class="ai-rank-name">{{item.name}}</text>
+            <view class="ai-status-tag" style="color: {{item.statusColor}}">{{item.statusLabel}}</view>
+          </view>
+          <view class="ai-rank-stats">
+            <text class="ai-stat">📚 {{item.knowledgeCount}}{{texts.knowledge}}</text>
+            <text class="ai-stat">📊 {{item.reportCount}}{{texts.reports}}</text>
+            <text class="ai-stat">⭐ {{item.ratingText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报表说明 -->
+  <view class="footer-note">
+    <text>{{texts.footerUpdateTime}}{{'\n'}}{{texts.footerRealTime}}{{'\n'}}{{'\n'}}{{texts.footerMock}}</text>
+  </view>
+
+  <!-- 导出用的隐藏 Canvas -->
+  <canvas canvas-id="reportCanvas" style="position: fixed; left: -9999px; top: -9999px; width: 640px; height: 1200px;"></canvas>
+
+  <!-- 分享面板 -->
+  <view class="share-modal" wx:if="{{showSharePanel}}" catchtap="onShareCancel">
+    <view class="share-panel" catchtap="">
+      <view class="share-panel-header">
+        <text class="share-panel-title">{{texts.sharePanelTitle}}</text>
+      </view>
+      <view class="share-panel-body">
+        <button class="share-btn-item" open-type="share">
+          <view class="share-icon share-icon-friend">👥</view>
+          <text class="share-text">{{texts.sendToFriend}}</text>
+        </button>
+        <view class="share-btn-item" bindtap="onShareToTimeline">
+          <view class="share-icon share-icon-timeline">🌐</view>
+          <text class="share-text">{{texts.shareTimeline}}</text>
+        </view>
+        <view class="share-btn-item" bindtap="onShareToImage">
+          <view class="share-icon share-icon-image">📷</view>
+          <text class="share-text">{{texts.shareImage}}</text>
+        </view>
+      </view>
+      <view class="share-panel-footer">
+        <view class="share-cancel-btn" bindtap="onShareCancel">{{texts.cancel}}</view>
+      </view>
+      <!-- 分享卡片预览 -->
+      <view class="share-preview" wx:if="{{sharePreview}}" catchtap="">
+        <view class="share-preview-card">
+          <view class="share-preview-header">
+            <text class="share-preview-title">{{texts.sharePreviewTitle}}</text>
+            <text class="share-preview-period">{{periods[periodIndex]}}</text>
+          </view>
+          <view class="share-preview-stats">
+            <view class="share-preview-stat">
+              <text class="stat-value">{{summary.totalCustomers}}</text>
+              <text class="stat-label">{{texts.sharePreviewCustomer}}</text>
+            </view>
+            <view class="share-preview-stat">
+              <text class="stat-value">{{summary.conversionRate}}%</text>
+              <text class="stat-label">{{texts.sharePreviewConversion}}</text>
+            </view>
+            <view class="share-preview-stat">
+              <text class="stat-value">{{summary.totalReports}}</text>
+              <text class="stat-label">{{texts.sharePreviewReport}}</text>
+            </view>
+          </view>
+          <view class="share-preview-footer">
+            <text>{{texts.sharePreviewFooter}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

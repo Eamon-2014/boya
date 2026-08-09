@@ -1,0 +1,55 @@
+// data/notifications.js - 通知 Mock 数据
+const NOTIFICATIONS = [
+  {
+    id: 'notif-001',
+    type: 'report_review',
+    title: '新报告待审核',
+    content: '李思琪（法语）评估报告已生成，请审核',
+    time: '10分钟前',
+    read: false,
+    icon: '📋',
+    color: '#F59E0B',
+    targetUrl: '/pages/report-detail/report-detail?id=report-001',
+    isTab: false,
+  },
+  {
+    id: 'notif-002',
+    type: 'customer_new',
+    title: '新增客户',
+    content: '刘思远家长通过渠道码添加',
+    time: '30分钟前',
+    read: true,
+    icon: '👤',
+    color: '#3B82F6',
+    targetUrl: '/pages/customer-detail/customer-detail?id=cust-001',
+    isTab: false,
+  },
+  {
+    id: 'notif-003',
+    type: 'registration',
+    title: '新注册申请',
+    content: '张小红申请注册教师账号',
+    time: '1小时前',
+    read: false,
+    icon: '📝',
+    color: '#10B981',
+    targetUrl: '/pages/notifications/notifications',
+    isTab: true,
+  },
+  {
+    id: 'notif-004',
+    type: 'system',
+    title: '系统公告',
+    content: '系统将于今晚 23:00 进行例行维护',
+    time: '2小时前',
+    read: true,
+    icon: '🔔',
+    color: '#8B5CF6',
+    targetUrl: '',
+    isTab: true,
+  },
+];
+
+module.exports = {
+  NOTIFICATIONS,
+};

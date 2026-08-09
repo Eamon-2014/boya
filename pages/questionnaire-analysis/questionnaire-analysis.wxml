@@ -1,0 +1,152 @@
+<!--pages/questionnaire-analysis/questionnaire-analysis.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!hasData}}">
+    <view class="empty-icon">📊</view>
+    <text class="empty-title">{{texts.noData}}</text>
+    <text class="empty-desc">{{texts.noDataDesc}}</text>
+  </view>
+
+  <block wx:if="{{hasData}}">
+
+    <!-- 顶部概览 -->
+    <view class="overview-grid">
+      <view class="overview-card card-blue">
+        <text class="overview-value">{{overview.totalTemplates}}</text>
+        <text class="overview-label">{{texts.statTemplates}}</text>
+      </view>
+      <view class="overview-card card-green">
+        <text class="overview-value">{{overview.totalAssignments}}</text>
+        <text class="overview-label">{{texts.statAssignments}}</text>
+      </view>
+      <view class="overview-card card-orange">
+        <text class="overview-value">{{overview.avgCompletionRate}}%</text>
+        <text class="overview-label">{{texts.statCompletionRate}}</text>
+      </view>
+      <view class="overview-card card-purple">
+        <text class="overview-value">{{overview.avgScore}}</text>
+        <text class="overview-label">{{texts.statAvgScore}}</text>
+      </view>
+    </view>
+
+    <!-- 模板筛选条 -->
+    <view class="card">
+      <view class="filter-header">
+        <text class="card-title">{{texts.byTemplate}}</text>
+      </view>
+      <scroll-view class="template-filter" scroll-x enable-flex>
+        <view class="filter-item {{selectedTemplateId === 'all' ? 'active' : ''}}"
+              data-id="all"
+              bindtap="onTemplateFilter">
+          {{texts.allTemplates}}
+        </view>
+        <view wx:for="{{templates}}" wx:key="id"
+              class="filter-item {{selectedTemplateId === item.id ? 'active' : ''}}"
+              data-id="{{item.id}}"
+              bindtap="onTemplateFilter">
+          {{item.name}}
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 模板统计卡片列表 -->
+    <view class="template-list">
+      <view wx:for="{{filteredTemplates}}" wx:key="id"
+            class="template-stat-card"
+            data-id="{{item.id}}"
+            bindtap="onTemplateTap">
+        <view class="template-card-header">
+          <view class="template-info">
+            <text class="template-name">{{item.name}}</text>
+            <view class="template-meta">
+              <view class="lang-tag" style="background: {{item.languageBg || 'rgba(107,114,128,0.1)'}}; color: {{item.languageColor || '#6B7280'}}">
+                {{item.languageLabel}}
+              </view>
+              <text class="template-questions">{{item.questionCount}}{{texts.questions}}</text>
+            </view>
+          </view>
+          <view class="template-arrow">›</view>
+        </view>
+
+        <view class="template-card-stats">
+          <view class="stat-item">
+            <text class="stat-value">{{item.totalAssignments}}</text>
+            <text class="stat-label">{{texts.totalAssignments}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{item.completedCount}}</text>
+            <text class="stat-label">{{texts.completedCount}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{item.avgScore}}</text>
+            <text class="stat-label">{{texts.avgScore}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{item.avgDuration}}{{texts.minutes}}</text>
+            <text class="stat-label">{{texts.avgDuration}}</text>
+          </view>
+        </view>
+
+        <view class="template-card-progress">
+          <view class="progress-label-row">
+            <text class="progress-label">{{texts.completionRate}}</text>
+            <text class="progress-value">{{item.completionRate}}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{item.completionRate}}%; background: linear-gradient(90deg, var(--color-primary-light) 0%, var(--color-primary) 100%);"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分数分布图 -->
+    <view class="card">
+      <text class="card-title">📈 {{texts.scoreDistribution}}</text>
+      <view class="score-chart">
+        <view wx:for="{{scoreDistribution}}" wx:key="range" class="chart-bar-wrapper">
+          <view class="chart-bar-bg">
+            <view class="chart-bar" style="height: {{item.height}}%; background: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-primary) 100%);"></view>
+          </view>
+          <text class="chart-count">{{item.count}}</text>
+          <text class="chart-label">{{item.range}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 题目诊断 -->
+    <view class="card" wx:if="{{questionStats.length > 0}}">
+      <text class="card-title">🔍 {{texts.questionDiagnosis}}</text>
+      <text class="subtitle">{{texts.difficultyRank}}</text>
+      <view class="question-diagnosis">
+        <view wx:for="{{questionStats}}" wx:key="id" class="diagnosis-item">
+          <view class="diagnosis-rank">
+            <text class="rank-num">{{index + 1}}</text>
+          </view>
+          <view class="diagnosis-content">
+            <text class="diagnosis-text">{{item.text}}</text>
+            <view class="diagnosis-meta">
+              <text class="diagnosis-template">{{item.templateName}}</text>
+            </view>
+            <view class="diagnosis-stats">
+              <view class="correct-rate-wrap">
+                <text class="correct-rate-label">{{texts.correctRate}}</text>
+                <view class="correct-rate-bar">
+                  <view class="correct-rate-fill" style="width: {{item.correctRate}}%; background: {{item.correctRate < 40 ? '#EF4444' : item.correctRate < 60 ? '#F59E0B' : '#10B981'}};"></view>
+                </view>
+                <text class="correct-rate-value">{{item.correctRate}}%</text>
+              </view>
+              <text class="time-spent">⏱ {{item.avgTimeSpent}}{{texts.minutes}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部说明 -->
+    <view class="footer-note">
+      <text>{{texts.noData}}</text>
+    </view>
+
+  </block>
+</view>

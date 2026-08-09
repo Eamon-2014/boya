@@ -1,0 +1,143 @@
+<!--pages/customers/customers.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 搜索栏 -->
+  <search-bar
+    placeholder="{{texts.searchPlaceholder}}"
+    value="{{searchText}}"
+    action-text="{{texts.addAction}}"
+    bind:change="onSearchChange"
+    bind:action="onAddCustomer"
+  />
+
+  <!-- 数据概览 -->
+  <view class="stats-row">
+    <view class="stats-cell">
+      <text class="stats-value">{{statusCounts.all}}</text>
+      <text class="stats-label">{{texts.statAll}}</text>
+    </view>
+    <view class="stats-cell">
+      <text class="stats-value" style="color: {{themeColors.primaryLight}}">{{statusCounts.new}}</text>
+      <text class="stats-label">{{texts.statNew}}</text>
+    </view>
+    <view class="stats-cell">
+      <text class="stats-value" style="color: #F59E0B">{{statusCounts.following}}</text>
+      <text class="stats-label">{{texts.statFollowing}}</text>
+    </view>
+    <view class="stats-cell">
+      <text class="stats-value" style="color: #10B981">{{statusCounts.converted}}</text>
+      <text class="stats-label">{{texts.statConverted}}</text>
+    </view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <scroll-view scroll-x class="filter-tabs" enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{statusFilters}}"
+      wx:key="key"
+      class="filter-tab {{statusFilter === item.key ? 'filter-tab-active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onStatusFilter"
+    >
+      <text>{{item.label}}</text>
+      <text class="filter-tab-count">{{statusCounts[item.key] || 0}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 语言筛选 -->
+  <scroll-view wx:if="{{languageOptions.length > 0}}" scroll-x class="lang-filter" enhanced show-scrollbar="{{false}}">
+    <view
+      class="lang-chip {{langFilter === 'all' ? 'lang-chip-active' : ''}}"
+      data-key="all"
+      bindtap="onLangFilter"
+    >
+      <text>{{texts.langAll}}</text>
+    </view>
+    <view
+      wx:for="{{languageOptions}}"
+      wx:key="key"
+      class="lang-chip {{langFilter === item.key ? 'lang-chip-active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onLangFilter"
+    >
+      <text>{{item.label}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 客户列表 -->
+  <view class="customer-list">
+    <block wx:for="{{customers}}" wx:key="id">
+      <view
+        wx:if="{{(statusFilter === 'all' || item.status === statusFilter) && (langFilter === 'all' || item.language === langFilter) && (!searchText || item.name.indexOf(searchText) >= 0 || item.childName.indexOf(searchText) >= 0 || item.phone.indexOf(searchText) >= 0 || item.tags.join(',').toLowerCase().indexOf(searchText.toLowerCase()) >= 0)}}"
+        class="customer-card"
+        data-id="{{item.id}}"
+        bindtap="onCustomerClick"
+      >
+        <view class="customer-header">
+          <view class="customer-avatar" style="background: {{item.avatarColor}}">
+            <text>{{item.initial}}</text>
+          </view>
+          <view class="customer-info">
+            <view class="customer-name-row">
+              <text class="customer-name">{{item.name}}</text>
+              <view class="tag tag-rounded" style="background: {{item.statusBg}}; color: {{item.statusColor}}">
+                <text>{{item.statusLabel}}</text>
+              </view>
+            </view>
+            <text class="customer-child">{{item.childName}} · {{item.childGrade}} · {{item.childAge}}{{texts.ageUnit}}</text>
+            <view class="customer-tags">
+              <view class="lang-tag" style="background: {{item.languageBg}}; color: {{item.languageColor}}">
+                <text>{{item.languageLabel}}</text>
+              </view>
+              <view wx:if="{{item.targetExam}}" class="customer-tag">
+                <text>{{item.targetExam}}</text>
+              </view>
+              <view wx:for="{{item.visibleTags}}" wx:for-item="tag" wx:key="*this" class="customer-tag">
+                <text>{{tag}}</text>
+              </view>
+              <view wx:if="{{item.extraTagCount > 0}}" class="customer-tag">
+                <text>+{{item.extraTagCount}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="customer-details">
+          <view class="customer-detail">
+            <text class="detail-icon">📱</text>
+            <text class="detail-text">{{item.phoneMasked}}</text>
+          </view>
+          <view class="customer-detail">
+            <text class="detail-icon">🔄</text>
+            <text class="detail-text">{{item.followCountText}}</text>
+          </view>
+          <view class="customer-detail">
+            <text class="detail-icon">🕐</text>
+            <text class="detail-text">{{item.lastFollowText}}</text>
+          </view>
+        </view>
+
+        <view class="customer-footer">
+          <view class="customer-source">
+            <text>{{item.sourceText}}</text>
+          </view>
+          <view class="customer-actions">
+            <view class="action-btn action-btn-outline" data-customer="{{item}}" catchtap="onFollow">
+              <text>{{texts.btnFollow}}</text>
+            </view>
+            <view class="action-btn action-btn-primary" data-customer="{{item}}" catchtap="onAssign">
+              <text>{{texts.btnAssign}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{customers.length === 0}}" class="empty-state">
+      <view class="empty-icon"><text>👤</text></view>
+      <text class="empty-title">{{texts.emptyTitle}}</text>
+      <text class="empty-desc">{{texts.emptyDesc}}</text>
+    </view>
+  </view>
+
+  <view style="height: 80rpx;"></view>
+</view>

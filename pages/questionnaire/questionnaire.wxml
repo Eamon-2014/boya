@@ -1,0 +1,180 @@
+<!--pages/questionnaire/questionnaire.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <search-bar
+    placeholder="{{tab === 'templates' ? texts.searchPlaceholder_template : (tab === 'assignments' ? texts.searchPlaceholder_assignment : texts.searchPlaceholder_report)}}"
+    value="{{search}}"
+    bind:change="onSearchChange"
+  />
+
+  <!-- Tab分段 -->
+  <view class="segment">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="segment-item {{tab === item.key ? 'segment-item-active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onTabChange"
+    >
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="summary">
+    <view class="summary-card">
+      <text class="summary-value">{{tab === 'templates' ? summary.templates : (tab === 'assignments' ? summary.pendingAssignments : summary.pendingReview)}}</text>
+      <text class="summary-label">{{tab === 'templates' ? texts.statTemplates : (tab === 'assignments' ? texts.statPendingFill : texts.statPendingReview)}}</text>
+    </view>
+    <view class="summary-card">
+      <text class="summary-value" style="color: #10B981">{{tab === 'templates' ? summary.activeTemplates : (tab === 'assignments' ? summary.completedAssignments : summary.totalReports)}}</text>
+      <text class="summary-label">{{tab === 'templates' ? texts.statActive : (tab === 'assignments' ? texts.statCompleted : texts.statTotalReports)}}</text>
+    </view>
+    <view class="summary-card">
+      <text class="summary-value" style="color: #8B5CF6">{{tab === 'templates' ? summary.totalUsage : (tab === 'assignments' ? summary.totalAssignments : summary.sentReports)}}</text>
+      <text class="summary-label">{{tab === 'templates' ? texts.statTotalUsage : (tab === 'assignments' ? texts.statTotalAssign : texts.statSentParents)}}</text>
+    </view>
+  </view>
+
+  <!-- 问卷模板列表 -->
+  <view wx:if="{{tab === 'templates'}}">
+    <view
+      wx:for="{{templates}}"
+      wx:key="id"
+      wx:if="{{!search || item.name.indexOf(search) >= 0 || (item.description && item.description.indexOf(search) >= 0)}}"
+      class="template-card"
+      data-template="{{item}}"
+      bindtap="onTemplateClick"
+    >
+      <view class="template-header">
+        <text class="template-title">{{item.name}}</text>
+        <view class="tag tag-rounded" style="background: {{item.statusBg}}; color: {{item.statusColor}}">
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+      <text class="template-desc">{{item.descText}}</text>
+      <view class="template-meta">
+        <view class="lang-tag" style="background: {{item.languageBg}}; color: {{item.languageColor}}">
+          <text>{{item.languageLabel}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">📂</text>
+          <text class="meta-text">{{item.category}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">❓</text>
+          <text class="meta-text">{{item.questionsText}}</text>
+        </view>
+      </view>
+      <view class="template-footer">
+        <view class="usage-tag">
+          <text>{{item.usedTimesText}}</text>
+        </view>
+        <view class="template-actions">
+          <view class="action-btn action-btn-outline" data-id="{{item.id}}" catchtap="onTemplateClick" data-template="{{item}}">
+            <text>{{texts.btnEdit}}</text>
+          </view>
+          <view class="action-btn action-btn-primary" catchtap="onAssignTemplate">
+            <text>{{texts.btnPush}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发放记录 -->
+  <view wx:if="{{tab === 'assignments'}}">
+    <view
+      wx:for="{{assignments}}"
+      wx:key="id"
+      wx:if="{{!search || item.templateName.indexOf(search) >= 0 || item.customerName.indexOf(search) >= 0 || item.parentName.indexOf(search) >= 0 || item.parentPhone.indexOf(search) >= 0}}"
+      class="assignment-card"
+      data-assignment="{{item}}"
+      bindtap="onAssignmentClick"
+    >
+      <view class="assignment-header">
+        <text class="assignment-template">{{item.templateName}}</text>
+        <view class="tag tag-rounded" style="background: {{item.statusBg}}; color: {{item.statusColor}}">
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+      <text class="assignment-customer">{{item.customerName}}（{{item.parentName}}）· {{item.phoneMasked}}</text>
+      <view class="assignment-meta">
+        <view class="meta-item">
+          <text>👤</text>
+          <text class="meta-text">{{item.assignedByText}}</text>
+        </view>
+        <view class="meta-item">
+          <text>📅</text>
+          <text class="meta-text">{{item.assignedAtText}}</text>
+        </view>
+        <view wx:if="{{item.completedAtTextLabel}}" class="meta-item">
+          <text>✅</text>
+          <text class="meta-text">{{item.completedAtTextLabel}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评估报告 -->
+  <view wx:if="{{tab === 'reports'}}">
+    <view
+      wx:for="{{reports}}"
+      wx:key="id"
+      wx:if="{{!search || item.childName.indexOf(search) >= 0 || item.templateName.indexOf(search) >= 0}}"
+      class="report-card"
+      data-id="{{item.id}}"
+      bindtap="onReportClick"
+    >
+      <view class="report-header">
+        <view class="report-info">
+          <view class="report-name-row">
+            <text class="report-customer">{{item.childName}}</text>
+            <view class="lang-tag" style="background: {{item.languageBg}}; color: {{item.languageColor}}">
+              <text>{{item.languageLabel}}</text>
+            </view>
+          </view>
+          <text class="report-template">{{item.templateName}}</text>
+          <view class="report-status-row">
+            <text class="report-ai">{{item.aiTeacherText}}</text>
+          </view>
+        </view>
+        <view class="score-box">
+          <text class="score-value" style="color: {{item.levelColor}}">{{item.overallScore}}</text>
+          <text class="score-label">{{item.overallLevel}}</text>
+        </view>
+      </view>
+
+      <view class="report-dimensions">
+        <view wx:for="{{item.topDimensions}}" wx:for-item="dim" wx:key="name" class="dim-item">
+          <text class="dim-name">{{dim.name}}</text>
+          <view class="dim-bar">
+            <view class="dim-bar-fill" style="width: {{dim.percent}}%; background: {{dim.levelColor}}"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="report-footer">
+        <view class="report-by">
+          <text>🕐</text>
+          <text class="meta-text">{{item.generatedAtText}}</text>
+        </view>
+        <view class="report-actions">
+          <button
+            class="action-btn action-btn-primary share-btn"
+            open-type="share"
+            data-id="{{item.id}}"
+          >
+            <text>{{texts.btnShare}}</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height: 160rpx;"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="floating-btn" bindtap="onFloatingClick">
+    <text>＋</text>
+  </view>
+</view>

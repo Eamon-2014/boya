@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "工作台",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "stat-card": "/components/stat-card/stat-card",
+    "section-header": "/components/section-header/section-header",
+    "notification-toast": "/components/notification-toast/notification-toast"
+  }
+}

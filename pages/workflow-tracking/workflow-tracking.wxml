@@ -1,0 +1,113 @@
+<!--pages/workflow-tracking/workflow-tracking.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+
+  <!-- 概览卡片 -->
+  <view class="overview-card" wx:if="{{overview}}">
+    <view class="overview-header">
+      <text class="overview-title">📊 {{texts.overviewTitle}}</text>
+    </view>
+    <view class="overview-grid">
+      <view class="overview-item">
+        <text class="overview-value">{{overview.totalCustomers}}</text>
+        <text class="overview-label">{{texts.totalCustomers}}</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-value">{{overview.totalReports}}</text>
+        <text class="overview-label">{{texts.totalReports}}</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-value">{{overview.avgPipelineTime}}<text class="overview-unit">{{texts.hours}}</text></text>
+        <text class="overview-label">{{texts.avgPipelineTime}}</text>
+      </view>
+      <view class="overview-item bottleneck-item">
+        <text class="overview-value">{{overview.bottleneckStage}}</text>
+        <text class="overview-label">{{texts.bottleneckStage}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 流程管道 -->
+  <view class="pipeline-card">
+    <view class="pipeline-header">
+      <text class="pipeline-title">🔄 {{texts.pipelineTitle}}</text>
+    </view>
+    <view class="pipeline-flow">
+      <block wx:for="{{pipeline}}" wx:key="key">
+        <view class="stage-node {{item.bottleneck ? 'bottleneck' : ''}}" 
+              style="--stage-color: {{item.color}}; --stage-bg: {{item.bg}};"
+              data-key="{{item.key}}"
+              bindtap="onStageTap">
+          <view class="stage-icon-wrap">
+            <text class="stage-icon">{{item.icon}}</text>
+            <view wx:if="{{item.bottleneck}}" class="bottleneck-badge">
+              <text class="bottleneck-text">{{texts.bottleneck}}</text>
+            </view>
+          </view>
+          <view class="stage-info">
+            <text class="stage-title">{{item.title}}</text>
+            <text class="stage-count">{{item.count}} {{texts.customers}}</text>
+            <text class="stage-time">{{texts.avgTime}}: {{item.avgTime}}{{texts.hours}}</text>
+          </view>
+          <view wx:if="{{index < pipeline.length - 1}}" class="stage-arrow">
+            <text class="arrow-icon">→</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 阶段详情面板 -->
+  <view class="stage-detail-panel {{showStageDetail ? 'show' : ''}}" wx:if="{{showStageDetail}}">
+    <view class="stage-detail-mask" bindtap="onCloseStageDetail"></view>
+    <view class="stage-detail-content">
+      <view class="stage-detail-header">
+        <block wx:for="{{pipeline}}" wx:key="key" wx:for-item="stage">
+          <view wx:if="{{stage.key === currentStageKey}}" class="stage-detail-title-wrap">
+            <text class="stage-detail-title">{{stage.icon}} {{stage.title}}</text>
+            <view wx:if="{{stage.bottleneck}}" class="bottleneck-badge-sm">
+              <text class="bottleneck-text">{{texts.bottleneck}}</text>
+            </view>
+          </view>
+        </block>
+        <view class="stage-detail-close" bindtap="onCloseStageDetail">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      <view class="stage-detail-list" wx:if="{{stageDetails[currentStageKey] && stageDetails[currentStageKey].length > 0}}">
+        <view wx:for="{{stageDetails[currentStageKey]}}" wx:key="id" 
+              class="customer-item"
+              data-id="{{item.id}}"
+              bindtap="onCustomerTap">
+          <view class="customer-info">
+            <text class="customer-name">{{item.name}}</text>
+            <text class="customer-child">{{item.childName}}</text>
+          </view>
+          <view class="customer-status-wrap">
+            <view class="customer-status-tag">
+              <text class="customer-status">{{item.statusLabel}}</text>
+            </view>
+          </view>
+          <view class="customer-stay">
+            <text class="stay-label">{{texts.stayTime}}</text>
+            <text class="stay-value">{{item.stayHours}}{{texts.hours}}</text>
+          </view>
+          <view wx:if="{{item.overallScore}}" class="customer-score">
+            <text class="score-value">{{item.overallScore}}</text>
+          </view>
+          <view class="customer-arrow">
+            <text class="arrow-right">›</text>
+          </view>
+        </view>
+      </view>
+      <view class="stage-detail-empty" wx:else>
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">{{texts.noData}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-note">
+    <text>{{texts.pageTitle}}</text>
+  </view>
+
+</view>

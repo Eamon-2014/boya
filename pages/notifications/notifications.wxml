@@ -1,0 +1,78 @@
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 顶部操作栏 -->
+  <view class="action-bar">
+    <view class="unread-badge" wx:if="{{unreadCount > 0}}">
+      <text class="unread-num">{{unreadCount}}</text>
+      <text class="unread-label">{{texts.unread}}</text>
+    </view>
+    <view class="action-btns">
+      <view class="action-btn" bindtap="onMarkAllRead" wx:if="{{unreadCount > 0}}">{{texts.markAll}}</view>
+      <view class="action-btn danger" bindtap="onClearAll" wx:if="{{filteredList.length > 0}}">{{texts.clearAll}}</view>
+    </view>
+  </view>
+
+  <!-- 类型筛选 -->
+  <scroll-view class="filter-scroll" scroll-x>
+    <view class="filter-row">
+      <view wx:for="{{typeFilters}}" wx:key="key"
+        class="filter-chip {{filterKey === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}" bindtap="onFilter">
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 通知列表 -->
+  <view class="notif-list" wx:if="{{filteredList.length > 0}}">
+    <view wx:for="{{filteredList}}" wx:key="id"
+      class="notif-card {{item.read ? 'read' : 'unread'}}"
+      data-id="{{item.id}}" bindtap="onNotificationTap" hover-class="notif-hover">
+      <view class="notif-icon" style="background: {{item.color}}15">
+        <text>{{item.icon}}</text>
+      </view>
+      <view class="notif-body">
+        <view class="notif-header">
+          <text class="notif-title">{{item.title}}</text>
+          <view class="notif-dot" wx:if="{{!item.read}}"></view>
+        </view>
+        <text class="notif-content">{{item.content}}</text>
+        <view class="notif-footer">
+          <text class="notif-time">{{item.time}}</text>
+          <text class="notif-link" wx:if="{{item.targetUrl}}">{{texts.viewDetail}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredList.length === 0}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">{{texts.empty}}</text>
+    <text class="empty-sub">{{texts.emptySub}}</text>
+  </view>
+
+  <!-- 通知详情弹窗 -->
+  <view class="detail-overlay" wx:if="{{showDetailModal}}" bindtap="onCloseDetailModal">
+    <view class="detail-card" catchtap="noop">
+      <view class="detail-header">
+        <view class="detail-icon" style="background: {{detailItem.color}}15">
+          <text>{{detailItem.icon}}</text>
+        </view>
+        <text class="detail-title">{{detailItem.title}}</text>
+        <view class="detail-close" bindtap="onCloseDetailModal">✕</view>
+      </view>
+      <view class="detail-body">
+        <text class="detail-content">{{detailItem.content}}</text>
+        <view class="detail-meta">
+          <text class="detail-time">{{detailItem.time}}</text>
+          <text class="detail-status {{detailItem.read ? 'read' : 'unread'}}">{{detailItem.read ? '已读' : '未读'}}</text>
+        </view>
+      </view>
+      <view class="detail-actions">
+        <view class="detail-btn detail-btn-delete" bindtap="onDeleteNotification">🗑 删除</view>
+        <view class="detail-btn detail-btn-cancel" bindtap="onCloseDetailModal">关闭</view>
+        <view class="detail-btn detail-btn-primary" wx:if="{{detailItem.targetUrl && detailItem.targetUrl !== '/pages/notifications/notifications'}}" bindtap="onDetailNavigate">查看详情</view>
+      </view>
+    </view>
+  </view>
+</view>

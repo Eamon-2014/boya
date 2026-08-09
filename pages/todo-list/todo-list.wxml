@@ -1,0 +1,197 @@
+<!--pages/todo-list/todo-list.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 顶部统计 -->
+  <view class="summary-card">
+    <view class="summary-item">
+      <text class="summary-value">{{summary.total}}</text>
+      <text class="summary-label">{{texts.totalLabel}}</text>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <text class="summary-value text-warning">{{summary.pending}}</text>
+      <text class="summary-label">{{texts.pendingLabel}}</text>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <text class="summary-value text-success">{{summary.done}}</text>
+      <text class="summary-label">{{texts.doneLabel}}</text>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <text class="summary-value text-danger">{{summary.high}}</text>
+      <text class="summary-label">{{texts.highLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <scroll-view class="filter-bar" scroll-x>
+    <view class="filter-list">
+      <view
+        wx:for="{{filters}}"
+        wx:key="key"
+        class="filter-chip {{activeFilter === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onFilterChange"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 批量操作 -->
+  <view class="batch-actions" wx:if="{{summary.pending > 0 || summary.done > 0}}">
+    <view class="batch-btn batch-btn-primary" bindtap="onCompleteAll" wx:if="{{summary.pending > 0}}">
+      <text>✓ {{texts.completeAll}} {{summary.pending}} 项</text>
+    </view>
+    <view class="batch-btn batch-btn-ghost" bindtap="onClearDone" wx:if="{{summary.done > 0}}">
+      <text>{{texts.clearDone}}</text>
+    </view>
+  </view>
+
+  <!-- 待办列表 -->
+  <view class="todo-list" wx:if="{{filteredTodos.length > 0}}">
+    <view
+      wx:for="{{filteredTodos}}"
+      wx:key="id"
+      class="todo-item {{item.isDone ? 'done' : ''}}"
+      data-todo="{{item}}"
+      bindtap="onTodoClick"
+    >
+      <!-- 优先级色条 -->
+      <view class="todo-bar" style="background: {{item.priorityColor}}"></view>
+
+      <!-- 类型图标 -->
+      <view class="todo-type-icon" style="background: {{item.typeBg}}">
+        <text>{{item.typeIcon}}</text>
+      </view>
+
+      <!-- 内容区 -->
+      <view class="todo-main">
+        <view class="todo-header">
+          <text class="todo-title">{{item.title}}</text>
+          <view class="todo-tags">
+            <view class="tag tag-type" style="color: {{item.typeColor}}; background: {{item.typeBg}}">
+              <text>{{item.typeLabel}}</text>
+            </view>
+            <view class="tag tag-priority" style="color: {{item.priorityColor}}; background: {{item.priorityBg}}">
+              <text>{{item.priorityLabel}}</text>
+            </view>
+          </view>
+        </view>
+        <text class="todo-desc">{{item.description}}</text>
+        <view class="todo-footer">
+          <view class="todo-time {{item.isOverdue ? 'overdue' : ''}}" wx:if="{{item.dueTimeText}}">
+            <text wx:if="{{item.isOverdue}}">⚠️ {{texts.overdue}} · </text>
+            <text>{{texts.deadline}} {{item.dueTimeText}}</text>
+          </view>
+          <view class="todo-status" wx:if="{{item.isDone}}">
+            <text class="status-done">✓ {{texts.completedStatus}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 完成按钮 -->
+      <view
+        class="todo-check"
+        data-id="{{item.id}}"
+        catchtap="onToggleDone"
+      >
+        <view class="check-circle {{item.isDone ? 'checked' : ''}}">
+          <text wx:if="{{item.isDone}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">🎉</view>
+    <text class="empty-title">
+      {{activeFilter === 'done' ? texts.noDone : activeFilter === 'high' ? texts.noHigh : texts.noTodos}}
+    </text>
+    <text class="empty-desc">
+      {{activeFilter === 'pending' ? texts.allDoneMsg : texts.switchFilter}}
+    </text>
+  </view>
+
+  <view style="height: 64rpx;"></view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab-add" bindtap="onOpenAddModal">
+    <text>＋</text>
+  </view>
+
+  <!-- 添加待办弹窗 -->
+  <view class="add-overlay" wx:if="{{showAddModal}}" bindtap="onCloseAddModal">
+    <view class="add-card" catchtap="noop">
+      <view class="add-header">
+        <text class="add-title">新建待办</text>
+        <view class="add-close" bindtap="onCloseAddModal">✕</view>
+      </view>
+
+      <view class="add-body">
+        <!-- 标题 -->
+        <view class="add-field">
+          <text class="add-label">标题 <text class="add-required">*</text></text>
+          <input
+            class="add-input"
+            placeholder="请输入待办标题"
+            value="{{addForm.title}}"
+            bindinput="onAddTitleInput"
+            maxlength="50"
+          />
+        </view>
+
+        <!-- 详情 -->
+        <view class="add-field">
+          <text class="add-label">详情说明</text>
+          <textarea
+            class="add-textarea"
+            placeholder="可填写详细内容（选填）"
+            value="{{addForm.description}}"
+            bindinput="onAddDescInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+
+        <!-- 优先级 -->
+        <view class="add-field">
+          <text class="add-label">优先级</text>
+          <view class="priority-options">
+            <view
+              wx:for="{{priorityOptions}}"
+              wx:key="key"
+              class="priority-option {{addForm.priority === item.key ? 'active' : ''}}"
+              data-key="{{item.key}}"
+              bindtap="onAddPrioritySelect"
+              style="{{addForm.priority === item.key ? 'background:' + item.bg + ';border-color:' + item.color + ';color:' + item.color : ''}}"
+            >
+              <text>{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 截止日期 -->
+        <view class="add-field">
+          <text class="add-label">截止日期</text>
+          <view class="due-row">
+            <picker mode="date" value="{{addForm.dueDate || todayDate}}" start="{{todayDate}}" bindchange="onAddDueDateChange">
+              <view class="due-picker {{addForm.dueDate ? '' : 'placeholder'}}">
+                <text>{{addForm.dueDate || '选择截止日期（选填）'}}</text>
+              </view>
+            </picker>
+            <view class="due-clear" wx:if="{{addForm.dueDate}}" bindtap="onAddDueDateClear">清除</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="add-actions">
+        <view class="add-btn add-btn-cancel" bindtap="onCloseAddModal">取消</view>
+        <view class="add-btn add-btn-confirm {{adding ? 'disabled' : ''}}" bindtap="onSubmitAddTodo">
+          {{adding ? '创建中...' : '创建待办'}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

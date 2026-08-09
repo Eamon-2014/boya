@@ -1,0 +1,209 @@
+<!--pages/template-edit/template-edit.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 顶部信息编辑区 -->
+  <view class="card info-card">
+    <view class="card-title">{{texts.basicInfo}}</view>
+    <view class="form-item">
+      <text class="form-label">{{texts.nameLabel}}</text>
+      <input class="form-input" placeholder="{{texts.namePlaceholder}}" value="{{template.name}}" bindinput="onInputName" maxlength="50" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">{{texts.descLabel}}</text>
+      <textarea class="form-textarea" placeholder="{{texts.descPlaceholder}}" value="{{template.description}}" bindinput="onInputDesc" maxlength="200" auto-height />
+    </view>
+    <view class="form-row">
+      <view class="form-item half">
+        <text class="form-label">{{texts.language}}</text>
+        <picker mode="selector" range="{{languageLabels}}" value="{{languageIndex}}" bindchange="onLanguageChange">
+          <view class="form-picker">{{languageLabels[languageIndex]}} <text class="picker-arrow">▼</text></view>
+        </picker>
+      </view>
+      <view class="form-item half">
+        <text class="form-label">{{texts.category}}</text>
+        <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+          <view class="form-picker">{{categories[categoryIndex]}} <text class="picker-arrow">▼</text></view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <!-- 题目列表 -->
+  <view class="section-header">
+    <text class="section-title">{{texts.questionList}} ({{template.questions.length}})</text>
+  </view>
+
+  <block wx:for="{{template.questions}}" wx:key="id" wx:for-item="q" wx:for-index="qi">
+    <view class="card question-card">
+      <!-- 题目头部 -->
+      <view class="question-header" bindtap="toggleEditing" data-index="{{qi}}">
+        <view class="question-order">{{qi + 1}}</view>
+        <view class="question-title-wrap">
+          <text wx:if="{{!q.title}}" class="question-title-placeholder">{{texts.unnamedQuestion}}</text>
+          <text wx-else class="question-title">{{q.title}}</text>
+          <view class="question-type-badge">
+            <text>{{typeKeyMap[q.type].icon}} {{typeKeyMap[q.type].label}}</text>
+          </view>
+        </view>
+        <view class="question-toggle">{{editingIndex === qi ? texts.collapse : texts.expand}} {{editingIndex === qi ? '▲' : '▼'}}</view>
+      </view>
+
+      <!-- 展开编辑区 -->
+      <view class="question-edit" wx:if="{{editingIndex === qi}}">
+        <!-- 题干输入 -->
+        <view class="form-item">
+          <text class="form-label">{{texts.questionContent}}</text>
+          <input class="form-input" placeholder="{{texts.questionContentPlaceholder}}" value="{{q.title}}" bindinput="onQuestionTitleInput" data-index="{{qi}}" />
+        </view>
+
+        <!-- 题型选择 -->
+        <view class="form-item">
+          <text class="form-label">{{texts.questionType}}</text>
+          <view class="type-selector">
+            <view wx:for="{{questionTypes}}" wx:for-item="t" wx:key="key"
+              class="type-chip {{q.type === t.key ? 'active' : ''}}"
+              bindtap="onQuestionTypeChange" data-index="{{qi}}" data-type="{{t.key}}">
+              <text>{{t.icon}} {{t.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 选项编辑区 (单选/多选) -->
+        <block wx:if="{{q.type === 'single' || q.type === 'multiple'}}">
+          <view class="form-item">
+            <text class="form-label">{{texts.optionSettings}}</text>
+            <view class="option-list">
+              <view wx:for="{{q.options}}" wx:for-item="opt" wx:for-index="oi" wx:key="id" class="option-row">
+                <view class="option-index">{{oi + 1}}</view>
+                <input class="option-input" placeholder="{{texts.optionPlaceholder}}" value="{{opt.label}}"
+                  bindinput="onOptionLabelInput" data-qi="{{qi}}" data-oi="{{oi}}" />
+                <input class="option-score" type="digit" placeholder="{{texts.optionScore}}" value="{{opt.score}}"
+                  bindinput="onOptionScoreInput" data-qi="{{qi}}" data-oi="{{oi}}" />
+                <view class="option-delete" catchtap="removeOption" data-qi="{{qi}}" data-oi="{{oi}}">✕</view>
+              </view>
+            </view>
+            <view class="add-option-btn" bindtap="addOption" data-index="{{qi}}">
+              <text>{{texts.addOption}}</text>
+            </view>
+          </view>
+        </block>
+
+        <!-- 评分题配置 -->
+        <block wx:if="{{q.type === 'rating'}}">
+          <view class="form-item">
+            <text class="form-label">{{texts.ratingRange}}</text>
+            <view class="rating-config">
+              <view class="rating-range">
+                <text class="range-label">{{texts.minValue}}</text>
+                <input class="range-input" type="number" value="{{q.minValue}}"
+                  bindinput="onRatingRangeInput" data-qi="{{qi}}" data-field="minValue" />
+              </view>
+              <view class="rating-range">
+                <text class="range-label">{{texts.maxValue}}</text>
+                <input class="range-input" type="number" value="{{q.maxValue}}"
+                  bindinput="onRatingRangeInput" data-qi="{{qi}}" data-field="maxValue" />
+              </view>
+            </view>
+          </view>
+        </block>
+
+        <!-- 量表题配置 -->
+        <block wx:if="{{q.type === 'scale'}}">
+          <view class="form-item">
+            <text class="form-label">{{texts.scaleSettings}}</text>
+            <view class="scale-list">
+              <view wx:for="{{q.scaleOptions}}" wx:for-item="sopt" wx:for-index="oi" wx:key="id" class="scale-row">
+                <input class="scale-value" type="number" placeholder="{{texts.scaleValuePlaceholder}}" value="{{sopt.value}}"
+                  bindinput="onScaleOptionValueInput" data-qi="{{qi}}" data-oi="{{oi}}" />
+                <input class="scale-label" placeholder="{{texts.scaleLabelPlaceholder}}" value="{{sopt.label}}"
+                  bindinput="onScaleOptionLabelInput" data-qi="{{qi}}" data-oi="{{oi}}" />
+                <view class="option-delete" catchtap="removeScaleOption" data-qi="{{qi}}" data-oi="{{oi}}">✕</view>
+              </view>
+            </view>
+            <view class="add-option-btn" bindtap="addScaleOption" data-index="{{qi}}">
+              <text>{{texts.addScale}}</text>
+            </view>
+          </view>
+        </block>
+
+        <!-- 选项控制栏 -->
+        <view class="question-actions">
+          <view class="action-left">
+            <view class="required-toggle {{q.required ? 'on' : ''}}" bindtap="toggleRequired" data-index="{{qi}}">
+              <text>{{q.required ? texts.required : texts.optional}}</text>
+            </view>
+          </view>
+          <view class="action-right">
+            <view class="action-btn" bindtap="moveQuestion" data-index="{{qi}}" data-direction="up" wx:if="{{qi > 0}}">{{texts.moveUp}}</view>
+            <view class="action-btn" bindtap="moveQuestion" data-index="{{qi}}" data-direction="down" wx:if="{{qi < template.questions.length - 1}}">{{texts.moveDown}}</view>
+            <view class="action-btn danger" bindtap="removeQuestion" data-index="{{qi}}">{{texts.delete}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view wx:if="{{template.questions.length === 0}}" class="empty-state">
+    <text class="empty-icon">📝</text>
+    <text class="empty-text">{{texts.emptyTitle}}</text>
+  </view>
+
+  <!-- 添加题目按钮 -->
+  <view class="add-question-bar" bindtap="addQuestion">
+    <text class="add-question-icon">+</text>
+    <text class="add-question-text">{{texts.addQuestion}}</text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bar-btn secondary" bindtap="togglePreview">
+      <text>👁 {{isPreviewMode ? texts.exitPreview : texts.preview}}</text>
+    </view>
+    <view class="bar-btn primary" bindtap="validateAndSave">
+      <text>{{texts.save}}</text>
+    </view>
+  </view>
+
+  <!-- 预览遮罩层 -->
+  <view class="preview-overlay" wx:if="{{isPreviewMode}}" bindtap="togglePreview">
+    <view class="preview-container" catchtap="noop">
+      <view class="preview-header">
+        <text class="preview-title">{{template.name || texts.previewTitle}}</text>
+        <view class="preview-close" bindtap="togglePreview">✕</view>
+      </view>
+      <scroll-view class="preview-body" scroll-y>
+        <view class="preview-desc" wx:if="{{template.description}}">{{template.description}}</view>
+        <block wx:for="{{template.questions}}" wx:key="id" wx:for-item="q" wx:for-index="qi">
+          <view class="preview-question">
+            <view class="preview-q-title">
+              <text class="preview-q-order">{{qi + 1}}.</text>
+              <text>{{q.title || texts.unnamedQuestion}}</text>
+              <text wx:if="{{q.required}}" class="preview-q-required">*</text>
+            </view>
+            <!-- 选项预览 -->
+            <view wx:if="{{q.type === 'single' || q.type === 'multiple'}}" class="preview-options">
+              <view wx:for="{{q.options}}" wx:for-item="opt" wx:key="id" class="preview-option">
+                <text>{{opt.label}}</text>
+                <text class="preview-score" wx:if="{{opt.score}}">({{opt.score}})</text>
+              </view>
+            </view>
+            <!-- 评分预览 -->
+            <view wx:if="{{q.type === 'rating'}}" class="preview-rating">
+              <text>{{q.minValue}} - {{q.maxValue}}</text>
+            </view>
+            <!-- 量表预览 -->
+            <view wx:if="{{q.type === 'scale'}}" class="preview-scale">
+              <view wx:for="{{q.scaleOptions}}" wx:for-item="sopt" wx:key="id" class="preview-scale-item">
+                <text class="preview-scale-value">{{sopt.value}}</text>
+                <text class="preview-scale-label">{{sopt.label}}</text>
+              </view>
+            </view>
+            <!-- 填空预览 -->
+            <view wx:if="{{q.type === 'text'}}" class="preview-text-placeholder">
+              <text>{{texts.previewTextPlaceholder}}</text>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "业务流程跟踪",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "status-tag": "/components/status-tag/status-tag"
+  }
+}

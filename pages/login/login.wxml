@@ -1,0 +1,66 @@
+<!--pages/login/login.wxml-->
+<view class="login-page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}};">
+  <!-- 顶部装饰背景 -->
+  <view class="login-bg">
+    <view class="login-bg-circle circle-1"></view>
+    <view class="login-bg-circle circle-2"></view>
+  </view>
+
+  <!-- 品牌区域 -->
+  <view class="brand-area">
+    <view class="brand-logo">
+      <text class="brand-icon">📚</text>
+    </view>
+    <text class="brand-title">{{texts.appName}}</text>
+    <text class="brand-desc">{{texts.appDesc}}</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-area">
+    <view class="form-card">
+      <!-- 账号 -->
+      <view class="form-item">
+        <view class="form-icon">
+          <text>👤</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="{{texts.accountPlaceholder}}"
+          value="{{account}}"
+          bindinput="onAccountInput"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 密码 -->
+      <view class="form-item">
+        <view class="form-icon">
+          <text>🔒</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="{{texts.passwordPlaceholder}}"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          password="{{!showPassword}}"
+          maxlength="30"
+        />
+        <view class="form-eye" bindtap="togglePassword">
+          <image class="eye-icon" src="{{showPassword ? '/images/icons/eye-off.png' : '/images/icons/eye-open.png'}}" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 登录按钮 -->
+    <view class="login-btn {{loading ? 'loading' : ''}}" bindtap="onLogin">
+      <text>{{loading ? '...' : texts.loginBtn}}</text>
+    </view>
+
+    <!-- 注册入口 -->
+    <view class="register-link" bindtap="onGoRegister">
+      <text>{{texts.toRegister}}</text>
+    </view>
+  </view>
+</view>

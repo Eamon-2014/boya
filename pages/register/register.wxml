@@ -1,0 +1,131 @@
+<!--pages/register/register.wxml-->
+<view class="register-page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}};">
+  <!-- 顶部装饰背景 -->
+  <view class="reg-bg">
+    <view class="reg-bg-circle circle-1"></view>
+    <view class="reg-bg-circle circle-2"></view>
+  </view>
+
+  <!-- 品牌区域 -->
+  <view class="brand-area">
+    <view class="brand-logo">
+      <text class="brand-icon">✨</text>
+    </view>
+    <text class="brand-title">{{texts.welcome}} {{texts.appName}}</text>
+    <text class="brand-desc">{{texts.appDesc}}</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-area">
+    <view class="form-card">
+      <!-- 账号 -->
+      <view class="form-item">
+        <view class="form-icon"><text>👤</text></view>
+        <input
+          class="form-input"
+          placeholder="{{texts.accountPlaceholder}}"
+          value="{{form.account}}"
+          bindinput="onAccountInput"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 姓名 -->
+      <view class="form-item">
+        <view class="form-icon"><text>📝</text></view>
+        <input
+          class="form-input"
+          placeholder="{{texts.namePlaceholder}}"
+          value="{{form.name}}"
+          bindinput="onNameInput"
+          maxlength="20"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 手机号 -->
+      <view class="form-item">
+        <view class="form-icon"><text>📱</text></view>
+        <input
+          class="form-input"
+          type="number"
+          placeholder="{{texts.phonePlaceholder}}"
+          value="{{form.phone}}"
+          bindinput="onPhoneInput"
+          maxlength="11"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 密码 -->
+      <view class="form-item">
+        <view class="form-icon"><text>🔒</text></view>
+        <input
+          class="form-input"
+          placeholder="{{texts.passwordPlaceholder}}"
+          value="{{form.password}}"
+          bindinput="onPasswordInput"
+          password="{{true}}"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 确认密码 -->
+      <view class="form-item">
+        <view class="form-icon"><text>🔑</text></view>
+        <input
+          class="form-input"
+          placeholder="{{texts.confirmPasswordPlaceholder}}"
+          value="{{form.confirmPassword}}"
+          bindinput="onConfirmPasswordInput"
+          password="{{true}}"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 角色 -->
+      <view class="form-item">
+        <view class="form-icon"><text>🏷️</text></view>
+        <picker class="form-picker" mode="selector" range="{{roleOptions}}" range-key="label" bindchange="onRoleChange">
+          <view class="picker-value">{{roleLabel}}</view>
+        </picker>
+      </view>
+
+      <view class="form-divider"></view>
+
+      <!-- 管理员码 -->
+      <view class="form-item">
+        <view class="form-icon"><text>🎫</text></view>
+        <input
+          class="form-input"
+          placeholder="{{texts.authCodePlaceholder}}"
+          value="{{form.authCode}}"
+          bindinput="onAuthCodeInput"
+          password="{{!showAuthCode}}"
+          maxlength="10"
+        />
+        <view class="form-eye" bindtap="toggleAuthCode">
+          <image class="eye-icon" src="{{showAuthCode ? '/images/icons/eye-off.png' : '/images/icons/eye-open.png'}}" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 注册按钮 -->
+    <view class="register-btn {{loading ? 'loading' : ''}}" bindtap="onRegister">
+      <text>{{loading ? '...' : texts.registerBtn}}</text>
+    </view>
+
+    <!-- 登录入口 -->
+    <view class="login-link" bindtap="onGoLogin">
+      <text>{{texts.toLogin}}</text>
+    </view>
+  </view>
+</view>

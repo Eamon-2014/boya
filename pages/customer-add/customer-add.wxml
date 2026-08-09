@@ -1,0 +1,83 @@
+<!--pages/customer-add/customer-add.wxml-->
+<view class="page">
+  <!-- 家长信息 -->
+  <view class="card">
+    <view class="card-title">家长信息</view>
+    <view class="form-item">
+      <text class="form-label">家长姓名 <text class="required">*</text></text>
+      <input class="form-input" placeholder="请输入家长姓名" value="{{form.name}}" bindinput="onInput" data-field="name" maxlength="20" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">联系电话 <text class="required">*</text></text>
+      <input class="form-input" type="number" placeholder="请输入手机号码" value="{{form.phone}}" bindinput="onInput" data-field="phone" maxlength="11" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">微信号</text>
+      <input class="form-input" placeholder="选填，方便添加微信" value="{{form.wechatId}}" bindinput="onInput" data-field="wechatId" maxlength="30" />
+    </view>
+  </view>
+
+  <!-- 孩子信息 -->
+  <view class="card">
+    <view class="card-title">孩子信息</view>
+    <view class="form-item">
+      <text class="form-label">孩子姓名 <text class="required">*</text></text>
+      <input class="form-input" placeholder="请输入孩子姓名" value="{{form.childName}}" bindinput="onInput" data-field="childName" maxlength="20" />
+    </view>
+    <view class="form-row">
+      <view class="form-item half">
+        <text class="form-label">年龄</text>
+        <input class="form-input" type="number" placeholder="年龄" value="{{form.childAge}}" bindinput="onInput" data-field="childAge" maxlength="3" />
+      </view>
+      <view class="form-item half">
+        <text class="form-label">年级</text>
+        <picker mode="selector" range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
+          <view class="form-picker">{{grades[gradeIndex]}} <text class="picker-arrow">▼</text></view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <!-- 意向信息 -->
+  <view class="card">
+    <view class="card-title">意向信息</view>
+    <view class="form-row">
+      <view class="form-item half">
+        <text class="form-label">意向语种</text>
+        <picker mode="selector" range="{{languageLabels}}" value="{{languageIndex}}" bindchange="onLanguageChange">
+          <view class="form-picker">{{languageLabels[languageIndex]}} <text class="picker-arrow">▼</text></view>
+        </picker>
+      </view>
+      <view class="form-item half">
+        <text class="form-label">客户状态</text>
+        <picker mode="selector" range="{{statusLabels}}" value="{{statusIndex}}" bindchange="onStatusChange">
+          <view class="form-picker">{{statusLabels[statusIndex]}} <text class="picker-arrow">▼</text></view>
+        </picker>
+      </view>
+    </view>
+    <view class="form-item">
+      <text class="form-label">目标考试</text>
+      <input class="form-input" placeholder="如：剑桥KET、DELF A2等" value="{{form.targetExam}}" bindinput="onInput" data-field="targetExam" maxlength="30" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">客户来源</text>
+      <picker mode="selector" range="{{sources}}" value="{{sourceIndex}}" bindchange="onSourceChange">
+        <view class="form-picker">{{sources[sourceIndex]}} <text class="picker-arrow">▼</text></view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="card-title">备注</view>
+    <textarea class="form-textarea" placeholder="补充说明客户情况、需求等" value="{{form.remark}}" bindinput="onInput" data-field="remark" maxlength="200" auto-height />
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <view class="bar-btn secondary" bindtap="onReset">重置</view>
+    <view class="bar-btn primary" bindtap="onSubmit" hover-class="bar-btn-hover" hover-stay-time="50">
+      <text>保存客户</text>
+    </view>
+  </view>
+</view>

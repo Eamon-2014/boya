@@ -1,0 +1,187 @@
+<view class="page">
+  <!-- 步骤指示器 -->
+  <view class="stepper">
+    <view class="step {{step >= 1 ? 'active' : ''}} {{step > 1 ? 'done' : ''}}" data-step="1" bindtap="goToStep">
+      <view class="step-circle">{{step > 1 ? '✓' : '1'}}</view>
+      <text class="step-label">选客户</text>
+    </view>
+    <view class="step-line {{step > 1 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 2 ? 'active' : ''}} {{step > 2 ? 'done' : ''}}" data-step="2" bindtap="goToStep">
+      <view class="step-circle">{{step > 2 ? '✓' : '2'}}</view>
+      <text class="step-label">选模板</text>
+    </view>
+    <view class="step-line {{step > 2 ? 'active' : ''}}"></view>
+    <view class="step {{step >= 3 ? 'active' : ''}}" data-step="3" bindtap="goToStep">
+      <view class="step-circle">3</view>
+      <text class="step-label">配置推送</text>
+    </view>
+  </view>
+
+  <!-- Step 1: 选择客户 -->
+  <block wx:if="{{step === 1}}">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索客户姓名/孩子姓名/手机号" value="{{customerSearch}}" bindinput="onCustomerSearch" />
+    </view>
+
+    <view class="list-title">选择推送对象（{{filteredCustomers.length}}人）</view>
+
+    <view class="customer-list">
+      <view wx:for="{{filteredCustomers}}" wx:key="id" class="customer-card"
+        data-customer="{{item}}" bindtap="selectCustomer" hover-class="card-hover">
+        <view class="cust-avatar" style="background: {{item.avatarColor}}">
+          <text>{{item.initial}}</text>
+        </view>
+        <view class="cust-info">
+          <view class="cust-name-row">
+            <text class="cust-name">{{item.name}}</text>
+            <view class="cust-lang" style="background: {{item.languageColor}}20; color: {{item.languageColor}}">{{item.languageLabel}}</view>
+          </view>
+          <text class="cust-sub">孩子：{{item.childName}} · {{item.maskedPhone}}</text>
+        </view>
+        <text class="cust-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="empty-tip" wx:if="{{filteredCustomers.length === 0}}">
+      <text>未找到匹配的客户</text>
+    </view>
+  </block>
+
+  <!-- Step 2: 选择模板 -->
+  <block wx:if="{{step === 2}}">
+    <view class="selected-customer-bar">
+      <view class="sel-cust-avatar" style="background: {{selectedCustomer.avatarColor}}">
+        <text>{{selectedCustomer.initial}}</text>
+      </view>
+      <view class="sel-cust-info">
+        <text class="sel-cust-name">{{selectedCustomer.name}}</text>
+        <text class="sel-cust-sub">{{selectedCustomer.childName}} · {{selectedCustomer.maskedPhone}}</text>
+      </view>
+      <view class="sel-cust-change" data-step="1" bindtap="goToStep">更换</view>
+    </view>
+
+    <view class="list-title">选择问卷模板（{{templates.length}}个可用）</view>
+
+    <view class="template-list">
+      <view wx:for="{{templates}}" wx:key="id" class="template-card"
+        data-template="{{item}}" bindtap="selectTemplate" hover-class="card-hover">
+        <view class="tpl-header">
+          <view class="tpl-lang-badge" style="background: {{item.languageBg}}; color: {{item.languageColor}}">{{item.languageLabel}}</view>
+          <text class="tpl-category">{{item.category}}</text>
+        </view>
+        <text class="tpl-name">{{item.name}}</text>
+        <text class="tpl-desc">{{item.description}}</text>
+        <view class="tpl-meta">
+          <text class="tpl-meta-item">📝 {{item.questionCount}}题</text>
+          <text class="tpl-meta-item">📊 已用{{item.usageCount}}次</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- Step 3: 配置推送 -->
+  <block wx:if="{{step === 3}}">
+    <!-- 已选客户 -->
+    <view class="config-section">
+      <view class="config-section-title">推送对象</view>
+      <view class="config-card">
+        <view class="sel-cust-avatar sm" style="background: {{selectedCustomer.avatarColor}}">
+          <text>{{selectedCustomer.initial}}</text>
+        </view>
+        <view class="sel-cust-info">
+          <text class="sel-cust-name">{{selectedCustomer.name}}</text>
+          <text class="sel-cust-sub">{{selectedCustomer.childName}} · {{selectedCustomer.languageLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 已选模板 -->
+    <view class="config-section">
+      <view class="config-section-title">问卷模板</view>
+      <view class="config-card">
+        <view class="tpl-icon-wrap">
+          <text class="tpl-icon">📋</text>
+        </view>
+        <view class="sel-cust-info">
+          <text class="sel-cust-name">{{selectedTemplate.name}}</text>
+          <text class="sel-cust-sub">{{selectedTemplate.languageLabel}} · {{selectedTemplate.questionCount}}题</text>
+        </view>
+        <view class="sel-cust-change" data-step="2" bindtap="goToStep">更换</view>
+      </view>
+    </view>
+
+    <!-- AI教师选择 -->
+    <view class="config-section">
+      <view class="config-section-title">指定AI教师（用于报告生成）</view>
+      <view class="ai-teacher-list">
+        <view wx:for="{{aiTeachers}}" wx:key="id" class="ai-teacher-card {{selectedAiTeacher.id === item.id ? 'selected' : ''}}"
+          data-teacher="{{item}}" bindtap="onAiTeacherSelect">
+          <view class="ai-avatar">🤖</view>
+          <view class="ai-info">
+            <text class="ai-name">{{item.name}}</text>
+            <text class="ai-sub">{{item.languageLabel}} · {{item.reportCount}}份报告</text>
+          </view>
+          <view class="ai-check {{selectedAiTeacher.id === item.id ? 'checked' : ''}}">
+            {{selectedAiTeacher.id === item.id ? '✓' : ''}}
+          </view>
+        </view>
+        <view class="empty-tip" wx:if="{{aiTeachers.length === 0}}">
+          <text>暂无可用的AI教师</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 截止日期 -->
+    <view class="config-section">
+      <view class="config-section-title">填写截止日期</view>
+      <view class="config-card">
+        <text class="config-label">有效期</text>
+        <picker mode="selector" range="{{deadlineOptions}}" value="{{deadlineIndex}}" bindchange="onDeadlineChange">
+          <view class="picker-value">
+            <text>{{deadlineOptions[deadlineIndex]}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      <view class="config-hint">截止日期：{{deadline}}，超时未填写将自动标记为过期</view>
+    </view>
+
+    <!-- 给家长留言 -->
+    <view class="config-section">
+      <view class="config-section-title">给家长留言（选填）</view>
+      <textarea class="message-textarea" placeholder="例如：您好，请抽空填写这份评估问卷，以便我们更好地了解孩子的学习情况..." value="{{message}}" bindinput="onMessageInput" maxlength="200" auto-height />
+      <view class="char-count">{{message.length}}/200</view>
+    </view>
+
+    <!-- 推送预览 -->
+    <view class="preview-card">
+      <view class="preview-title">📋 推送预览</view>
+      <view class="preview-row">
+        <text class="preview-key">推送对象</text>
+        <text class="preview-val">{{selectedCustomer.name}}（{{selectedCustomer.childName}}家长）</text>
+      </view>
+      <view class="preview-row">
+        <text class="preview-key">问卷名称</text>
+        <text class="preview-val">{{selectedTemplate.name}}</text>
+      </view>
+      <view class="preview-row">
+        <text class="preview-key">AI教师</text>
+        <text class="preview-val">{{selectedAiTeacher.name || '未指定'}}</text>
+      </view>
+      <view class="preview-row">
+        <text class="preview-key">截止日期</text>
+        <text class="preview-val">{{deadline}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="btn-cancel" bindtap="onCancel">取消</view>
+    <view wx:if="{{step > 1}}" class="btn-back" data-step="{{step - 1}}" bindtap="goToStep">上一步</view>
+    <view wx:if="{{step === 3}}" class="btn-submit {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      {{submitting ? '推送中...' : '确认推送'}}
+    </view>
+  </view>
+</view>

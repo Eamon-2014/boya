@@ -1,0 +1,7 @@
+<!--components/status-tag/status-tag.wxml-->
+<view
+  class="tag {{rounded ? 'tag-rounded' : ''}} tag-{{type}}"
+  style="{{bgColor ? 'background:' + bgColor + ';' : ''}}{{color ? 'color:' + color + ';' : ''}}"
+>
+  {{text}}
+</view>

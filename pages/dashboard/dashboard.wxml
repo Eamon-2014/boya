@@ -1,0 +1,315 @@
+<!--pages/dashboard/dashboard.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 通知实时弹窗 -->
+  <notification-toast />
+
+  <!-- 伪装登录横幅（仅管理员以其他用户身份查看时显示） -->
+  <view class="impersonate-banner" wx:if="{{isImpersonating}}">
+    <view class="impersonate-banner-inner">
+      <text class="impersonate-icon">🔍</text>
+      <view class="impersonate-text">
+        <text class="impersonate-title">正在以「{{currentUser.name}}」的身份查看</text>
+        <text class="impersonate-sub">所有操作将以该用户身份记录，可随时切回管理员</text>
+      </view>
+      <view class="impersonate-exit-btn" bindtap="onExitImpersonation">
+        <text>切回管理员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 问候卡片 -->
+  <view class="greeting {{isImpersonating ? 'greeting-after-banner' : ''}}">
+    <view class="greeting-top">
+      <view class="greeting-info">
+        <text class="greeting-hello">{{texts.greeting}}，{{currentUser.name}} 👋</text>
+        <text class="greeting-date">{{todayStr}} · {{texts.wishWork}}</text>
+      </view>
+      <view class="greeting-weather">
+        <text>☀️ 28°C</text>
+      </view>
+    </view>
+    <view class="greeting-summary">
+      <view class="greeting-summary-item">
+        <text class="greeting-summary-value">{{stats.todayNewCustomers}}</text>
+        <text class="greeting-summary-label">{{texts.todayNewCustomers}}</text>
+      </view>
+      <view class="greeting-summary-item">
+        <text class="greeting-summary-value">{{stats.todayFollowTasks}}</text>
+        <text class="greeting-summary-label">{{texts.todayFollow}}</text>
+      </view>
+      <view class="greeting-summary-item">
+        <text class="greeting-summary-value">{{stats.monthConversionRate}}%</text>
+        <text class="greeting-summary-label">{{texts.monthConversion}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日焦点 -->
+  <view class="section-header">
+    <view class="section-title-wrap">
+      <view class="section-bar"></view>
+      <text class="section-title">{{texts.todayFocus}}</text>
+    </view>
+  </view>
+  <view class="focus-scroll">
+    <view class="focus-card" wx:for="{{focusCards}}" wx:key="title"
+      style="background: {{item.bg}}" data-action="{{item.action}}" bindtap="onFocusCardTap">
+      <view class="focus-icon" style="background: {{item.color}}20">
+        <text>{{item.icon}}</text>
+      </view>
+      <view class="focus-content">
+        <text class="focus-value" style="color: {{item.color}}">{{item.value}}</text>
+        <text class="focus-title">{{item.title}}</text>
+        <text class="focus-desc">{{item.desc}}</text>
+      </view>
+      <view class="focus-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 数据统计卡片 -->
+  <view class="stats-grid">
+    <stat-card
+      label="{{texts.pendingReports}}"
+      value="{{stats.pendingReports}}"
+      accent-color="warning"
+      trend-type="up"
+      trend-value="+2"
+    />
+    <stat-card
+      label="{{texts.pendingQuestionnaires}}"
+      value="{{stats.pendingQuestionnaires}}"
+      accent-color="primary"
+    />
+    <stat-card
+      label="{{texts.monthConverted}}"
+      value="{{stats.monthConvertedCustomers}}"
+      suffix="{{texts.suffixCustomer}}"
+      accent-color="success"
+    />
+    <stat-card
+      label="{{texts.activeTeachers}}"
+      value="{{stats.activeAITeachers}}"
+      suffix="{{texts.suffixTeacher}}"
+      accent-color="ai"
+    />
+  </view>
+
+  <!-- 转化漏斗概览 -->
+  <view class="funnel-card" wx:if="{{funnelData}}" bindtap="onFunnelTap">
+    <view class="funnel-header">
+      <view class="funnel-title-wrap">
+        <text class="funnel-title">{{texts.conversionFunnel}}</text>
+        <text class="funnel-subtitle">{{texts.fullAnalysis}}</text>
+      </view>
+      <view class="funnel-rate">
+        <text class="funnel-rate-value">{{funnelData.conversionRate}}%</text>
+        <text class="funnel-rate-label">{{texts.conversionRate}}</text>
+      </view>
+    </view>
+    <view class="funnel-stages">
+      <view wx:for="{{funnelData.stages}}" wx:key="label" class="funnel-stage">
+        <view class="funnel-bar-row">
+          <view class="funnel-bar" style="width: {{item.width}}%; background: {{item.color}}"></view>
+          <text class="funnel-count" style="color: {{item.color}}">{{item.count}}</text>
+        </view>
+        <text class="funnel-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="funnel-footer">
+      <text class="funnel-link">{{texts.viewReport}} ›</text>
+    </view>
+  </view>
+
+  <!-- 快捷功能入口 -->
+  <view class="quick-entry">
+    <text class="quick-entry-title">{{texts.quickActions}}</text>
+    <view class="quick-entry-grid">
+      <view class="quick-entry-item" wx:for="{{quickEntries}}" wx:key="action" data-action="{{item.action}}" bindtap="onQuickAction">
+        <view class="quick-entry-icon" style="background: {{item.bg}}">
+          <text style="color: {{item.color}}">{{item.icon}}</text>
+        </view>
+        <text class="quick-entry-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 待办事项 -->
+  <view class="section-header">
+    <view class="section-title-wrap">
+      <view class="section-bar"></view>
+      <text class="section-title">{{texts.myTodos}}</text>
+      <view class="section-count-badge">{{todos.length}}</view>
+    </view>
+    <text class="section-action" bindtap="onMoreTodos">{{texts.viewAll}} ›</text>
+  </view>
+
+  <view wx:if="{{todos.length === 0}}" class="card">
+    <text class="empty-inline">🎉 {{texts.noTodos}}</text>
+  </view>
+
+  <view wx:else>
+    <view
+      wx:for="{{todos}}"
+      wx:key="id"
+      class="todo-card"
+      data-todo="{{item}}"
+      bindtap="onTodoClick"
+    >
+      <view class="todo-priority" style="background: {{item.priorityColor}}"></view>
+      <view class="todo-content">
+        <text class="todo-title">{{item.title}}</text>
+        <text class="todo-desc">{{item.description}}</text>
+        <view class="todo-meta">
+          <text class="todo-time">{{item.dueTimeText ? texts.deadline + ' ' + item.dueTimeText : ''}}</text>
+        </view>
+      </view>
+      <view class="todo-done-btn" catchtap="onTodoDone" data-id="{{item.id}}">
+        <text>✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 团队动态 -->
+  <view class="section-header">
+    <view class="section-title-wrap">
+      <view class="section-bar"></view>
+      <text class="section-title">{{texts.teamActivity}}</text>
+    </view>
+    <view class="section-action" bindtap="onPublishActivity">
+      <text>＋ 发布</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <!-- 空状态 -->
+    <view class="activity-empty" wx:if="{{!activities || activities.length === 0}}">
+      <text class="activity-empty-icon">📭</text>
+      <text class="activity-empty-text">暂时没有动态</text>
+      <view class="activity-empty-btn" bindtap="onPublishActivity">
+        <text>发布第一条动态</text>
+      </view>
+    </view>
+
+    <!-- 动态列表 -->
+    <view
+      wx:for="{{activities}}"
+      wx:key="id"
+      class="activity-item"
+      data-activity="{{item}}"
+      bindtap="onActivityClick"
+    >
+      <view class="activity-dot"></view>
+      <view class="activity-content">
+        <text class="activity-title">{{item.title}}</text>
+        <text class="activity-desc">{{item.description}}</text>
+        <view class="activity-footer">
+          <text class="activity-user">{{item.operatorName}}</text>
+          <text class="activity-time">{{item.timeText}}</text>
+        </view>
+      </view>
+      <text class="activity-arrow">›</text>
+    </view>
+  </view>
+
+  <view style="height: 64rpx;"></view>
+
+  <!-- 团队动态详情弹窗 -->
+  <view class="activity-modal-mask" wx:if="{{showActivityDetail}}" catchtap="onCloseActivityDetail">
+    <view class="activity-modal" catchtap="noop">
+      <view class="activity-modal-header">
+        <text class="activity-modal-title">团队动态详情</text>
+        <view class="activity-modal-close" bindtap="onCloseActivityDetail">
+          <text>✕</text>
+        </view>
+      </view>
+
+      <view class="activity-modal-body" wx:if="{{selectedActivity}}">
+        <view class="detail-title-row">
+          <text class="detail-title">{{selectedActivity.title}}</text>
+        </view>
+
+        <view class="detail-meta">
+          <view class="meta-item">
+            <text class="meta-label">操作人</text>
+            <text class="meta-value">{{selectedActivity.operatorName || '-'}}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">发生时间</text>
+            <text class="meta-value">{{selectedActivity.timeText || '-'}}</text>
+          </view>
+          <view class="meta-item" wx:if="{{selectedActivity.customerName}}">
+            <text class="meta-label">关联客户</text>
+            <text class="meta-value">{{selectedActivity.customerName}}</text>
+          </view>
+          <view class="meta-item" wx:if="{{selectedActivity.type}}">
+            <text class="meta-label">类型</text>
+            <text class="meta-value">{{selectedActivity.type}}</text>
+          </view>
+        </view>
+
+        <view class="detail-desc-block">
+          <text class="detail-desc-label">详情说明</text>
+          <text class="detail-desc">{{selectedActivity.description || '暂无详细描述'}}</text>
+        </view>
+      </view>
+
+      <view class="activity-modal-actions">
+        <view class="action-btn action-btn-danger" bindtap="onDeleteActivity">
+          <text>🗑 删除</text>
+        </view>
+        <button class="action-btn action-btn-primary" open-type="share" bindtap="onShareActivity">
+          <text>📤 分享</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享图用 Canvas（隐藏） -->
+  <canvas canvas-id="activityShareCanvas" style="position: fixed; left: -9999px; top: -9999px; width: 600px; height: 400px;"></canvas>
+
+  <!-- 发布动态弹窗 -->
+  <view class="activity-modal-mask" wx:if="{{showActivityPublish}}" catchtap="onClosePublish">
+    <view class="activity-modal activity-modal-publish" catchtap="noop">
+      <view class="activity-modal-header">
+        <text class="activity-modal-title">发布动态</text>
+        <view class="activity-modal-close" bindtap="onClosePublish">
+          <text>✕</text>
+        </view>
+      </view>
+
+      <view class="activity-modal-body">
+        <view class="publish-field">
+          <text class="publish-label">标题 <text class="publish-required">*</text></text>
+          <input
+            class="publish-input"
+            placeholder="请输入动态标题"
+            value="{{publishForm.title}}"
+            bindinput="onPublishTitleInput"
+            maxlength="50"
+          />
+        </view>
+
+        <view class="publish-field">
+          <text class="publish-label">详情说明</text>
+          <textarea
+            class="publish-textarea"
+            placeholder="可填写详细内容（选填）"
+            value="{{publishForm.description}}"
+            bindinput="onPublishDescInput"
+            maxlength="300"
+            auto-height
+          />
+        </view>
+      </view>
+
+      <view class="activity-modal-actions">
+        <view class="action-btn action-btn-cancel" bindtap="onClosePublish">
+          <text>取消</text>
+        </view>
+        <view class="action-btn action-btn-primary {{publishing ? 'disabled' : ''}}" bindtap="onSubmitPublish">
+          <text>{{publishing ? '发布中...' : '发布'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

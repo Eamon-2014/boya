@@ -1,0 +1,18 @@
+<!--components/stat-card/stat-card.wxml-->
+<view class="stat-card">
+  <view class="stat-card-accent" style="background: {{accentColorMap[accentColor] || accentColorMap.primary}}"></view>
+
+  <view class="stat-card-header">
+    <text class="stat-card-label">{{label}}</text>
+    <view wx:if="{{trendType}}" class="stat-card-trend stat-card-trend-{{trendType}}">
+      <text>{{trendType === 'up' ? '↑' : (trendType === 'down' ? '↓' : '—')}} {{trendValue}}</text>
+    </view>
+  </view>
+
+  <view>
+    <text class="stat-card-value">{{value != null ? value : 0}}</text>
+    <text wx:if="{{suffix}}" class="stat-card-suffix">{{suffix}}</text>
+  </view>
+
+  <text wx:if="{{subtext}}" class="stat-card-subtext">{{subtext}}</text>
+</view>

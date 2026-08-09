@@ -1,0 +1,194 @@
+/* pages/register/register.wxss */
+
+.register-page {
+  min-height: 100vh;
+  background: #F5F7FA;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.reg-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 500rpx;
+  background: var(--color-primary-gradient);
+  overflow: hidden;
+}
+
+.reg-bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 400rpx;
+  height: 400rpx;
+  top: -150rpx;
+  left: -120rpx;
+}
+
+.circle-2 {
+  width: 250rpx;
+  height: 250rpx;
+  top: 150rpx;
+  right: -80rpx;
+}
+
+/* 品牌区域 */
+.brand-area {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+  padding-bottom: 40rpx;
+}
+
+.brand-logo {
+  width: 120rpx;
+  height: 120rpx;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10rpx);
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.brand-icon {
+  font-size: 60rpx;
+}
+
+.brand-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 1rpx;
+}
+
+.brand-desc {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 8rpx;
+}
+
+/* 表单区域 */
+.form-area {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0 48rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 8rpx 32rpx;
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  height: 100rpx;
+  gap: 20rpx;
+}
+
+.form-icon {
+  width: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1F2937;
+  height: 100rpx;
+}
+
+.form-picker {
+  flex: 1;
+}
+
+.picker-value {
+  font-size: 30rpx;
+  color: #1F2937;
+  height: 100rpx;
+  line-height: 100rpx;
+}
+
+.form-divider {
+  height: 1rpx;
+  background: #F0F1F3;
+}
+
+/* 注册按钮 */
+.register-btn {
+  margin-top: 48rpx;
+  height: 96rpx;
+  background: var(--color-primary-gradient);
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.3);
+  transition: all 0.2s;
+}
+
+.register-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.register-btn.loading {
+  opacity: 0.6;
+}
+
+/* 登录入口 */
+.login-link {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #6B7280;
+}
+
+.login-link:active {
+  color: var(--color-primary);
+}
+
+/* 眼睛切换按钮 */
+.form-eye {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+.eye-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.form-eye:active {
+  opacity: 1;
+}

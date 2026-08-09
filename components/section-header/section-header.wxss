@@ -1,0 +1,48 @@
+/* components/section-header/section-header.wxss */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 48rpx 0 24rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+}
+
+.section-title-bar {
+  width: 6rpx;
+  height: 28rpx;
+  background: var(--color-primary-gradient);
+  border-radius: 4rpx;
+  margin-right: 16rpx;
+}
+
+.section-title-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.section-title-count {
+  margin-left: 16rpx;
+  padding: 2rpx 12rpx;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  font-size: 22rpx;
+  border-radius: 999rpx;
+  line-height: 1.4;
+}
+
+.section-action {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.section-action-arrow {
+  margin-left: 4rpx;
+  color: #9CA3AF;
+}

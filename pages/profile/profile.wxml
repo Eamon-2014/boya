@@ -1,0 +1,328 @@
+<!--pages/profile/profile.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 通知实时弹窗 -->
+  <notification-toast />
+
+  <!-- 个人信息头部 -->
+  <view class="profile-header">
+    <view class="profile-header-inner">
+      <view class="profile-avatar">
+        <text>{{avatarText}}</text>
+      </view>
+      <view class="profile-info">
+        <text class="profile-name">{{currentUser.name}}</text>
+        <text class="profile-role">{{roleCampusText}}</text>
+        <view class="profile-stats">
+          <view class="profile-stat-item">
+            <text class="stat-value">{{totalCustomers}}</text>
+            <text class="stat-label">{{texts.followCustomers}}</text>
+          </view>
+          <view class="profile-stat-item">
+            <text class="stat-value">{{convertedCustomers}}</text>
+            <text class="stat-label">{{texts.monthConvert}}</text>
+          </view>
+          <view class="profile-stat-item">
+            <text class="stat-value">{{conversionRate}}%</text>
+            <text class="stat-label">{{texts.conversionRate}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="profile-setting" bindtap="onSettingClick">
+        <text>⚙️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账号信息 -->
+  <view class="account-card">
+    <view class="account-card-header">
+      <text class="account-card-icon">🔑</text>
+      <text class="account-card-title">{{texts.accountInfo}}</text>
+    </view>
+    <view class="account-row">
+      <text class="account-label">{{texts.accountLabel}}</text>
+      <text class="account-value">{{currentUser.account || '-'}}</text>
+    </view>
+    <view class="account-row">
+      <text class="account-label">{{texts.passwordLabel}}</text>
+      <view class="account-pwd-wrap">
+        <text class="account-value">{{showPassword ? (currentUser.password || '-') : passwordDots}}</text>
+        <view class="pwd-toggle" bindtap="onTogglePassword">
+          <image class="eye-icon" src="{{showPassword ? '/images/icons/eye-off.png' : '/images/icons/eye-open.png'}}" />
+        </view>
+      </view>
+    </view>
+    <view class="account-row">
+      <text class="account-label">{{texts.fullNameLabel}}</text>
+      <text class="account-value">{{currentUser.name || '-'}}</text>
+    </view>
+    <view class="account-row">
+      <text class="account-label">{{texts.roleLabel}}</text>
+      <text class="account-value">{{currentUser.role || '-'}}</text>
+    </view>
+    <view class="account-row">
+      <text class="account-label">{{texts.userIdLabel}}</text>
+      <text class="account-value">{{currentUser.id || '-'}}</text>
+    </view>
+  </view>
+
+  <!-- 业务数据概览 -->
+  <view class="overview-card">
+    <view class="overview-grid">
+      <view class="overview-item">
+        <view class="overview-icon" style="background: {{themeColors.primaryBg}}">
+          <text style="color: {{themeColors.primary}}">👤</text>
+        </view>
+        <view>
+          <text class="overview-value">{{totalCustomers}}</text>
+          <text class="overview-label">{{texts.totalCustomers}}</text>
+        </view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-icon" style="background: #D1FAE5">
+          <text style="color: #10B981">✅</text>
+        </view>
+        <view>
+          <text class="overview-value">{{convertedCustomers}}</text>
+          <text class="overview-label">{{texts.convertedCustomers}}</text>
+        </view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-icon" style="background: #FEF3C7">
+          <text style="color: #F59E0B">📈</text>
+        </view>
+        <view>
+          <text class="overview-value">{{conversionRate}}%</text>
+          <text class="overview-label">{{texts.conversionRate}}</text>
+        </view>
+      </view>
+      <view class="overview-item">
+        <view class="overview-icon" style="background: #EDE9FE">
+          <text style="color: #8B5CF6">🤖</text>
+        </view>
+        <view>
+          <text class="overview-value">{{readyAiCount}}</text>
+          <text class="overview-label">{{texts.readyAITeachers}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI教师训练中心 -->
+  <view class="training-center">
+    <view class="training-header">
+      <view class="training-title-wrap">
+        <text class="training-icon">🤖</text>
+        <text class="training-title">{{texts.trainingCenter}}</text>
+      </view>
+      <text class="training-action" bindtap="onAddAITeacher">{{texts.addTeacher}}</text>
+    </view>
+    <view class="training-stats">
+      <view class="training-stat-item">
+        <text class="training-stat-value">{{readyAiCount}}</text>
+        <text class="training-stat-label">{{texts.teacherReady}}</text>
+      </view>
+      <view class="training-stat-divider"></view>
+      <view class="training-stat-item">
+        <text class="training-stat-value">{{teachers.length}}</text>
+        <text class="training-stat-label">{{texts.teacherTotal}}</text>
+      </view>
+      <view class="training-stat-divider"></view>
+      <view class="training-stat-item">
+        <text class="training-stat-value">{{totalReports || 0}}</text>
+        <text class="training-stat-label">{{texts.reportGenerated}}</text>
+      </view>
+    </view>
+    <view class="training-progress-list">
+      <view wx:for="{{teachers}}" wx:key="id" wx:if="{{item.status === 'training'}}" class="training-item">
+        <view class="training-item-header">
+          <text class="training-item-name">{{item.name}}</text>
+          <text class="training-item-pct">{{item.trainingProgress}}%</text>
+        </view>
+        <view class="training-item-bar">
+          <view class="training-item-fill" style="width: {{item.trainingProgress}}%; background: linear-gradient(90deg, #F59E0B, #8B5CF6)"></view>
+        </view>
+      </view>
+      <view wx:if="{{trainingCount === 0}}" class="training-empty">
+        <text class="training-empty-text">{{texts.allTrained}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI教师管理 -->
+  <view class="section">
+    <view class="section-header-custom">
+      <view class="section-title">
+        <view class="section-bar"></view>
+        <text class="section-text">{{texts.teacherManagement}}</text>
+      </view>
+      <text class="section-action" bindtap="onAddAITeacher">{{texts.addNew}}</text>
+    </view>
+
+    <view
+      wx:for="{{teachers}}"
+      wx:key="id"
+      class="teacher-card"
+      data-teacher="{{item}}"
+      bindtap="onAITeacherClick"
+    >
+      <view class="teacher-header">
+        <view class="teacher-left">
+          <view class="teacher-avatar">
+            <text>🤖</text>
+          </view>
+          <view class="teacher-info">
+            <view class="teacher-name-row">
+              <text class="teacher-name">{{item.name}}</text>
+              <view class="lang-tag" style="background: {{item.languageBg}}; color: {{item.languageColor}}">
+                <text>{{item.languageLabel}}</text>
+              </view>
+            </view>
+            <text class="teacher-desc">{{item.cloneFromText}}</text>
+          </view>
+        </view>
+        <view class="tag tag-rounded" style="background: {{item.statusBg}}; color: {{item.statusColor}}">
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+
+      <view class="teacher-meta">
+        <view wx:for="{{item.topSpecialties}}" wx:for-item="spec" wx:key="*this" class="spec-tag">
+          <text>{{spec}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.status === 'training'}}" class="teacher-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{item.trainingProgress}}%"></view>
+        </view>
+        <view class="progress-info">
+          <text class="progress-text">{{item.trainingProgressText}}</text>
+          <text class="progress-action" data-teacher="{{item}}" catchtap="onTraining">{{item.trainNowText}}</text>
+        </view>
+      </view>
+
+      <view class="teacher-stats">
+        <view class="stat-cell">
+          <text class="stat-cell-value">{{item.knowledgeCount}}</text>
+          <text class="stat-cell-label">{{texts.knowledgePoints}}</text>
+        </view>
+        <view class="stat-cell">
+          <text class="stat-cell-value">{{item.reportCount}}</text>
+          <text class="stat-cell-label">{{texts.generateReports}}</text>
+        </view>
+        <view class="stat-cell">
+          <text class="stat-cell-value" style="color: #F59E0B">{{item.ratingText}}</text>
+          <text class="stat-cell-label">{{item.ratingCountText || item.lastTrainedText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据分析菜单 -->
+  <view class="section">
+    <view class="section-header-custom">
+      <view class="section-title">
+        <view class="section-bar"></view>
+        <text class="section-text">{{texts.dataAnalysis}}</text>
+      </view>
+    </view>
+    <view class="menu-group">
+      <view
+        wx:for="{{menuGroups[0]}}"
+        wx:key="action"
+        class="menu-item"
+        data-action="{{item.action}}"
+        bindtap="onMenuItem"
+      >
+        <view class="menu-left">
+          <view class="menu-icon" style="background: {{item.iconBg}}">
+            <text style="color: {{item.iconColor}}">{{item.icon}}</text>
+          </view>
+          <view class="menu-content">
+            <text class="menu-title">{{item.title}}</text>
+            <text wx:if="{{item.subtitle}}" class="menu-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+        <view class="menu-right">
+          <view wx:if="{{item.badge > 0}}" class="menu-badge">
+            <text>{{item.badge}}</text>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 系统管理菜单 -->
+  <view class="section">
+    <view class="section-header-custom">
+      <view class="section-title">
+        <view class="section-bar"></view>
+        <text class="section-text">{{texts.systemManagement}}</text>
+      </view>
+    </view>
+    <view class="menu-group">
+      <view
+        wx:for="{{menuGroups[1]}}"
+        wx:key="action"
+        class="menu-item"
+        data-action="{{item.action}}"
+        bindtap="onMenuItem"
+      >
+        <view class="menu-left">
+          <view class="menu-icon" style="background: {{item.iconBg}}">
+            <text style="color: {{item.iconColor}}">{{item.icon}}</text>
+          </view>
+          <view class="menu-content">
+            <text class="menu-title">{{item.title}}</text>
+            <text wx:if="{{item.subtitle}}" class="menu-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+        <view class="menu-right">
+          <view wx:if="{{item.badge > 0}}" class="menu-badge">
+            <text>{{item.badge}}</text>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 管理员专用菜单（仅管理员可见） -->
+  <view class="section" wx:if="{{isAdmin && menuGroups[2].length > 0}}">
+    <view class="section-header-custom">
+      <view class="section-title">
+        <view class="section-bar" style="background: #DC2626;"></view>
+        <text class="section-text">{{texts.adminSection}}</text>
+      </view>
+    </view>
+    <view class="menu-group">
+      <view
+        wx:for="{{menuGroups[2]}}"
+        wx:key="action"
+        class="menu-item"
+        data-action="{{item.action}}"
+        bindtap="onMenuItem"
+      >
+        <view class="menu-left">
+          <view class="menu-icon" style="background: {{item.iconBg}}">
+            <text style="color: {{item.iconColor}}">{{item.icon}}</text>
+          </view>
+          <view class="menu-content">
+            <text class="menu-title">{{item.title}}</text>
+            <text wx:if="{{item.subtitle}}" class="menu-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+        <view class="menu-right">
+          <view wx:if="{{item.badge > 0}}" class="menu-badge">
+            <text>{{item.badge}}</text>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height: 100rpx;"></view>
+</view>

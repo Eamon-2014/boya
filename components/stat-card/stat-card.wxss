@@ -1,0 +1,74 @@
+/* components/stat-card/stat-card.wxss */
+.stat-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6rpx;
+  height: 100%;
+  border-radius: 16rpx 0 0 16rpx;
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.stat-card-label {
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.2;
+}
+
+.stat-card-trend {
+  font-size: 22rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+  line-height: 1.2;
+}
+
+.stat-card-trend-up {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+
+.stat-card-trend-down {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.stat-card-trend-flat {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6B7280;
+}
+
+.stat-card-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1F2937;
+  line-height: 1.2;
+}
+
+.stat-card-suffix {
+  font-size: 24rpx;
+  font-weight: 500;
+  margin-left: 4rpx;
+  color: #6B7280;
+}
+
+.stat-card-subtext {
+  display: block;
+  font-size: 22rpx;
+  color: #9CA3AF;
+  margin-top: 8rpx;
+}

@@ -1,0 +1,51 @@
+/* components/status-tag/status-tag.wxss */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: 4rpx;
+  font-size: 22rpx;
+  line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-rounded {
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+
+.tag-primary {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.tag-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+
+.tag-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #F59E0B;
+}
+
+.tag-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.tag-info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-primary-light);
+}
+
+.tag-ai {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8B5CF6;
+}
+
+.tag-gray {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6B7280;
+}

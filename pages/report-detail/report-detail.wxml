@@ -1,0 +1,157 @@
+<!--pages/report-detail/report-detail.wxml-->
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};" wx:if="{{report && !report.isPlaceholder}}">
+  <!-- 报告概览卡 -->
+  <view class="hero-card">
+    <view class="hero-bg-circle c1"></view>
+    <view class="hero-bg-circle c2"></view>
+    <view class="hero-content">
+      <view class="hero-top">
+        <view class="hero-info">
+          <view class="hero-name-row">
+            <text class="hero-name">{{report.childName}}</text>
+            <view class="hero-lang-tag" style="background: {{report.levelColor}}20; color: {{report.levelColor}}">
+              {{report.languageLabel}}
+            </view>
+          </view>
+          <text class="hero-template">{{report.templateName}}</text>
+          <text class="hero-ai">{{texts.aiTeacher}}{{report.aiTeacherName}}</text>
+        </view>
+        <view class="hero-score-box" style="border-color: {{report.levelColor}}">
+          <text class="hero-score-num" style="color: {{report.levelColor}}">{{report.overallScore}}</text>
+          <text class="hero-score-unit">{{texts.scoreUnit}}</text>
+          <text class="hero-score-level" style="color: {{report.levelColor}}">{{report.overallLevel}}</text>
+        </view>
+      </view>
+      <view class="hero-meta">
+        <text class="hero-time">{{texts.generateTime}}{{report.generatedAtText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作栏：分享 + 删除 -->
+  <view class="action-bar">
+    <button class="action-item share-action" open-type="share">
+      <view class="action-icon share">🔗</view>
+      <text class="action-label">{{texts.share}}</text>
+    </button>
+    <view class="action-item delete-action" bindtap="onDeleteReport">
+      <view class="action-icon delete">🗑️</view>
+      <text class="action-label">{{texts.delete}}</text>
+    </view>
+  </view>
+
+  <!-- Tab 导航 -->
+  <view class="tab-nav">
+    <view wx:for="{{sections}}" wx:key="key"
+      class="tab-nav-item {{activeSection === item.key ? 'active' : ''}}"
+      bindtap="switchSection" data-section="{{item.key}}">
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 概览 Tab -->
+  <block wx:if="{{activeSection === 'overview'}}">
+    <!-- 能力雷达 -->
+    <view class="card">
+      <view class="card-title-wrap">
+        <text class="card-title">{{texts.radar}}</text>
+      </view>
+      <view class="radar-container">
+        <view class="radar-legend">
+          <view wx:for="{{report.dimensions}}" wx:key="name" class="legend-item">
+            <view class="legend-dot" style="background: {{item.levelColor}}"></view>
+            <text class="legend-label">{{item.name}}</text>
+            <text class="legend-score" style="color: {{item.levelColor}}">{{item.score}}/{{item.maxScore}}</text>
+          </view>
+        </view>
+        <view class="radar-visual">
+          <view wx:for="{{report.dimensions}}" wx:key="name" class="radar-bar-wrap">
+            <text class="radar-bar-label">{{item.name}}</text>
+            <view class="radar-bar">
+              <view class="radar-bar-fill" style="width: {{item.percent}}%; background: {{item.levelColor}}"></view>
+            </view>
+            <text class="radar-bar-pct" style="color: {{item.levelColor}}">{{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 优势与薄弱 -->
+    <view class="dual-card">
+      <view class="dual-col strengths">
+        <view class="dual-title">
+          <text class="dual-icon">✅</text>
+          <text>{{texts.strengths}}</text>
+        </view>
+        <view wx:for="{{report.strengths}}" wx:key="*this" class="dual-point">
+          <text class="dual-point-text">{{item}}</text>
+        </view>
+      </view>
+      <view class="dual-col weaknesses">
+        <view class="dual-title">
+          <text class="dual-icon">⚠️</text>
+          <text>{{texts.weaknesses}}</text>
+        </view>
+        <view wx:for="{{report.weaknesses}}" wx:key="*this" class="dual-point">
+          <text class="dual-point-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 能力分析 Tab -->
+  <block wx:if="{{activeSection === 'dimensions'}}">
+    <view class="card">
+      <text class="card-title">{{texts.dimensions}}</text>
+      <view wx:for="{{report.dimensions}}" wx:key="name" class="dim-card">
+        <view class="dim-header">
+          <text class="dim-name">{{item.name}}</text>
+          <view class="dim-score-pill" style="background: {{item.levelColor}}20; color: {{item.levelColor}}">
+            {{item.score}}/{{item.maxScore}} · {{item.level}}
+          </view>
+        </view>
+        <view class="dim-progress">
+          <view class="dim-progress-fill" style="width: {{item.percent}}%; background: {{item.levelColor}}"></view>
+        </view>
+        <text class="dim-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 建议方案 Tab -->
+  <block wx:if="{{activeSection === 'suggestions'}}">
+    <view class="card">
+      <text class="card-title">💡 {{texts.personalSuggestions}}</text>
+      <view wx:for="{{report.suggestions}}" wx:key="*this" class="suggestion-item">
+        <view class="suggestion-num">{{index + 1}}</view>
+        <text class="suggestion-text">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">📚 {{texts.studyPlan}}</text>
+      <view wx:for="{{report.studyPlan}}" wx:key="phase" class="plan-block">
+        <view class="plan-timeline">
+          <view class="plan-dot"></view>
+          <view class="plan-line" wx:if="{{index < report.studyPlan.length - 1}}"></view>
+        </view>
+        <view class="plan-body">
+          <view class="plan-header">
+            <text class="plan-phase">{{item.phase}}</text>
+            <text class="plan-duration">{{item.duration}}</text>
+          </view>
+          <view class="plan-focus">
+            <text class="plan-focus-label">{{texts.planFocus}}</text>
+            <text>{{item.focus}}</text>
+          </view>
+          <view wx:for="{{item.content}}" wx:for-item="c" wx:key="*this" class="plan-task">
+            <text class="plan-task-bullet">▸</text>
+            <text>{{c}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="page-bottom-space"></view>
+</view>

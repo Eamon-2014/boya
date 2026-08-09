@@ -1,0 +1,12 @@
+<!--components/section-header/section-header.wxml-->
+<view class="section-header">
+  <view class="section-title">
+    <view class="section-title-bar"></view>
+    <text class="section-title-text">{{title}}</text>
+    <text wx:if="{{count !== '' && count !== null && count !== undefined}}" class="section-title-count">{{count}}</text>
+  </view>
+  <view wx:if="{{actionText || showArrow}}" class="section-action" bindtap="onActionTap">
+    <text>{{actionText || '查看全部'}}</text>
+    <text wx:if="{{showArrow}}" class="section-action-arrow">›</text>
+  </view>
+</view>

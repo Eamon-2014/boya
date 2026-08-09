@@ -1,0 +1,87 @@
+<view class="page">
+  <!-- 统计概览 -->
+  <view class="stats-row">
+    <view class="stat-card-wrap">
+      <text class="stat-val">{{stats.total}}</text>
+      <text class="stat-lbl">团队成员</text>
+    </view>
+    <view class="stat-card-wrap active">
+      <text class="stat-val">{{stats.active}}</text>
+      <text class="stat-lbl">在职</text>
+    </view>
+    <view class="stat-card-wrap leave">
+      <text class="stat-val">{{stats.leave}}</text>
+      <text class="stat-lbl">请假</text>
+    </view>
+    <view class="stat-card-wrap inactive">
+      <text class="stat-val">{{stats.inactive}}</text>
+      <text class="stat-lbl">停用</text>
+    </view>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="filter-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索姓名/邮箱/角色" value="{{search}}" bindinput="onSearchInput" />
+    </view>
+    <view class="filter-tabs">
+      <view wx:for="{{statuses}}" wx:key="key"
+        class="filter-tab {{filterStatus === item.key ? 'active' : ''}}"
+        data-status="{{item.key}}" bindtap="onFilterStatus">
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 成员列表 -->
+  <view class="member-list" wx:if="{{filteredMembers.length > 0}}">
+    <view wx:for="{{filteredMembers}}" wx:key="id" class="member-card"
+      data-member="{{item}}" bindtap="onMemberTap">
+      <view class="member-avatar" style="background: {{item.avatarColor}}">
+        <text class="member-initial">{{item.initial}}</text>
+      </view>
+      <view class="member-info">
+        <view class="member-name-row">
+          <text class="member-name">{{item.name}}</text>
+          <view class="member-role" style="background: {{item.roleColor}}20; color: {{item.roleColor}}">{{item.roleLabel}}</view>
+        </view>
+        <text class="member-contact">{{item.email}} · {{item.phone}}</text>
+        <view class="member-stats-row">
+          <text class="member-stat">👥 {{item.studentCount}} 名学员</text>
+          <text class="member-stat">📈 {{item.conversionRate}}% 转化</text>
+        </view>
+      </view>
+      <view class="member-status" style="background: {{item.statusBg}}; color: {{item.statusColor}}">
+        {{item.statusLabel}}
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{filteredMembers.length === 0}}">
+    <text class="empty-icon">👥</text>
+    <text class="empty-text">暂无符合条件的成员</text>
+  </view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab" bindtap="onAddMember">+</view>
+
+  <!-- 添加弹窗 -->
+  <view class="modal-overlay" wx:if="{{showAddModal}}" bindtap="onCloseModal">
+    <view class="modal-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加团队成员</text>
+        <view class="modal-close" bindtap="onCloseModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <text class="modal-desc">选择快速添加角色：</text>
+        <view class="role-grid">
+          <view wx:for="{{roles}}" wx:key="key" class="role-chip"
+            data-role="{{item.key}}" bindtap="onQuickAdd">
+            <text class="role-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

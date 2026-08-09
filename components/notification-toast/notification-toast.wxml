@@ -1,0 +1,10 @@
+<!-- components/notification-toast/notification-toast.wxml -->
+<view class="notification-toast-container" wx:if="{{visible}}" animation="{{animationData}}" bindtap="onTap">
+  <view class="toast-inner">
+    <view class="toast-icon">{{notification.icon || '🔔'}}</view>
+    <view class="toast-content">
+      <view class="toast-title">{{notification.title || '新通知'}}</view>
+      <view class="toast-desc" wx:if="{{notification.content}}">{{notification.content}}</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,21 @@
+<!--components/search-bar/search-bar.wxml-->
+<view class="search-bar">
+  <view class="search-bar-icon">
+    <text>🔍</text>
+  </view>
+  <input
+    class="search-bar-input"
+    type="text"
+    placeholder="{{placeholder}}"
+    value="{{innerValue}}"
+    bindinput="onInput"
+    bindconfirm="onConfirm"
+    confirm-type="search"
+  />
+  <view wx:if="{{showClear && innerValue}}" class="search-bar-clear" catchtap="onClear">
+    <text>×</text>
+  </view>
+  <view wx:if="{{actionText}}" class="search-bar-action" catchtap="onAction">
+    <text>{{actionText}}</text>
+  </view>
+</view>

@@ -1,0 +1,587 @@
+<!--pages/ai-teacher-edit/ai-teacher-edit.wxml-->
+<view class="page">
+  <!-- 真实教师数据 -->
+  <block wx:if="{{teacher && !isPlaceholder}}">
+    <!-- 概览卡片 -->
+    <view class="overview-card">
+      <view class="overview-header">
+        <view class="overview-avatar" style="background: {{teacher.languageColor}}">
+          <text>AI</text>
+        </view>
+        <view class="overview-info">
+          <view class="overview-name-row">
+            <text class="overview-name">{{teacher.name}}</text>
+            <view class="status-pill" style="background: {{teacher.statusBg}}; color: {{teacher.statusColor}}">
+              <text>{{teacher.statusLabel}}</text>
+            </view>
+          </view>
+          <view class="overview-tags">
+            <view class="lang-tag" style="background: {{teacher.languageBg}}; color: {{teacher.languageColor}}">
+              <text>{{teacher.languageLabel}}</text>
+            </view>
+            <view wx:if="{{teacher.isTraining}}" class="lang-tag tag-training">
+              <text>训练进度 {{teacher.trainingProgress}}%</text>
+            </view>
+          </view>
+          <text class="overview-source">复刻自：{{teacher.originalTeacherName}}</text>
+        </view>
+      </view>
+
+      <text class="overview-desc">{{teacher.description}}</text>
+
+      <view class="overview-specialty">
+        <text class="specialty-label">专长领域</text>
+        <text class="specialty-text">{{teacher.specialtiesText}}</text>
+      </view>
+
+      <!-- 训练进度条 -->
+      <view wx:if="{{teacher.isTraining}}" class="progress-wrap">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{teacher.trainingProgress}}%"></view>
+        </view>
+        <text class="progress-text">模型训练中，请稍候...</text>
+      </view>
+    </view>
+
+    <!-- 核心指标 -->
+    <view class="metrics-grid">
+      <view class="metric-item">
+        <text class="metric-value">{{teacher.knowledgeCount}}</text>
+        <text class="metric-label">知识条目</text>
+      </view>
+      <view class="metric-item">
+        <text class="metric-value">{{teacher.reportCount}}</text>
+        <text class="metric-label">生成报告</text>
+      </view>
+      <view class="metric-item metric-rating" bindtap="onOpenRatingModal">
+        <view class="rating-display">
+          <text class="rating-star">⭐</text>
+          <text class="metric-value">{{teacher.avgRating > 0 ? teacher.avgRating.toFixed(1) : '2.5'}}</text>
+        </view>
+        <text class="metric-label">{{teacher.ratingCountText || '暂无评分'}}</text>
+      </view>
+      <view class="metric-item">
+        <text class="metric-value">{{teacher.lastTrainedText}}</text>
+        <text class="metric-label">最近训练</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <button class="btn btn-primary" bindtap="onRetrain" wx:if="{{!teacher.isTraining}}">
+        <text>🔄 增量训练</text>
+      </button>
+      <button class="btn btn-secondary" bindtap="onTestChat">
+        <text>💬 测试对话</text>
+      </button>
+      <button class="btn btn-secondary" bindtap="onViewReports">
+        <text>📊 关联报告</text>
+      </button>
+      <button class="btn btn-outline" bindtap="onArchive">
+        <text>归档</text>
+      </button>
+    </view>
+
+    <!-- 知识库 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">🧠 知识库</text>
+        <view class="card-add" bindtap="onAddKnowledge">
+          <text>+ 添加</text>
+        </view>
+      </view>
+
+      <block wx:if="{{teacher.knowledgeBase.length > 0}}">
+        <view
+          wx:for="{{teacher.knowledgeBase}}"
+          wx:key="id"
+          class="knowledge-item"
+          data-id="{{item.id}}"
+          bindtap="onKnowledgeClick"
+        >
+          <view class="knowledge-header">
+            <view class="knowledge-type" style="background: {{item.typeBg}}; color: {{item.typeColor}}">
+              <text>{{item.typeLabel}}</text>
+            </view>
+            <text class="knowledge-time">{{item.createdAtText}}</text>
+          </view>
+          <text class="knowledge-title">{{item.title}}</text>
+          <text class="knowledge-content">{{item.content}}</text>
+        </view>
+      </block>
+
+      <view wx:else class="empty-state">
+        <text class="empty-icon">📋</text>
+        <text class="empty-text">暂无知识条目</text>
+        <text class="empty-hint">点击右上角"+ 添加"开始构建知识库</text>
+      </view>
+    </view>
+
+    <!-- 元信息 -->
+    <view class="card meta-card">
+      <view class="meta-row">
+        <text class="meta-label">教师ID</text>
+        <text class="meta-value">{{teacher.id}}</text>
+      </view>
+      <view class="meta-row">
+        <text class="meta-label">创建时间</text>
+        <text class="meta-value">{{teacher.createdAtText}}</text>
+      </view>
+      <view class="meta-row">
+        <text class="meta-label">原始教师</text>
+        <text class="meta-value">{{teacher.originalTeacherName}}（{{teacher.originalTeacherId}}）</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 占位模式：创建AI教师 -->
+  <view wx:if="{{isPlaceholder}}" class="create-page">
+    <!-- 顶部标题 -->
+    <view class="create-header">
+      <view class="create-icon">
+        <text>🤖</text>
+      </view>
+      <text class="create-title">AI教师能力复刻</text>
+      <text class="create-desc">复刻王牌教师教学风格与知识库，创建专属AI教师</text>
+    </view>
+
+    <!-- 步骤指示 -->
+    <view class="steps-bar">
+      <view class="step {{currentStep >= 1 ? 'active' : ''}}">
+        <view class="step-dot">1</view>
+        <text class="step-label">基础信息</text>
+      </view>
+      <view class="step-line {{currentStep >= 2 ? 'active' : ''}}"></view>
+      <view class="step {{currentStep >= 2 ? 'active' : ''}}">
+        <view class="step-dot">2</view>
+        <text class="step-label">知识录入</text>
+      </view>
+      <view class="step-line {{currentStep >= 3 ? 'active' : ''}}"></view>
+      <view class="step {{currentStep >= 3 ? 'active' : ''}}">
+        <view class="step-dot">3</view>
+        <text class="step-label">确认创建</text>
+      </view>
+    </view>
+
+    <!-- 步骤1：基础信息 -->
+    <block wx:if="{{currentStep === 1}}">
+      <!-- 选择原始教师 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">👤</text>
+          <text>选择要复刻的教师</text>
+          <text class="form-required">*</text>
+        </view>
+        <view class="teacher-list">
+          <view
+            wx:for="{{sourceTeachers}}"
+            wx:key="id"
+            class="teacher-option {{form.sourceTeacherId === item.id ? 'selected' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="onSelectSourceTeacher"
+          >
+            <view class="teacher-avatar" style="background: {{item.languageColor}}">
+              <text>{{item.name[0]}}</text>
+            </view>
+            <view class="teacher-info">
+              <text class="teacher-name">{{item.name}}</text>
+              <text class="teacher-specialty">{{item.specialtiesText}}</text>
+            </view>
+            <view class="teacher-check" wx:if="{{form.sourceTeacherId === item.id}}">
+              <text>✓</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- AI教师名称 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">🏷️</text>
+          <text>AI教师名称</text>
+          <text class="form-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="如：英语-王老师（复刻版）"
+          value="{{form.name}}"
+          bindinput="onInputName"
+          maxlength="30"
+        />
+        <text class="form-hint">建议包含语种和原始教师名称，便于识别</text>
+      </view>
+
+      <!-- 选择语种 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">🌍</text>
+          <text>语种</text>
+          <text class="form-required">*</text>
+        </view>
+        <view class="lang-grid">
+          <view
+            wx:for="{{languageOptions}}"
+            wx:key="key"
+            class="lang-item {{form.language === item.key ? 'selected' : ''}}"
+            data-key="{{item.key}}"
+            bindtap="onSelectLanguage"
+          >
+            <view class="lang-check" wx:if="{{form.language === item.key}}">
+              <text>✓</text>
+            </view>
+            <text class="lang-name">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 专长领域 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">🎯</text>
+          <text>专长领域</text>
+        </view>
+        <view class="specialty-list">
+          <view
+            wx:for="{{specialtyOptions}}"
+            wx:key="*this"
+            class="specialty-tag {{item.selected ? 'selected' : ''}}"
+            data-item="{{item.name}}"
+            data-index="{{index}}"
+            bindtap="onToggleSpecialty"
+            hover-class="specialty-tag-hover"
+            hover-stay-time="50"
+          >
+            <view wx:if="{{item.selected}}" class="specialty-check">✓</view>
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+        <view class="custom-specialty">
+          <input
+            class="form-input"
+            placeholder="自定义专长（输入后按添加）"
+            value="{{customSpecialty}}"
+            bindinput="onInputCustomSpecialty"
+            bindconfirm="onAddCustomSpecialty"
+          />
+          <view class="add-btn" bindtap="onAddCustomSpecialty">
+            <text>添加</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 下一步按钮 -->
+      <view class="create-actions">
+        <view class="create-btn-primary {{!canGoStep2 ? 'disabled' : ''}}" bindtap="onGoStep2">
+          <text>下一步：录入知识</text>
+        </view>
+      </view>
+      <view style="height: 48rpx;"></view>
+    </block>
+
+    <!-- 步骤2：知识录入 -->
+    <block wx:if="{{currentStep === 2}}">
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">📚</text>
+          <text>知识库（可选）</text>
+        </view>
+        <text class="form-section-desc">录入原教师的教学方法论、话术、案例等知识，让AI教师更精准</text>
+      </view>
+
+      <!-- 已添加知识 -->
+      <view class="form-card" wx:if="{{form.knowledgeList.length > 0}}">
+        <view class="knowledge-list-header">
+          <text class="knowledge-list-title">已添加 {{form.knowledgeList.length}} 条知识</text>
+        </view>
+        <view
+          wx:for="{{form.knowledgeList}}"
+          wx:key="id"
+          class="knowledge-edit-item"
+        >
+          <view class="knowledge-edit-type" style="background: {{item.typeBg}}; color: {{item.typeColor}}">
+            <text>{{item.typeLabel}}</text>
+          </view>
+          <view class="knowledge-edit-body">
+            <text class="knowledge-edit-title">{{item.title}}</text>
+            <text class="knowledge-edit-content">{{item.content}}</text>
+          </view>
+          <view class="knowledge-del" data-index="{{index}}" bindtap="onRemoveKnowledge">
+            <text>✕</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 添加知识 -->
+      <view class="form-card">
+        <view class="add-knowledge-header">
+          <text class="add-knowledge-title">+ 添加知识条目</text>
+        </view>
+
+        <!-- 选择类型 -->
+        <view class="form-subsection">
+          <text class="form-subsection-label">知识类型</text>
+          <view class="knowledge-type-list">
+            <view
+              wx:for="{{knowledgeTypes}}"
+              wx:key="key"
+              class="knowledge-type-chip {{newKnowledge.type === item.key ? 'selected' : ''}}"
+              data-key="{{item.key}}"
+              bindtap="onSelectKnowledgeType"
+            >
+              <text>{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 标题 -->
+        <view class="form-subsection">
+          <text class="form-subsection-label">标题</text>
+          <input
+            class="form-input"
+            placeholder="如：青少年英语能力评估方法论"
+            value="{{newKnowledge.title}}"
+            bindinput="onInputKnowledgeTitle"
+            maxlength="50"
+          />
+        </view>
+
+        <!-- 内容 -->
+        <view class="form-subsection">
+          <text class="form-subsection-label">详细内容</text>
+          <textarea
+            class="form-textarea"
+            placeholder="输入知识详细内容，支持多条、结构化描述..."
+            value="{{newKnowledge.content}}"
+            bindinput="onInputKnowledgeContent"
+            maxlength="500"
+            auto-height
+          />
+          <text class="form-counter">{{newKnowledge.content.length}}/500</text>
+        </view>
+
+        <!-- 添加按钮 -->
+        <view class="add-knowledge-btn {{!canAddKnowledge ? 'disabled' : ''}}" bindtap="onAddKnowledgeItem">
+          <text>添加到知识库</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="create-actions">
+        <view class="create-btn-secondary" bindtap="onBackToStep1">
+          <text>上一步</text>
+        </view>
+        <view class="create-btn-primary" bindtap="onGoStep3">
+          <text>下一步：确认创建</text>
+        </view>
+      </view>
+
+      <view style="height: 48rpx;"></view>
+    </block>
+
+    <!-- 步骤3：确认创建 -->
+    <block wx:if="{{currentStep === 3}}">
+      <!-- 预览卡片 -->
+      <view class="preview-card">
+        <view class="preview-avatar" style="background: {{form.languageColor}}">
+          <text>AI</text>
+        </view>
+        <view class="preview-info">
+          <text class="preview-name">{{form.name}}</text>
+          <view class="preview-tags">
+            <view class="preview-lang" style="background: {{form.languageBg}}; color: {{form.languageColor}}">
+              <text>{{form.languageLabel}}</text>
+            </view>
+            <view wx:for="{{form.specialties}}" wx:for-item="spec" wx:key="*this" class="preview-specialty">
+              <text>{{spec}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 配置概览 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">📋</text>
+          <text>配置概览</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">复刻自</text>
+          <text class="config-value">{{form.sourceTeacherName}}</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">语种</text>
+          <text class="config-value">{{form.languageLabel}}</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">专长领域</text>
+          <text class="config-value">{{form.specialties.length > 0 ? form.specialties.join('、') : '未设置'}}</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">知识条目</text>
+          <text class="config-value">{{form.knowledgeList.length}} 条</text>
+        </view>
+        <view class="config-row">
+          <text class="config-label">训练方式</text>
+          <text class="config-value">{{form.knowledgeList.length > 0 ? '基于知识库训练（推荐）' : '基础风格复刻（快速）'}}</text>
+        </view>
+      </view>
+
+      <!-- 预期效果 -->
+      <view class="form-card">
+        <view class="form-section-title">
+          <text class="form-section-icon">⚡</text>
+          <text>创建后可实现</text>
+        </view>
+        <view class="effect-list">
+          <view class="effect-item">
+            <text class="effect-check">✓</text>
+            <text class="effect-text">复刻{{form.sourceTeacherName}}的教学风格与话术体系</text>
+          </view>
+          <view class="effect-item">
+            <text class="effect-check">✓</text>
+            <text class="effect-text">智能生成专业的评估报告</text>
+          </view>
+          <view class="effect-item">
+            <text class="effect-check">✓</text>
+            <text class="effect-text">持续学习和优化报告质量</text>
+          </view>
+          <view class="effect-item">
+            <text class="effect-check">✓</text>
+            <text class="effect-text">可随时增量训练和调整</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 训练提示 -->
+      <view class="training-notice">
+        <view class="notice-icon">⏱️</view>
+        <view class="notice-content">
+          <text class="notice-title">创建说明</text>
+          <text class="notice-desc">提交后将立即创建AI教师实例，并开始初始化训练。基础风格复刻约需 1-2 分钟，完整知识训练约需 3-5 分钟。</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="create-actions">
+        <view class="create-btn-secondary" bindtap="onBackToStep2">
+          <text>上一步</text>
+        </view>
+        <view class="create-btn-primary" bindtap="onSubmitCreate">
+          <text>🚀 确认创建并开始训练</text>
+        </view>
+      </view>
+
+      <view style="height: 48rpx;"></view>
+    </block>
+
+    <!-- 创建成功 -->
+    <block wx:if="{{createSuccess}}">
+      <view class="success-page">
+        <view class="success-icon">
+          <text>🎉</text>
+        </view>
+        <text class="success-title">AI教师创建成功</text>
+        <text class="success-desc">「{{createdTeacher.name}}」正在训练中，完成后即可投入使用</text>
+
+        <view class="success-info">
+          <view class="success-info-row">
+            <text class="success-info-label">教师ID</text>
+            <text class="success-info-value">{{createdTeacher.id}}</text>
+          </view>
+          <view class="success-info-row">
+            <text class="success-info-label">当前状态</text>
+            <view class="success-status training">
+              <text>训练中</text>
+            </view>
+          </view>
+          <view class="success-info-row">
+            <text class="success-info-label">训练进度</text>
+            <text class="success-info-value">{{createdTeacher.trainingProgress}}%</text>
+          </view>
+          <view class="success-info-row">
+            <text class="success-info-label">知识条目</text>
+            <text class="success-info-value">{{createdTeacher.knowledgeCount}} 条</text>
+          </view>
+        </view>
+
+        <view class="success-actions">
+          <view class="success-btn-primary" data-id="{{createdTeacher.id}}" bindtap="onGoDetail">
+            <text>查看AI教师详情</text>
+          </view>
+          <view class="success-btn-secondary" bindtap="onBackToList">
+            <text>返回AI教师列表</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 评分弹窗 -->
+  <view wx:if="{{showRatingModal}}" class="rating-modal-mask" bindtap="onRatingModalBgClick">
+    <view class="rating-modal" catchtap="onRatingModalClick">
+      <view class="rating-modal-header">
+        <text class="rating-modal-title">给 AI 教师评分</text>
+        <view class="rating-modal-close" bindtap="onCloseRatingModal">✕</view>
+      </view>
+
+      <!-- 当前评分展示 -->
+      <view wx:if="{{ratingData}}" class="rating-summary">
+        <view class="rating-summary-item">
+          <text class="rating-summary-value">{{ratingData.avgRating}}</text>
+          <text class="rating-summary-label">平均评分</text>
+        </view>
+        <view class="rating-summary-divider"></view>
+        <view class="rating-summary-item">
+          <text class="rating-summary-value">{{ratingData.ratingCount}}</text>
+          <text class="rating-summary-label">评分人数</text>
+        </view>
+      </view>
+
+      <!-- 星级选择 -->
+      <view class="rating-stars">
+        <view
+          wx:for="{{ratingStars}}"
+          wx:key="*this"
+          class="star-item {{item <= ratingScore ? 'active' : ''}}"
+          data-score="{{item}}"
+          bindtap="onSelectRating"
+        >
+          <text>{{item <= ratingScore ? '★' : '☆'}}</text>
+        </view>
+        <text class="rating-score-text">{{ratingScore}} 分</text>
+      </view>
+
+      <!-- 评分说明 -->
+      <view class="rating-desc">
+        <block wx:if="{{ratingScore === 5}}"><text>非常满意，表现出色</text></block>
+        <block wx:elif="{{ratingScore === 4}}"><text>满意，表现良好</text></block>
+        <block wx:elif="{{ratingScore === 3}}"><text>一般，还需改进</text></block>
+        <block wx:elif="{{ratingScore === 2}}"><text>不满意，需要改善</text></block>
+        <block wx:elif="{{ratingScore === 1}}"><text>非常不满意</text></block>
+      </view>
+
+      <!-- 评论输入 -->
+      <view class="rating-comment">
+        <textarea
+          class="rating-comment-input"
+          placeholder="添加评论（可选）"
+          value="{{ratingComment}}"
+          bindinput="onRatingCommentInput"
+          maxlength="200"
+          auto-height
+        />
+        <text class="rating-comment-count">{{ratingComment.length}}/200</text>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="rating-actions">
+        <view class="rating-cancel" bindtap="onCloseRatingModal">
+          <text>取消</text>
+        </view>
+        <view class="rating-submit {{submittingRating ? 'disabled' : ''}}" bindtap="onSubmitRating">
+          <text>{{submittingRating ? '提交中...' : '提交评分'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

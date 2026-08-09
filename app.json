@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/dashboard/dashboard",
+    "pages/customers/customers",
+    "pages/questionnaire/questionnaire",
+    "pages/profile/profile",
+    "pages/customer-detail/customer-detail",
+    "pages/template-edit/template-edit",
+    "pages/questionnaire-fill/questionnaire-fill",
+    "pages/report-detail/report-detail",
+    "pages/ai-teacher-edit/ai-teacher-edit",
+    "pages/data-report/data-report",
+    "pages/workflow-tracking/workflow-tracking",
+    "pages/questionnaire-analysis/questionnaire-analysis",
+    "pages/customer-add/customer-add",
+    "pages/team-members/team-members",
+    "pages/security/security",
+    "pages/notifications/notifications",
+    "pages/settings/settings",
+    "pages/survey-assign/survey-assign",
+    "pages/todo-list/todo-list",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/user-management/user-management"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#2563EB",
+    "navigationBarTitleText": "语言教培管理",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#9CA3AF",
+    "selectedColor": "#2563EB",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "工作台"
+      },
+      {
+        "pagePath": "pages/customers/customers",
+        "text": "客户管理"
+      },
+      {
+        "pagePath": "pages/questionnaire/questionnaire",
+        "text": "问卷评估"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "管理中心"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

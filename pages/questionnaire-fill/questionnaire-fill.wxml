@@ -1,0 +1,170 @@
+<!--pages/questionnaire-fill/questionnaire-fill.wxml-->
+<view class="page" wx:if="{{template && currentQuestion}}">
+  <!-- 顶部进度栏 -->
+  <view class="progress-bar">
+    <view class="progress-info">
+      <text class="progress-title">{{template.name}}</text>
+      <text class="progress-text">{{answeredCount}}/{{totalQuestions}} 已完成</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+    <view class="progress-steps">
+      <view wx:for="{{template.questions}}" wx:key="id" wx:for-index="idx"
+        class="step-dot {{answers[item.id] ? 'answered' : ''}} {{idx === currentIndex ? 'current' : ''}}"
+        bindtap="goToQuestion" data-index="{{idx}}">
+      </view>
+    </view>
+  </view>
+
+  <!-- 题目卡片 -->
+  <view class="question-card">
+    <view class="question-header">
+      <view class="question-meta">
+        <text class="question-num">{{currentQuestionIndexLabel}}</text>
+        <view class="question-type-tag">{{currentQuestion.typeLabel}}</view>
+      </view>
+      <view wx:if="{{currentQuestion.required}}" class="required-mark">* 必答</view>
+    </view>
+
+    <view class="question-title">{{currentQuestion.title}}</view>
+
+    <!-- 单选题 -->
+    <block wx:if="{{currentQuestion.type === 'single'}}">
+      <view class="options-list">
+        <view wx:for="{{currentQuestion.options}}" wx:key="id"
+          class="option-item {{currentAnswer === item.id ? 'selected' : ''}}"
+          bindtap="onSingleSelect" data-id="{{item.id}}">
+          <view class="option-radio {{currentAnswer === item.id ? 'checked' : ''}}"></view>
+          <view class="option-content">
+            <text class="option-label">{{item.label}}</text>
+            <text wx:if="{{item.score}}" class="option-score">{{item.score}}分</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 多选题 -->
+    <block wx:if="{{currentQuestion.type === 'multiple'}}">
+      <view class="options-list">
+        <view wx:for="{{currentQuestion.options}}" wx:key="id"
+          class="option-item {{currentAnswer.indexOf(item.id) > -1 ? 'selected' : ''}}"
+          bindtap="onMultipleSelect" data-id="{{item.id}}">
+          <view class="option-checkbox {{currentAnswer.indexOf(item.id) > -1 ? 'checked' : ''}}"></view>
+          <view class="option-content">
+            <text class="option-label">{{item.label}}</text>
+            <text wx:if="{{item.score}}" class="option-score">{{item.score}}分</text>
+          </view>
+        </view>
+      </view>
+      <view class="multi-hint">可多选</view>
+    </block>
+
+    <!-- 填空题 -->
+    <block wx:if="{{currentQuestion.type === 'text'}}">
+      <textarea class="text-input" placeholder="请输入您的回答..."
+        value="{{currentAnswer}}" bindinput="onTextInput" auto-height maxlength="500" />
+    </block>
+
+    <!-- 评分题 -->
+    <block wx:if="{{currentQuestion.type === 'rating'}}">
+      <view class="rating-display">
+        <text class="rating-value">{{currentAnswer || currentQuestion.minValue}}</text>
+        <text class="rating-max">/ {{currentQuestion.maxValue}}</text>
+      </view>
+      <slider class="rating-slider"
+        min="{{currentQuestion.minValue}}" max="{{currentQuestion.maxValue}}"
+        value="{{currentAnswer || currentQuestion.minValue}}"
+        block-size="40" activeColor="{{themeColors.primary}}" backgroundColor="#E5E7EB"
+        show-value="{{false}}" bindchange="onRatingChange" />
+      <view class="rating-range">
+        <text>{{currentQuestion.minValue}}</text>
+        <text>{{currentQuestion.maxValue}}</text>
+      </view>
+    </block>
+
+    <!-- 量表题 -->
+    <block wx:if="{{currentQuestion.type === 'scale'}}">
+      <view class="scale-options">
+        <view wx:for="{{currentQuestion.scaleOptions}}" wx:key="id"
+          class="scale-item {{currentAnswer === item.value ? 'selected' : ''}}"
+          bindtap="onScaleSelect" data-value="{{item.value}}">
+          <view class="scale-value">{{item.value}}</view>
+          <view class="scale-label">{{item.label}}</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bar-btn prev {{currentIndex === 0 ? 'disabled' : ''}}" bindtap="goPrev">
+      <text>← 上一题</text>
+    </view>
+    <view wx:if="{{currentIndex < totalQuestions - 1}}" class="bar-btn next" bindtap="goNext">
+      <text>下一题 →</text>
+    </view>
+    <view wx:else class="bar-btn submit" bindtap="goNext">
+      <text>✓ 提交问卷</text>
+    </view>
+  </view>
+
+  <!-- 提交确认弹窗 -->
+  <view class="modal-overlay" wx:if="{{showSubmitConfirm}}" bindtap="hideSubmitConfirm">
+    <view class="modal-container" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">确认提交</text>
+      </view>
+      <view class="modal-body">
+        <view class="confirm-stats">
+          <view class="confirm-item">
+            <text class="confirm-value">{{totalQuestions}}</text>
+            <text class="confirm-label">总题数</text>
+          </view>
+          <view class="confirm-divider"></view>
+          <view class="confirm-item">
+            <text class="confirm-value">{{answeredCount}}</text>
+            <text class="confirm-label">已完成</text>
+          </view>
+          <view class="confirm-divider"></view>
+          <view class="confirm-item">
+            <text class="confirm-value">{{totalQuestions - answeredCount}}</text>
+            <text class="confirm-label">未完成</text>
+          </view>
+        </view>
+
+        <!-- AI 评估：选择学员客户 -->
+        <view class="ai-select-row">
+          <text class="ai-select-label">👤 学员客户</text>
+          <picker class="ai-select-picker" mode="selector" range="{{customerList}}" range-key="name"
+            value="{{customerIndex}}" bindchange="onCustomerChange">
+            <view class="ai-select-value {{customerIndex >= 0 ? 'selected' : ''}}">
+              {{customerIndex >= 0 ? customerList[customerIndex].name : '请选择学员'}}
+            </view>
+          </picker>
+        </view>
+
+        <!-- AI 评估：选择 AI 教师 -->
+        <view class="ai-select-row">
+          <text class="ai-select-label">🤖 AI 教师</text>
+          <picker class="ai-select-picker" mode="selector" range="{{aiTeacherList}}" range-key="name"
+            value="{{aiTeacherIndex}}" bindchange="onAiTeacherChange">
+            <view class="ai-select-value {{aiTeacherIndex >= 0 ? 'selected' : ''}}">
+              {{aiTeacherIndex >= 0 ? aiTeacherList[aiTeacherIndex].name : '请选择 AI 教师'}}
+            </view>
+          </picker>
+        </view>
+
+        <text class="confirm-tip">提交后 AI 将根据作答生成评估报告，无法修改答案</text>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="hideSubmitConfirm">再检查一下</view>
+        <view class="modal-btn confirm" bindtap="submitAnswers">确认提交</view>
+      </view>
+      <view wx:if="{{isSubmitting}}" class="submitting-mask">
+        <view class="loading-spinner"></view>
+        <text class="submitting-text">正在提交...</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,313 @@
+// prisma/schema.prisma - 教育管理系统数据模型
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== 用户与认证 =====
+model User {
+  id        String   @id @default(cuid())
+  account   String   @unique
+  password  String   // bcrypt 哈希
+  name      String
+  phone     String?
+  role      String   // 管理员 / 校区主管 / 教师
+  avatar    String?
+  isBuiltin Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  followRecords   FollowRecord[]
+  reports         Report[]       @relation("ReportReviewer")
+  createdReports  Report[]       @relation("ReportCreator")
+  templates       Template[]     @relation("TemplateCreator")
+  aiTeachers      AiTeacher[]    @relation("AiTeacherCreator")
+  assignments     Assignment[]   @relation("AssignmentAssigner")
+  activities      Activity[]
+  notifications   Notification[] @relation("NotificationOwner")
+  customers       Customer[]     @relation("CustomerOwner")
+  todos           Todo[]
+  settings        UserSettings?
+  givenRatings    UserRating[]   @relation("RatingFromUser")
+  receivedRatings UserRating[]   @relation("RatingToUser")
+  aiTeacherRatings AiTeacherRating[]
+}
+
+// ===== 客户 =====
+model Customer {
+  id           String    @id
+  name         String
+  phone        String
+  wechatId     String?
+  childName    String?
+  childAge     Int?
+  childGrade   String?
+  language     String
+  targetExam   String?
+  status       String    // new/following/converted/lost
+  source       String?
+  tags         String    @db.Text // JSON string[]
+  teacherId    String?
+  ownerId      String?   // 创建者（数据隔离用）
+  owner        User?     @relation("CustomerOwner", fields: [ownerId], references: [id])
+  followCount  Int       @default(0)
+  lastFollowAt DateTime?
+  remark       String?   @db.Text
+  isBuiltin    Boolean   @default(false)
+  isDeleted    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  followRecords FollowRecord[]
+  assignments   Assignment[]
+  reports       Report[]
+
+  @@index([status])
+  @@index([language])
+  @@index([ownerId])
+}
+
+model FollowRecord {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type       String   // phone/wechat/meeting/trial/other
+  typeLabel  String
+  icon       String
+  content    String   @db.Text
+  operatorId String?
+  operator   User?    @relation(fields: [operatorId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+}
+
+// ===== 评估报告 =====
+model Report {
+  id               String    @id
+  customerId       String
+  customer         Customer  @relation(fields: [customerId], references: [id])
+  customerName     String
+  childName        String?
+  language         String
+  templateId       String?
+  templateName     String?
+  answerId         String?
+  aiTeacherId      String?
+  aiTeacherName    String?
+  status           String    @default("generating")
+  overallScore     Int       @default(0)
+  overallLevel     String?
+  dimensions       String    @db.Text // JSON
+  strengths        String    @db.Text // JSON string[]
+  weaknesses       String    @db.Text // JSON string[]
+  suggestions      String    @db.Text // JSON string[]
+  studyPlan        String    @db.Text // JSON
+  creatorId        String?   // 创建者（数据隔离用）
+  creator          User?     @relation("ReportCreator", fields: [creatorId], references: [id])
+  reviewerId       String?
+  reviewer         User?     @relation("ReportReviewer", fields: [reviewerId], references: [id])
+  reviewerName     String?
+  reviewedAt       DateTime?
+  reviewComment    String?   @db.Text
+  rejectReason     String?   @db.Text
+  rejectedAt       DateTime?
+  sentToParent     Boolean   @default(false)
+  sentAt           DateTime?
+  pushChannel      String?
+  pushChannelLabel String?
+  isBuiltin        Boolean   @default(false)
+  isDeleted        Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([creatorId])
+}
+
+// ===== AI 教师 =====
+model AiTeacher {
+  id                  String    @id
+  name                String
+  description         String?   @db.Text
+  language            String
+  specialties         String    @db.Text // JSON string[]
+  originalTeacherId   String?
+  originalTeacherName String?
+  status              String    @default("training")
+  trainingProgress    Int       @default(0)
+  knowledgeCount      Int       @default(0)
+  reportCount         Int       @default(0)
+  avgRating           Float     @default(2.5)
+  ratingCount         Int       @default(0)
+  knowledgeBase       String    @db.LongText // JSON（可能较大）
+  creatorId           String?
+  creator             User?     @relation("AiTeacherCreator", fields: [creatorId], references: [id])
+  isBuiltin           Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  lastTrainedAt       DateTime?
+  updatedAt           DateTime  @updatedAt
+
+  ratings AiTeacherRating[]
+}
+
+// ===== 问卷模板与分配 =====
+model Template {
+  id          String   @id
+  name        String
+  description String?  @db.Text
+  language    String
+  category    String?
+  status      String   @default("draft")
+  usageCount  Int      @default(0)
+  questions   String   @db.Text // JSON
+  creatorId   String?
+  creator     User?    @relation("TemplateCreator", fields: [creatorId], references: [id])
+  creatorName String?
+  isBuiltin   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignments Assignment[]
+
+  @@index([status])
+  @@index([language])
+}
+
+model Assignment {
+  id             String    @id
+  templateId     String
+  template       Template  @relation(fields: [templateId], references: [id])
+  templateName   String
+  customerId     String
+  customer       Customer  @relation(fields: [customerId], references: [id])
+  customerName   String
+  parentName     String?
+  parentPhone    String?
+  status         String    @default("pending")
+  assignedBy     String?
+  assigner       User?     @relation("AssignmentAssigner", fields: [assignedBy], references: [id])
+  assignedByName String?
+  assignedAt     DateTime  @default(now())
+  completedAt    DateTime?
+  expireAt       DateTime?
+
+  @@index([customerId])
+  @@index([status])
+}
+
+// ===== 通知 / 待办 / 活动 / 设置 =====
+model Notification {
+  id        String   @id
+  userId    String?
+  user      User?    @relation("NotificationOwner", fields: [userId], references: [id])
+  type      String
+  title     String
+  content   String   @db.Text
+  time      String
+  read      Boolean  @default(false)
+  icon      String?
+  color     String?
+  targetUrl String?
+  isTab     Boolean  @default(false)
+  isBuiltin Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read])
+}
+
+model Todo {
+  id            String    @id
+  type          String
+  title         String
+  description   String?   @db.Text
+  priority      String    @default("medium")
+  status        String    @default("pending")
+  dueAt         DateTime?
+  relatedId     String?
+  userId        String?   // 所属用户（数据隔离用）
+  user          User?     @relation(fields: [userId], references: [id])
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([status])
+  @@index([userId])
+}
+
+model Activity {
+  id           String   @id @default(cuid())
+  type         String
+  title        String
+  description  String?  @db.Text
+  operatorName String?
+  operatorId   String?
+  operator     User?    @relation(fields: [operatorId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model UserSettings {
+  userId            String   @id
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language          String   @default("zh-CN")
+  theme             String   @default("默认蓝")
+  campus            String   @default("主校区")
+  timezone          String   @default("GMT+8 北京")
+  pushEnabled       Boolean  @default(true)
+  soundEnabled      Boolean  @default(true)
+  vibrationEnabled  Boolean  @default(true)
+  quietHour         String   @default("22:00 - 08:00")
+  autoBackup        Boolean  @default(true)
+  dataSync          Boolean  @default(false)
+  lastBackup        String?
+  logLevel          String   @default("警告")
+  apiBaseUrl        String?
+  apiKey            String?
+  apiSecret         String?
+  updatedAt         DateTime @updatedAt
+}
+
+model SystemConfig {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+// ===== 用户评分（用户之间互相评分）=====
+model UserRating {
+  id          String   @id @default(cuid())
+  fromUserId  String
+  fromUser    User     @relation("RatingFromUser", fields: [fromUserId], references: [id])
+  toUserId    String
+  toUser      User     @relation("RatingToUser", fields: [toUserId], references: [id])
+  score       Float    // 1.0 - 5.0
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@unique([fromUserId, toUserId]) // 每个用户只能给另一个用户评一次分
+}
+
+// ===== AI 教师评分 =====
+model AiTeacherRating {
+  id          String     @id @default(cuid())
+  aiTeacherId String
+  aiTeacher   AiTeacher  @relation(fields: [aiTeacherId], references: [id])
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  score       Float      // 1.0 - 5.0
+  comment     String?    @db.Text
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([aiTeacherId])
+  @@index([userId])
+  @@unique([aiTeacherId, userId]) // 每个用户只能给同一个 AI 教师评一次分
+}

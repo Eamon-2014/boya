@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "业务数据报表",
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true,
+  "usingComponents": {
+    "status-tag": "/components/status-tag/status-tag"
+  }
+}

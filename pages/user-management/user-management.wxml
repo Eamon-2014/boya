@@ -1,0 +1,59 @@
+<!-- pages/user-management/user-management.wxml -->
+<notification-toast />
+
+<view class="page-container" style="background: {{themeColors.primaryBg}};">
+  <!-- 页面标题 -->
+  <view class="page-header" style="background: {{themeColors.primaryGradient}};">
+    <view class="page-title">👤 用户管理</view>
+    <view class="page-subtitle">点击「以此用户登录」可切换身份查看</view>
+  </view>
+
+  <!-- 用户列表 -->
+  <view class="user-list">
+    <block wx:if="{{!loading && users.length > 0}}" wx:for="{{users}}" wx:key="id">
+      <view class="user-card">
+        <view class="user-info">
+          <view class="user-avatar" style="background: {{item.roleColor}};">
+            <text class="avatar-text">{{item.name[0] || '?'}}</text>
+          </view>
+          <view class="user-detail">
+            <view class="user-name-row">
+              <text class="user-name">{{item.name}}</text>
+              <text class="user-role-tag" style="color: {{item.roleColor}}; background: {{item.roleColor}}1A;">{{item.roleLabel}}</text>
+              <text class="builtin-badge" wx:if="{{item.isBuiltin}}">内置</text>
+              <text class="self-badge" wx:if="{{item.isSelf}}">本人</text>
+            </view>
+            <view class="user-meta">
+              <text class="meta-text">账号：{{item.account}}</text>
+            </view>
+            <view class="user-meta" wx:if="{{item.phone}}">
+              <text class="meta-text">手机：{{item.phone}}</text>
+            </view>
+            <view class="user-meta" wx:if="{{item.createdAtText}}">
+              <text class="meta-text">注册：{{item.createdAtText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="user-actions">
+          <button
+            class="impersonate-btn"
+            wx:if="{{!item.isSelf}}"
+            data-id="{{item.id}}"
+            data-name="{{item.name}}"
+            bindtap="onImpersonate"
+            style="background: {{themeColors.primaryGradient}};"
+          >以此用户登录</button>
+          <view class="current-mark" wx:else style="color: {{themeColors.primary}};">当前登录</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 加载中 -->
+    <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+
+    <!-- 空状态 -->
+    <view class="empty-tip" wx:if="{{!loading && users.length === 0}}">
+      <text>📭 暂无用户数据</text>
+    </view>
+  </view>
+</view>

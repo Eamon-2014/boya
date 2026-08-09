@@ -1,0 +1,6 @@
+{
+  "navigationBarTitle": "用户管理",
+  "usingComponents": {
+    "notification-toast": "/components/notification-toast/notification-toast"
+  }
+}

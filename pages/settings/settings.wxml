@@ -1,0 +1,140 @@
+<view class="page" style="--color-primary: {{themeColors.primary}}; --color-primary-light: {{themeColors.primaryLight}}; --color-primary-dark: {{themeColors.primaryDark}}; --color-primary-gradient: {{themeColors.primaryGradient}}; --color-primary-bg: {{themeColors.primaryBg}};">
+  <!-- 设置分组 -->
+  <block wx:for="{{groups}}" wx:for-item="group" wx:key="title">
+    <view class="group-header">
+      <text class="group-title">{{group.title}}</text>
+    </view>
+    <view class="settings-card">
+      <view wx:for="{{group.items}}" wx:for-item="item" wx:key="key"
+        class="setting-item"
+        data-group="{{group.title}}" data-item="{{item}}"
+        bindtap="onItemTap">
+        <view class="setting-icon">
+          <text>{{item.icon}}</text>
+        </view>
+        <view class="setting-info">
+          <text class="setting-label">{{item.label}}</text>
+          <text class="setting-desc" wx:if="{{item.desc}}">{{item.desc}}</text>
+        </view>
+        <view class="setting-control">
+          <!-- 开关类型 -->
+          <view wx:if="{{item.type === 'switch'}}"
+            class="control-switch {{item.enabled ? 'on' : ''}}">
+            <view class="switch-dot"></view>
+          </view>
+          <!-- 选择器类型 -->
+          <block wx:if="{{item.type === 'picker'}}">
+            <text class="control-value">{{item.value}}</text>
+            <text class="control-arrow">›</text>
+          </block>
+          <!-- 操作类型 -->
+          <block wx:if="{{item.type === 'action'}}">
+            <text class="control-arrow">›</text>
+          </block>
+          <!-- 信息类型 -->
+          <block wx:if="{{item.type === 'info'}}">
+            <text class="control-value muted">{{item.value}}</text>
+          </block>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 退出登录 -->
+  <view class="logout-btn" bindtap="onLogout">{{logoutText}}</view>
+
+  <!-- 选择器弹窗 -->
+  <view class="picker-overlay" wx:if="{{showPicker}}" bindtap="onClosePicker">
+    <view class="picker-card" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">{{pickerTitle}}</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-body">
+        <view wx:for="{{pickerOptions}}" wx:key="index"
+          class="picker-option"
+          data-idx="{{index}}" bindtap="onPickerSelect">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 接口配置弹窗 -->
+  <view class="picker-overlay" wx:if="{{showApiModal}}" bindtap="onApiCancel">
+    <view class="picker-card" catchtap="noop" style="max-height: 80vh;">
+      <view class="picker-header">
+        <text class="picker-title">{{apiConfigTitle}}</text>
+        <view class="picker-close" bindtap="onApiCancel">✕</view>
+      </view>
+      <view class="picker-body" style="padding: 24rpx;">
+        <view class="form-field">
+          <text class="form-label">{{apiBaseUrlLabel}}</text>
+          <input class="form-input" placeholder="https://api.example.com" value="{{apiBaseUrl}}" bindinput="onApiBaseUrlInput" />
+        </view>
+        <view class="form-field">
+          <text class="form-label">{{apiKeyLabel}}</text>
+          <input class="form-input" placeholder="{{enterApiKey}}" value="{{apiKey}}" bindinput="onApiKeyInput" />
+        </view>
+        <view class="form-field">
+          <text class="form-label">{{apiSecretLabel}}</text>
+          <input class="form-input" password="{{true}}" placeholder="{{enterApiSecret}}" value="{{apiSecret}}" bindinput="onApiSecretInput" />
+        </view>
+        <view class="modal-actions" style="margin-top: 32rpx; gap: 24rpx; display: flex;">
+          <view class="modal-btn btn-cancel" bindtap="onApiCancel" style="flex: 1; text-align: center; padding: 24rpx 0; border-radius: 12rpx; font-size: 28rpx; background: #F3F4F6; color: #6B7280;">{{cancelText}}</view>
+          <view class="modal-btn btn-confirm" bindtap="onApiSave" style="flex: 1; text-align: center; padding: 24rpx 0; border-radius: 12rpx; font-size: 28rpx; background: {{themeColors.primaryGradient}}; color: #FFFFFF;">{{saveText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 更改身份弹窗 -->
+  <view class="picker-overlay" wx:if="{{showRoleModal}}" bindtap="onCloseRoleModal">
+    <view class="picker-card" catchtap="noop">
+      <view class="picker-header">
+        <text class="picker-title">{{roleModalTitle}}</text>
+        <view class="picker-close" bindtap="onCloseRoleModal">✕</view>
+      </view>
+      <view class="picker-body" style="padding: 24rpx;">
+        <view class="role-current">{{settings_currentRoleText}}：<text class="role-current-value">{{currentRoleLabel}}</text></view>
+
+        <view class="role-options">
+          <view
+            wx:for="{{roleOptions}}"
+            wx:key="key"
+            class="role-option {{selectedRole === item.key ? 'active' : ''}}"
+            data-role="{{item.key}}"
+            bindtap="onRoleSelect"
+          >
+            <text class="role-option-icon">{{item.key === '管理员' ? '👑' : (item.key === '校区主管' ? '🏫' : '👨‍🏫')}}</text>
+            <text class="role-option-label">{{item.label}}</text>
+            <text wx:if="{{selectedRole === item.key}}" class="role-option-check">✓</text>
+          </view>
+        </view>
+
+        <view class="role-code-field" wx:if="{{selectedRole === '管理员'}}">
+          <text class="role-code-label">{{roleCodeLabel}} <text class="role-code-required">*</text></text>
+          <view class="role-code-input-wrap">
+            <input
+              class="form-input role-code-input"
+              placeholder="{{roleCodePlaceholder}}"
+              value="{{roleCode}}"
+              bindinput="onRoleCodeInput"
+              password="{{!showRoleCode}}"
+              maxlength="10"
+            />
+            <view class="pwd-toggle" bindtap="toggleRoleCode">
+              <image class="eye-icon" src="{{showRoleCode ? '/images/icons/eye-off.png' : '/images/icons/eye-open.png'}}" />
+            </view>
+          </view>
+          <text class="role-code-tip">{{roleCodeTip}}</text>
+        </view>
+
+        <view class="modal-actions" style="margin-top: 32rpx; gap: 24rpx; display: flex;">
+          <view class="modal-btn btn-cancel" bindtap="onCloseRoleModal" style="flex: 1; text-align: center; padding: 24rpx 0; border-radius: 12rpx; font-size: 28rpx; background: #F3F4F6; color: #6B7280;">{{roleCancelBtn}}</view>
+          <view class="modal-btn btn-confirm {{changingRole ? 'disabled' : ''}}" bindtap="onSubmitRoleChange" style="flex: 1; text-align: center; padding: 24rpx 0; border-radius: 12rpx; font-size: 28rpx; background: {{themeColors.primaryGradient}}; color: #FFFFFF;">{{changingRole ? roleChangingText : roleConfirmBtn}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

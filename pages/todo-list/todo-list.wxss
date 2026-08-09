@@ -1,0 +1,484 @@
+/* pages/todo-list/todo-list.wxss */
+.page {
+  min-height: 100vh;
+  background: #F5F7FA;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(64rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 顶部统计卡片 */
+.summary-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+  border-radius: 20rpx;
+  padding: 32rpx 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.25);
+}
+
+.summary-item {
+  flex: 1;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.summary-value {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8rpx;
+}
+
+.summary-value.text-warning { color: #FBBF24; }
+.summary-value.text-success { color: #6EE7B7; }
+.summary-value.text-danger { color: #FCA5A5; }
+
+.summary-label {
+  display: block;
+  font-size: 22rpx;
+  opacity: 0.9;
+}
+
+.summary-divider {
+  width: 1rpx;
+  height: 56rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 筛选标签栏 */
+.filter-bar {
+  margin-bottom: 24rpx;
+  white-space: nowrap;
+}
+
+.filter-list {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 4rpx;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 14rpx 32rpx;
+  background: #FFFFFF;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #6B7280;
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.2s;
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #2563EB, #3B82F6);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.3);
+}
+
+/* 批量操作 */
+.batch-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.batch-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.batch-btn-primary {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(16, 185, 129, 0.25);
+}
+
+.batch-btn-ghost {
+  background: #FFFFFF;
+  color: #6B7280;
+  border: 1rpx solid #E5E7EB;
+}
+
+/* 待办列表 */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.todo-item {
+  display: flex;
+  align-items: stretch;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.2s;
+}
+
+.todo-item.done {
+  opacity: 0.6;
+}
+
+.todo-item.done .todo-title {
+  text-decoration: line-through;
+  color: #9CA3AF;
+}
+
+.todo-bar {
+  width: 6rpx;
+  flex-shrink: 0;
+}
+
+.todo-type-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+  margin: 24rpx 20rpx 24rpx 0;
+  align-self: flex-start;
+}
+
+.todo-main {
+  flex: 1;
+  min-width: 0;
+  padding: 24rpx 0;
+}
+
+.todo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+  gap: 16rpx;
+}
+
+.todo-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2937;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.todo-tags {
+  display: flex;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.tag {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+}
+
+.todo-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.todo-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.todo-time {
+  font-size: 22rpx;
+  color: #9CA3AF;
+}
+
+.todo-time.overdue {
+  color: #EF4444;
+  font-weight: 500;
+}
+
+.todo-status .status-done {
+  font-size: 22rpx;
+  color: #10B981;
+  font-weight: 500;
+}
+
+/* 完成按钮 */
+.todo-check {
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx 0 16rpx;
+  flex-shrink: 0;
+}
+
+.check-circle {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 3rpx solid #D1D5DB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #FFFFFF;
+  transition: all 0.2s;
+}
+
+.check-circle.checked {
+  background: #10B981;
+  border-color: #10B981;
+}
+
+/* 空状态 */
+.empty-state {
+  padding: 120rpx 48rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 96rpx;
+  margin-bottom: 32rpx;
+}
+
+.empty-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #9CA3AF;
+  line-height: 1.6;
+}
+
+/* ============ 浮动添加按钮 ============ */
+.fab-add {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--color-primary-gradient, linear-gradient(135deg, #2563EB, #4F46E5));
+  color: #FFFFFF;
+  font-size: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.4);
+  z-index: 100;
+  line-height: 1;
+  padding-bottom: 4rpx;
+}
+
+.fab-add:active {
+  transform: scale(0.92);
+  opacity: 0.9;
+}
+
+/* ============ 添加待办弹窗 ============ */
+.add-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.add-card {
+  width: 100%;
+  max-height: 85vh;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.add-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #F0F1F3;
+  flex-shrink: 0;
+}
+
+.add-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.add-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #9CA3AF;
+  border-radius: 50%;
+  background: #F3F4F6;
+}
+
+.add-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32rpx;
+}
+
+.add-field {
+  margin-bottom: 28rpx;
+}
+
+.add-label {
+  font-size: 26rpx;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.add-required {
+  color: #EF4444;
+}
+
+.add-input {
+  width: 100%;
+  height: 88rpx;
+  background: #F9FAFB;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1F2937;
+  box-sizing: border-box;
+}
+
+.add-textarea {
+  width: 100%;
+  min-height: 140rpx;
+  background: #F9FAFB;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: #1F2937;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.priority-options {
+  display: flex;
+  gap: 16rpx;
+}
+
+.priority-option {
+  flex: 1;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F9FAFB;
+  border: 2rpx solid #E5E7EB;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: #6B7280;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.due-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.due-picker {
+  flex: 1;
+  height: 88rpx;
+  background: #F9FAFB;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1F2937;
+  display: flex;
+  align-items: center;
+}
+
+.due-picker.placeholder {
+  color: #9CA3AF;
+}
+
+.due-clear {
+  font-size: 24rpx;
+  color: #EF4444;
+  padding: 12rpx 16rpx;
+}
+
+.add-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #F0F1F3;
+  flex-shrink: 0;
+}
+
+.add-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.add-btn-cancel {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.add-btn-confirm {
+  background: var(--color-primary-gradient, linear-gradient(135deg, #2563EB, #4F46E5));
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(37, 99, 235, 0.3);
+}
+
+.add-btn.disabled {
+  opacity: 0.6;
+}

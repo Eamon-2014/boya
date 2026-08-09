@@ -1,0 +1,61 @@
+# ===== Next.js (后端 web/) =====
+node_modules/
+dev.db
+dev.db-journal
+*.sqlite
+*.sqlite3
+.env.local
+.env.*.local
+.next/
+out/
+build/
+dist/
+
+# ===== 微信小程序 =====
+miniprogram_npm/
+node_modules/  # 小程序根目录（虽然小程序一般不用 npm，但防万一）
+
+# ===== 敏感配置（绝不提交！）=====
+.env
+.env.production
+.env.development
+
+# ===== 测试脚本（临时文件）=====
+test-ai-report.js
+test-api.js
+test-idor.js
+test-impersonate.js
+test-role-whitelist.js
+cleanup-test-data.js
+scripts/check-users.cjs
+scripts/verify-password.cjs
+prisma/dev.db
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== IDE / 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.tsbuildinfo
+
+# ===== Trae 本地工作区 =====
+.trae/
+debug-backend-not-reachable.md
+
+# ===== 微信开发者工具私有配置（可选保留）=====
+# 注意：project.private.config.json 里有时会包含个人路径，
+# 如果不想提交就取消下面这行的注释
+# project.private.config.json
+
+# ===== Prisma 生成产物 =====
+web/prisma/*.db
+web/prisma/*.db-journal
