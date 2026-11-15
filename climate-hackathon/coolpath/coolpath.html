@@ -2997,13 +2997,23 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       var len = Math.hypot(fx,fy);
       if(len > 0 && !done){
         fx /= len; fy /= len;
-        var dx = (Math.cos(pl.a)*fx - Math.sin(pl.a)*fy) * sp * dt;
-        var dy = (Math.sin(pl.a)*fx + Math.cos(pl.a)*fy) * sp * dt;
-        var moved = 0;
-        if(!blockedAt(pl.x+dx, pl.y)){ pl.x += dx; moved += Math.abs(dx); }
-        if(!blockedAt(pl.x, pl.y+dy)){ pl.y += dy; moved += Math.abs(dy); }
+        var dirx = Math.cos(pl.a)*fx - Math.sin(pl.a)*fy;
+        var diry = Math.sin(pl.a)*fx + Math.cos(pl.a)*fy;
+        /* 倍率只放大位移（走多快），不放大时间：计时与暴晒仍按真实秒数累计 */
+        var stepLen = sp * dt * spdMul;
+        var nSub = Math.max(1, Math.min(240, Math.ceil(stepLen / 0.22)));
+        /* 子步数封顶后距离必须同步封顶，否则一步就跨过整栋楼（穿墙） */
+        if(stepLen > nSub * 0.22) stepLen = nSub * 0.22;
+        var seg = stepLen / nSub, moved = 0;
+        for(var sb=0; sb<nSub; sb++){
+          var dx = dirx*seg, dy = diry*seg, ox = pl.x, oy = pl.y;
+          if(!blockedAt(pl.x+dx, pl.y)) pl.x += dx;
+          if(!blockedAt(pl.x, pl.y+dy)) pl.y += dy;
+          moved += Math.hypot(pl.x-ox, pl.y-oy);
+          if(pl.x === ox && pl.y === oy) break;   /* 顶到墙就停，不做无用子步 */
+        }
         walked += moved;
-        pl.ph += moved * 7.6;
+        pl.ph += Math.min(moved, 0.35) * 7.6;
       }
       /* 相机朝向滞后跟随，转身时能看到角色侧面 */
       var da = pl.a - camA;
@@ -3173,13 +3183,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       last = t;
       /* 倍率作用在整段模拟时间上：走得更快，计时/暴晒同步加速，结算数据不因倍率而变。
          高倍率拆成多个子步，避免单帧位移过大穿过墙体。 */
-      var sdt = dt * spdMul;
-      /* 倍率可以设到 INT_MAX，但一帧能真正推进的模拟时间必须有上限，
-         否则单帧要算上亿秒、浏览器直接卡死。5 秒/帧≈300 倍，已足够"瞬间走完"。 */
-      if(sdt > 5) sdt = 5;
-      var n = Math.max(1, Math.min(160, Math.ceil(sdt / 0.034)));
-      for(var i=0;i<n;i++) step(sdt/n);
-      draw(); hud();
+      step(dt); draw(); hud();
       raf = requestAnimationFrame(frame);
     }
 
