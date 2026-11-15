@@ -1,0 +1,3154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>凉径 CoolPath · 让最热的三百米，有一条更凉的路</title>
+<style>
+:root{
+  --bg:#0A0E0D; --panel:#101614; --panel2:#0D1312;
+  --line:rgba(233,240,236,.09); --line2:rgba(233,240,236,.18);
+  --ink:#EDEFE9; --muted:#8B958F; --dim:#5E6964;
+  --cool:#5FE3C0; --amber:#FFA45C; --hot:#FF5B3D; --warm:#FFD166;
+  --mono:ui-monospace,SFMono-Regular,"JetBrains Mono","Cascadia Mono",Consolas,monospace;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+    radial-gradient(1100px 620px at 78% -8%, rgba(255,120,60,.13), transparent 62%),
+    radial-gradient(900px 520px at 4% 6%, rgba(95,227,192,.08), transparent 60%),
+    var(--bg);
+  color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:rgba(95,227,192,.28)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:inherit}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);
+  background:rgba(10,14,13,.72);border-bottom:1px solid var(--line)}
+.top .in{display:flex;align-items:center;gap:16px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.mark{width:22px;height:22px;flex:none}
+.brand small{font-weight:400;color:var(--dim);font-size:11px;letter-spacing:.14em}
+.top .sp{flex:1}
+.pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:5px 9px;border-radius:999px;
+  border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.pill.dot{color:var(--amber);border-color:rgba(255,164,92,.32);background:rgba(255,164,92,.07)}
+.tbtn{background:none;border:1px solid var(--line2);color:var(--muted);font:inherit;font-size:12.5px;
+  padding:6px 12px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+.tbtn:hover{color:var(--ink);border-color:rgba(233,240,236,.32)}
+.tbtn.on{color:var(--cool);border-color:rgba(95,227,192,.4);background:rgba(95,227,192,.08)}
+.langswitch{display:flex;gap:2px;background:rgba(233,240,236,.07);border:1px solid var(--line2);
+  border-radius:999px;padding:3px;flex:none}
+.lsbtn{border:none;background:none;color:var(--muted);font:inherit;font-size:12.5px;
+  padding:4px 13px;border-radius:999px;cursor:pointer;letter-spacing:.02em;line-height:1}
+.lsbtn:hover{color:var(--ink)}
+.lsbtn.on{background:rgba(233,240,236,.16);color:var(--ink)}
+
+/* ---------- hero ---------- */
+.hero{padding:86px 0 66px;position:relative}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);
+  display:flex;align-items:center;gap:10px;margin-bottom:26px;text-transform:uppercase}
+.eyebrow i{width:26px;height:1px;background:var(--line2);display:block}
+h1{font-size:clamp(38px,6.2vw,74px);line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:0 0 26px}
+h1 .hot{color:var(--amber)}
+h1 .cool{color:var(--cool)}
+h1 em{font-style:normal;position:relative;white-space:nowrap}
+h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.34em;
+  background:linear-gradient(90deg,rgba(95,227,192,.26),rgba(95,227,192,.02));z-index:-1;border-radius:2px}
+.lead{max-width:640px;font-size:clamp(15px,1.35vw,17.5px);color:#B9C2BC;line-height:1.75}
+.lead b{color:var(--ink);font-weight:600}
+.hstats{display:flex;gap:0;margin-top:52px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.hstat{padding:22px 34px 0 0;margin-right:34px;border-right:1px solid var(--line);min-width:150px}
+.hstat:last-child{border:none}
+.hstat .n{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.hstat .n span{font-size:14px;color:var(--muted);margin-left:2px;font-weight:400}
+.hstat .k{font-size:12px;color:var(--dim);margin-top:8px;letter-spacing:.02em}
+.n.cool{color:var(--cool)} .n.amber{color:var(--amber)}
+
+/* ---------- section shell ---------- */
+section{padding:74px 0}
+.shead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:30px;flex-wrap:wrap}
+.snum{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim)}
+h2{font-size:clamp(24px,3vw,34px);letter-spacing:-.025em;font-weight:750;margin:8px 0 0;line-height:1.2}
+.sdesc{color:var(--muted);font-size:13.5px;max-width:340px;text-align:right}
+
+/* ---------- console ---------- */
+.console{display:grid;grid-template-columns:1.42fr 1fr;gap:20px;align-items:start}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden}
+.card-h{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);
+  font-size:12.5px;color:var(--muted)}
+.card-h .t{color:var(--ink);font-weight:600;font-size:13px}
+
+/* map */
+.mapbox{position:relative;background:#0A0F0E}
+svg.map{display:block;width:100%;height:auto}
+.maphint{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.08em;color:rgba(233,240,236,.45);pointer-events:none}
+.pfocus{position:absolute;left:14px;top:12px;display:flex;align-items:center;gap:7px;
+  font-size:11px;color:#DCE6E2;background:rgba(8,13,12,.78);border:1px solid rgba(233,240,236,.16);
+  border-radius:999px;padding:5px 11px;pointer-events:none;max-width:calc(100% - 28px);
+  transition:color .2s,border-color .2s}
+.pfocus i{width:6px;height:6px;border-radius:50%;background:var(--cool);flex:none;
+  box-shadow:0 0 0 3px rgba(95,227,192,.15)}
+.pfocus.warm{border-color:rgba(255,91,61,.32)}
+.pfocus.warm i{background:var(--hot);box-shadow:0 0 0 3px rgba(255,91,61,.16)}
+
+/* ---------- simulation overlay ---------- */
+.sim{position:fixed;inset:0;z-index:90;display:none;background:#0A0806}
+.sim.on{display:block}
+#simc{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.simhud{position:absolute;inset:0;pointer-events:none;font-family:var(--sans)}
+.simbar{position:absolute;left:16px;top:14px;right:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.simwho{font-size:12.5px;font-weight:650;color:#06231C;
+  background:linear-gradient(180deg,#8CF2D8,#5FE3C0);padding:5px 12px;border-radius:999px}
+.simk{display:flex;align-items:baseline;gap:3px;font-size:11px;color:#B8C4BE;
+  background:rgba(8,13,12,.68);border:1px solid rgba(233,240,236,.14);border-radius:999px;padding:5px 11px}
+.simk b{font-size:15px;color:#F2F6F3;font-family:var(--mono);font-weight:600}
+.simk i{font-style:normal;font-size:10px;color:var(--muted)}
+.simk em{font-style:normal;font-size:10px;color:var(--dim);margin-left:2px}
+.simfrom{font-size:11px;color:#9FB0A9;background:rgba(8,13,12,.6);
+  border:1px solid rgba(233,240,236,.1);border-radius:999px;padding:5px 11px}
+.simx{pointer-events:auto;margin-left:auto;font:inherit;font-size:11.5px;color:#E7EEE9;
+  background:rgba(8,13,12,.72);border:1px solid rgba(233,240,236,.2);border-radius:999px;
+  padding:6px 13px;cursor:pointer}
+.simx:hover{border-color:rgba(255,91,61,.5);color:#FFB9A6}
+.simtip{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font-size:11px;color:#8E9C95;
+  background:rgba(8,13,12,.62);border:1px solid rgba(233,240,236,.1);border-radius:999px;
+  padding:6px 14px;text-align:center;max-width:92vw}
+.simnav{position:absolute;left:50%;top:62px;transform:translateX(-50%);display:flex;
+  flex-direction:column;align-items:center;gap:7px;pointer-events:none}
+.simnav-arrow{width:46px;height:46px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));will-change:transform}
+.simnav-arrow svg{width:100%;height:100%;display:block}
+.simnav-t{font-size:13.5px;font-weight:650;color:#F4F9F6;white-space:nowrap;
+  background:rgba(8,13,12,.74);border:1px solid rgba(95,227,192,.3);border-radius:999px;padding:6px 16px;
+  box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.simnav-s{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:#9FB6AC;white-space:nowrap}
+.simmap{position:absolute;left:16px;bottom:58px;width:172px;height:129px;border-radius:11px;display:block;
+  border:1px solid rgba(233,240,236,.14);background:rgba(6,10,9,.66);pointer-events:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.simdone{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);display:none;
+  pointer-events:auto;text-align:center;background:rgba(8,15,13,.94);
+  border:1px solid rgba(95,227,192,.35);border-radius:16px;padding:22px 26px;
+  max-width:min(440px,88vw);box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.simdone.on{display:block}
+.simdone h4{margin:0 0 8px;font-size:16px;color:var(--cool)}
+.simdone p{margin:0 0 16px;font-size:12.5px;color:#C3CFC9;line-height:1.75}
+.mapcaption{display:flex;align-items:center;gap:8px;padding:10px 18px;border-top:1px solid var(--line);
+  font-size:10.5px;color:var(--dim);line-height:1.5;background:rgba(0,0,0,.18)}
+
+/* enter simulation */
+.simcta{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);
+  background:rgba(95,227,192,.045);flex-wrap:wrap}
+.simbtn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:12.5px;font-weight:650;
+  color:#06231C;background:linear-gradient(180deg,#86F2D6,#4FD3B4);border:none;border-radius:999px;
+  padding:9px 17px;cursor:pointer;letter-spacing:.01em;transition:.18s;
+  box-shadow:0 4px 16px rgba(95,227,192,.22)}
+.simbtn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(95,227,192,.32)}
+.simbtn:active{transform:none}
+.simcta-note{font-size:11px;color:var(--dim)}
+.ctrls{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.timeline{display:flex;align-items:center;gap:12px;flex:1;min-width:230px}
+.timeline input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,var(--warm),var(--hot) 55%,#2c4a44);outline:none;cursor:pointer}
+.timeline input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:#F6F3EA;border:3px solid var(--hot);cursor:pointer;box-shadow:0 0 0 4px rgba(255,91,61,.14)}
+.now{font-family:var(--mono);font-size:13px;color:var(--amber);min-width:52px}
+.chips{display:flex;gap:6px}
+.chip{font-size:11.5px;padding:5px 10px;border-radius:999px;border:1px solid var(--line2);
+  color:var(--muted);cursor:pointer;user-select:none;transition:.18s;background:none;font-family:inherit}
+.chip:hover{color:var(--ink)}
+.chip.on{background:rgba(95,227,192,.1);border-color:rgba(95,227,192,.42);color:var(--cool)}
+
+/* right panel */
+.side{padding:18px}
+.rowlabel{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);margin:0 0 10px}
+.personas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.pcard{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:12px;padding:10px 9px;
+  cursor:pointer;transition:.2s;text-align:left;font:inherit;color:inherit}
+.pcard:hover{border-color:var(--line2);background:rgba(255,255,255,.045)}
+.pcard.on{border-color:rgba(95,227,192,.5);background:rgba(95,227,192,.08)}
+.pcard .pn{font-size:12.5px;font-weight:600;line-height:1.3}
+.pcard .pd{font-size:10.5px;color:var(--dim);margin-top:4px;line-height:1.4}
+
+.routes{display:grid;gap:8px;margin-bottom:18px}
+.rt{border:1px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;transition:.2s;
+  background:rgba(255,255,255,.018)}
+.rt:hover{border-color:var(--line2)}
+.rt.on{border-color:rgba(233,240,236,.3);background:rgba(255,255,255,.05)}
+.rt .rtop{display:flex;align-items:baseline;gap:8px}
+.rt .rname{font-size:12.5px;font-weight:600}
+.rt .rsub{font-size:10.5px;color:var(--dim);margin-left:auto;font-family:var(--mono)}
+.rt .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:9px;overflow:hidden}
+.rt .bar i{display:block;height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.rt.a .bar i{background:linear-gradient(90deg,#FF8A4C,#FF5B3D)}
+.rt.b .bar i{background:linear-gradient(90deg,#4ED3B3,#2C8E7B)}
+.rt .rtemp{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:7px}
+
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.metric{background:#0E1413;padding:11px 10px}
+.metric .v{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.metric .v u{font-size:10px;text-decoration:none;color:var(--dim);margin-left:2px}
+.metric .k{font-size:10px;color:var(--dim);margin-top:5px;letter-spacing:.02em}
+
+.advice{background:rgba(95,227,192,.055);border:1px solid rgba(95,227,192,.18);border-radius:12px;padding:14px}
+.advice .ah{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.advice .ah b{font-size:12px;letter-spacing:.02em;color:var(--cool);font-weight:600}
+.advice .ah .tag{font-family:var(--mono);font-size:9.5px;color:var(--dim);border:1px solid var(--line2);
+  padding:2px 6px;border-radius:999px;letter-spacing:.08em}
+.advice p{margin:0;font-size:12.5px;line-height:1.72;color:#C8D2CB}
+.advice .why{margin-top:10px;padding-top:9px;border-top:1px dashed rgba(95,227,192,.18);
+  font-size:10.5px;color:var(--dim);font-family:var(--mono);line-height:1.6}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.045);
+  color:var(--ink);font:inherit;font-size:12px;cursor:pointer;transition:.2s}
+.btn:hover{background:rgba(255,255,255,.09)}
+.btn.pri{background:var(--cool);color:#04110D;border-color:var(--cool);font-weight:600}
+.btn.pri:hover{filter:brightness(1.08)}
+
+/* ---------- cv ---------- */
+.cvgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cvcard{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.cvtop{padding:12px 15px 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  border-bottom:1px solid var(--line)}
+.cvtop .s{font-size:12.5px;font-weight:600}
+.cvtop .m{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.cvscene{position:relative;background:#0B100F}
+svg.scene{display:block;width:100%;height:auto}
+.detect{opacity:0;transition:opacity .4s}
+.cvcard.shown .detect{opacity:1}
+.cvbody{padding:13px 15px 15px;flex:1;display:flex;flex-direction:column;gap:10px}
+.score{display:flex;align-items:center;gap:10px}
+.score .lab{font-size:10.5px;color:var(--dim);white-space:nowrap}
+.score .sb{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.score .sb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4ED3B3,#7AE8CB)}
+.score .sv{font-family:var(--mono);font-size:11.5px;color:var(--cool)}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tg{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;padding:3px 7px;border-radius:5px;
+  background:rgba(255,255,255,.05);color:#A9B3AD;border:1px solid var(--line)}
+.tg b{color:var(--cool);font-weight:500}
+.cvbtn{margin-top:auto;width:100%;padding:8px;border-radius:9px;border:1px solid var(--line2);
+  background:none;color:var(--muted);font:inherit;font-size:11.5px;cursor:pointer;transition:.2s}
+.cvbtn:hover{color:var(--ink);border-color:rgba(233,240,236,.34)}
+
+/* ---------- care ---------- */
+.care{display:grid;grid-template-columns:.85fr 1.15fr;gap:20px}
+.careintro p{color:var(--muted);font-size:13.5px;line-height:1.8;margin:0 0 14px}
+.careintro .note{font-size:11.5px;color:var(--dim);border-left:2px solid var(--line2);padding-left:12px;line-height:1.7}
+table.risk{width:100%;border-collapse:collapse;font-size:12.5px}
+table.risk th{text-align:left;font-weight:500;font-size:10px;letter-spacing:.12em;color:var(--dim);
+  font-family:var(--mono);padding:0 10px 10px;border-bottom:1px solid var(--line)}
+table.risk td{padding:12px 10px;border-bottom:1px solid rgba(233,240,236,.055);vertical-align:middle}
+table.risk tr:last-child td{border-bottom:none}
+td .bname{font-weight:600;font-size:12.5px}
+td .bmeta{font-size:10.5px;color:var(--dim);margin-top:2px}
+.riskbar{display:flex;align-items:center;gap:8px;min-width:96px}
+.riskbar .rb{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.riskbar .rb i{display:block;height:100%;border-radius:99px}
+.riskbar span{font-family:var(--mono);font-size:11px;width:20px;text-align:right}
+.act{font-size:11.5px;color:#B4BEB8;line-height:1.55}
+.tagx{font-family:var(--mono);font-size:9.5px;padding:2px 6px;border-radius:4px;letter-spacing:.06em;white-space:nowrap}
+.tagx.now{background:rgba(255,91,61,.14);color:#FF8A6B;border:1px solid rgba(255,91,61,.28)}
+.tagx.soon{background:rgba(255,164,92,.1);color:var(--amber);border:1px solid rgba(255,164,92,.22)}
+
+/* ---------- method ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mcard{border:1px solid var(--line);border-radius:14px;padding:18px;background:rgba(255,255,255,.017)}
+.mcard h4{margin:0 0 10px;font-size:12.5px;letter-spacing:.02em;display:flex;align-items:center;gap:7px}
+.mcard h4 i{width:5px;height:5px;border-radius:50%;background:var(--cool);display:block;flex:none}
+.mcard.lim h4 i{background:var(--amber)}
+.mcard ul{margin:0;padding:0;list-style:none}
+.mcard li{font-size:11.8px;color:#A7B1AB;line-height:1.65;padding-left:13px;position:relative;margin-bottom:7px}
+.mcard li::before{content:"";position:absolute;left:0;top:.62em;width:4px;height:1px;background:var(--dim)}
+.plan{display:flex;gap:0;margin-top:22px;border-top:1px solid var(--line);padding-top:22px;flex-wrap:wrap}
+.step{flex:1;min-width:180px;padding-right:24px}
+.step .d{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber)}
+.step .s{font-size:12.5px;font-weight:600;margin:7px 0 5px}
+.step p{font-size:11.5px;color:var(--dim);margin:0;line-height:1.6}
+
+/* science basis */
+.sci{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+  background:rgba(255,255,255,.017)}
+.scih{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.scih b{font-size:13px;color:var(--ink)}
+.scih span{font-size:11px;color:var(--dim)}
+.scirow{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.sciitem b{display:block;font-size:12px;color:var(--cool);font-weight:600;margin-bottom:6px}
+.sciitem p{margin:0;font-size:11.5px;color:#A7B1AB;line-height:1.65}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
+.fin{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.fin .l{font-size:12.5px;color:var(--muted);max-width:520px;line-height:1.8}
+.fin .l b{color:var(--ink)}
+.fin .r{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:right;line-height:2}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(4,7,6,.6);backdrop-filter:blur(3px);opacity:0;
+  pointer-events:none;transition:.3s;z-index:90}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(430px,92vw);background:#0C1211;
+  border-left:1px solid var(--line2);z-index:100;transform:translateX(102%);transition:transform .38s cubic-bezier(.4,0,.2,1);
+  padding:28px 26px;overflow-y:auto}
+.drawer.on{transform:none}
+.drawer h3{font-size:16px;margin:0 0 6px;letter-spacing:-.01em}
+.drawer .dd{font-size:11.5px;color:var(--dim);margin-bottom:22px;line-height:1.7}
+.jrow{padding:13px 0;border-bottom:1px solid var(--line)}
+.jrow .jt{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:600}
+.jrow .jt span{font-family:var(--mono);font-size:11px;color:var(--cool);font-weight:400}
+.jrow p{margin:6px 0 0;font-size:11.5px;color:var(--muted);line-height:1.65}
+.dclose{position:absolute;top:18px;right:20px;background:none;border:none;color:var(--muted);
+  font-size:20px;cursor:pointer;line-height:1}
+
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:980px){
+  .console,.care{grid-template-columns:1fr}
+  .cvgrid{grid-template-columns:1fr}
+  .mgrid{grid-template-columns:repeat(2,1fr)}
+  .scirow{grid-template-columns:repeat(2,1fr)}
+  .sdesc{text-align:left}
+  .hero{padding:56px 0 40px}
+  .hstat{padding-right:22px;margin-right:22px}
+}
+@media (max-width:560px){
+  .mgrid{grid-template-columns:1fr}
+  .scirow{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .personas{grid-template-columns:1fr 1fr}
+  .brand small{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap in">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 24 24" fill="none">
+        <path d="M4 19c4.5 0 6.5-3 9-8" stroke="#5FE3C0" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M9 4.5c-2 3-1 5.5 1.2 6.8" stroke="#FFA45C" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="17.5" cy="16.5" r="3.2" stroke="#5FE3C0" stroke-width="1.8"/>
+      </svg>
+      凉径 CoolPath <small>COP31 · AI FOR CLIMATE</small>
+    </div>
+    <div class="sp"></div>
+    <span class="pill dot">演示数据 · 合成</span>
+    <div class="langswitch" role="group" aria-label="Language / 语言">
+      <button class="lsbtn" id="langEn" type="button">EN</button>
+      <button class="lsbtn" id="langZh" type="button">中文</button>
+    </div>
+    <button class="tbtn" id="judgeBtn" type="button">评审速览</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow"><i></i>城市高温 · 气候适应与社区韧性</div>
+    <h1 id="heroH1">最热的那<span class="hot">三百米</span>，<br>应该有一条<em><span class="cool">更凉的路</span></em>。</h1>
+    <p class="lead" id="heroLead">
+      极端高温已经成为城市里最沉默的杀手：它不掀翻屋顶，只是一次次把老人留在了去买菜的路上。
+      <b>凉径</b> 用 AI 把「热风险」翻译成一条可执行的路——给脆弱人群规划<b>最低热暴露</b>的步行路线，
+      同时给社区工作者一张<b>今天该先敲谁家门</b>的名单。
+    </p>
+
+    <div class="hstats">
+      <div class="hstat"><div class="n cool" id="h1n">5.6<span>℃</span></div><div class="k">同一起终点 · 体感温度降幅</div></div>
+      <div class="hstat"><div class="n" id="h2n">12<span>%</span> → 71<span>%</span></div><div class="k">路径树荫覆盖率</div></div>
+      <div class="hstat"><div class="n amber" id="h3n">38<span>户</span></div><div class="k">今日需优先走访的高风险住户</div></div>
+    </div>
+  </div>
+
+  <!-- CONSOLE -->
+  <section class="reveal" id="console">
+    <div class="shead">
+      <div>
+        <div class="snum">01 / 规划台</div>
+        <h2>同一段路，两种走法</h2>
+      </div>
+      <div class="sdesc">深圳福田 · 园岭社区（合成街道网络）。拖动时间轴，看 AI 的推荐如何随气温改变判断。</div>
+    </div>
+
+    <div class="console">
+      <!-- map card -->
+      <div class="card">
+        <div class="card-h">
+          <span class="t">园岭社区 · 热暴露地图</span>
+          <span class="mono" style="font-size:10px;color:var(--dim)">08:00 — 22:00 模拟</span>
+          <div style="flex:1"></div>
+          <span class="mono" style="font-size:10px;color:var(--amber)" id="airTemp">气温 34.8℃</span>
+        </div>
+
+        <div class="ctrls">
+          <div class="timeline">
+            <span class="now" id="nowTime">14:00</span>
+            <input type="range" id="hour" min="0" max="3" step="1" value="0" aria-label="时间">
+          </div>
+          <div class="chips">
+            <button class="chip on" data-layer="heat" type="button">热力</button>
+            <button class="chip on" data-layer="shade" type="button">遮荫</button>
+            <button class="chip" data-layer="water" type="button">补水点</button>
+          </div>
+        </div>
+
+        <div class="mapbox">
+          <svg class="map" viewBox="0 0 800 600" role="img" aria-label="社区热暴露地图">
+            <defs>
+              <filter id="soften" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="19"/>
+              </filter>
+              <filter id="pinGlow" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="5"/>
+              </filter>
+              <linearGradient id="parkG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#1B4A3F" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#122B25" stop-opacity=".55"/>
+              </linearGradient>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#5FE3C0"/>
+              </marker>
+            </defs>
+
+            <rect width="800" height="600" fill="#080C0B"/>
+
+            <!-- roads -->
+            <g stroke="#1A2220" stroke-linecap="square">
+              <line x1="30" y1="110" x2="785" y2="110" stroke-width="26"/>
+              <line x1="30" y1="310" x2="785" y2="310" stroke-width="26"/>
+              <line x1="30" y1="500" x2="785" y2="500" stroke-width="22"/>
+              <line x1="180" y1="30" x2="180" y2="575" stroke-width="22"/>
+              <line x1="430" y1="30" x2="430" y2="575" stroke-width="24"/>
+              <line x1="660" y1="30" x2="660" y2="575" stroke-width="22"/>
+            </g>
+
+            <!-- heat layer -->
+            <g id="heatLayer" filter="url(#soften)" opacity=".92"></g>
+
+            <!-- park base -->
+            <rect x="446" y="124" width="200" height="180" rx="16" fill="url(#parkG)" stroke="rgba(95,227,192,.16)"/>
+
+            <!-- blocks -->
+            <g id="blocks">
+              <rect x="196" y="126" width="218" height="172" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="46" y="126" width="118" height="172" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="676" y="126" width="88" height="172" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="196" y="326" width="218" height="162" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="446" y="326" width="200" height="162" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="676" y="326" width="88" height="162" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+              <rect x="46" y="326" width="118" height="162" rx="8" fill="rgba(17,23,21,.9)" stroke="rgba(233,240,236,.07)"/>
+            </g>
+
+            <!-- road center lines -->
+            <g stroke="rgba(233,240,236,.10)" stroke-width="1" stroke-dasharray="7 9">
+              <line x1="34" y1="110" x2="782" y2="110"/>
+              <line x1="34" y1="310" x2="782" y2="310"/>
+              <line x1="34" y1="500" x2="782" y2="500"/>
+              <line x1="180" y1="34" x2="180" y2="572"/>
+              <line x1="430" y1="34" x2="430" y2="572"/>
+              <line x1="660" y1="34" x2="660" y2="572"/>
+            </g>
+
+            <!-- labels -->
+            <g font-family="var(--sans)" font-size="11" fill="#8A948E" letter-spacing=".06em"
+               stroke="#0A0F0E" stroke-width="3" paint-order="stroke" stroke-linejoin="round">
+              <text x="212" y="216">老城住宅 A</text>
+              <text x="468" y="290">街心公园</text>
+              <text x="56" y="216">便民菜场</text>
+              <text x="688" y="216">快递驿站</text>
+              <text x="212" y="414">社区小学</text>
+              <text x="470" y="414" fill="#9AA5A0">社区医院</text>
+              <text x="688" y="414">住宅 B</text>
+              <text x="56" y="414">住宅 C</text>
+            </g>
+
+            <!-- shade layer -->
+            <g id="shadeLayer" opacity="0"></g>
+
+            <!-- trees -->
+            <g id="treeLayer"></g>
+
+            <!-- park footpath (walkable) -->
+            <path d="M434 215 L650 215" stroke="#26382F" stroke-width="15" stroke-linecap="round"/>
+            <path d="M446 215 L646 215" stroke="rgba(95,227,192,.14)" stroke-width="1.2" stroke-dasharray="5 7"/>
+            <text x="640" y="206" font-size="9" fill="#7E8B84" text-anchor="end" font-family="var(--sans)"
+              stroke="#0B1210" stroke-width="2.5" paint-order="stroke">公园北径</text>
+
+            <!-- routes: strictly along street network, park footpath is passable -->
+            <path id="routeA" d="M100 495 L175 495 L175 305 L597 305 L597 343" fill="none" stroke="#FF5B3D"
+              stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+            <path id="routeB" d="M100 505 L185 505 L185 315 L435 315 L435 215 L625 215 L625 343" fill="none" stroke="#5FE3C0"
+              stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+
+            <!-- persona focus overlay -->
+            <g id="personaLayer"></g>
+
+            <!-- water points -->
+            <g id="waterLayer"></g>
+
+            <!-- POI -->
+            <g>
+              <circle cx="100" cy="500" r="9" fill="#0A0E0D" stroke="#FFD166" stroke-width="2.5"/>
+              <circle cx="100" cy="500" r="3" fill="#FFD166"/>
+              <text id="startLabel" x="112" y="505" font-size="10.5" fill="#B9C2BC" font-family="var(--sans)"
+                stroke="#0A0F0E" stroke-width="3" paint-order="stroke" stroke-linejoin="round">陈阿姨家</text>
+
+              <circle cx="610" cy="345" r="9" fill="#0A0E0D" stroke="#5FE3C0" stroke-width="2.5"/>
+              <circle cx="610" cy="345" r="3" fill="#5FE3C0"/>
+              <text id="destLabel" x="610" y="374" font-size="10.5" fill="#B9C2BC" text-anchor="middle" font-family="var(--sans)"
+                stroke="#0A0F0E" stroke-width="3" paint-order="stroke" stroke-linejoin="round">目的地 · 社区医院</text>
+            </g>
+
+            <!-- legend -->
+            <g transform="translate(624,536)">
+              <text x="0" y="-10" font-size="9" fill="#5E6964" letter-spacing=".14em" font-family="var(--mono)">地表温度</text>
+              <defs>
+                <linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#2E8B78"/><stop offset=".5" stop-color="#FFC15E"/><stop offset="1" stop-color="#FF4B2B"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="112" height="6" rx="3" fill="url(#lg)"/>
+              <text x="0" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">低</text>
+              <text x="96" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">高</text>
+            </g>
+          </svg>
+          <div class="pfocus" id="pfocus"><i></i><span id="pfocusText"></span></div>
+          <div class="maphint">合成街道网络 · 非真实底图</div>
+        </div>
+        <div class="mapcaption">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <circle cx="6.5" cy="6.5" r="5.6" stroke="#5FE3C0" stroke-opacity=".5"/>
+            <path d="M6.5 3.2v3.6l2.2 1.4" stroke="#5FE3C0" stroke-width="1.1" stroke-linecap="round"/>
+          </svg>
+          路径严格沿街巷与公园步道生成，不穿越建筑体块；公园为可通行空间。
+        </div>
+        <div class="simcta">
+          <button class="simbtn" id="simBtn" type="button">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M4 2.6v8.8l7-4.4-7-4.4z" fill="currentColor"/>
+            </svg>
+            <span>进入模拟世界</span>
+          </button>
+          <span class="simcta-note">第三人称跟随 · WASD 移动 · 空格 跳跃 · Shift 快走</span>
+        </div>
+      </div>
+
+      <!-- side -->
+      <div class="card">
+        <div class="card-h"><span class="t">谁在走这条路</span><span class="mono" style="font-size:10px;color:var(--dim)">选择角色</span></div>
+        <div class="side">
+          <p class="rowlabel">角色</p>
+          <div class="personas">
+            <button class="pcard on" data-p="elder" type="button">
+              <div class="pn">陈阿姨 78</div><div class="pd">独居 · 高血压 · 步行 2.8km/h</div>
+            </button>
+            <button class="pcard" data-p="rider" type="button">
+              <div class="pn">阿哲 26</div><div class="pd">外卖骑手 · 日均户外 9h</div>
+            </button>
+            <button class="pcard" data-p="parent" type="button">
+              <div class="pn">林女士 34</div><div class="pd">推婴儿车 · 带 8 月龄宝宝</div>
+            </button>
+          </div>
+
+          <p class="rowlabel">路线</p>
+          <div class="routes">
+            <div class="rt a" data-r="a">
+              <div class="rtop"><span class="rname">最短路径</span><span class="rsub">沿主干道 · 无遮荫</span></div>
+              <div class="bar"><i id="barA" style="width:100%"></i></div>
+              <div class="rtemp">体感 <span id="tempA">43.2℃</span> · 树荫 <span id="shadeA">12%</span></div>
+            </div>
+            <div class="rt b on" data-r="b">
+              <div class="rtop"><span class="rname">凉径（推荐）</span><span class="rsub">穿公园北径 · 2 个补水点</span></div>
+              <div class="bar"><i id="barB" style="width:78%"></i></div>
+              <div class="rtemp">体感 <span id="tempB">37.6℃</span> · 树荫 <span id="shadeB">71%</span></div>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric"><div class="v" id="mdist">399<u>m</u></div><div class="k">距离</div></div>
+            <div class="metric"><div class="v" id="mtime">8.5<u>min</u></div><div class="k">步行用时</div></div>
+            <div class="metric"><div class="v" id="mfeel">43.2<u>℃</u></div><div class="k">平均体感</div></div>
+            <div class="metric"><div class="v" id="mwater">0<u>处</u></div><div class="k">补水点</div></div>
+          </div>
+
+          <div class="advice">
+            <div class="ah"><b>AI 出行建议</b><span class="tag" id="advTag">规则 + 模型混合生成</span></div>
+            <p id="advText">现在 34.8℃，正午地表最烫。建议走凉径：沿中街西段进入公园北径，全程树荫覆盖 71%，途中经过 2 个补水点。到院前在门口坐 5 分钟再进诊室。</p>
+            <div class="why" id="advWhy">判断依据：树荫 71% / 补水点 2 / 多走 121m（+2.6min）/ 体感差 5.6℃</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CV -->
+  <section class="reveal">
+    <div class="shead">
+      <div>
+        <div class="snum">02 / 感知层</div>
+        <h2>先让模型学会看阴影</h2>
+      </div>
+      <div class="sdesc">真实部署时，树荫不是地图上的图层，而是要从街景影像里分割出来的东西。以下是三张街景切片的识别结果演示。</div>
+    </div>
+
+    <div class="cvgrid">
+      <!-- card 1 -->
+      <div class="cvcard">
+        <div class="cvtop"><span class="s">园岭中路 · 14:20</span><span class="m">CAM-04</span></div>
+        <div class="cvscene">
+          <svg class="scene" viewBox="0 0 240 150">
+            <rect width="240" height="150" fill="#0E1514"/>
+            <rect x="0" y="34" width="58" height="76" fill="#18211F"/>
+            <rect x="74" y="22" width="52" height="88" fill="#1C2523"/>
+            <rect x="170" y="40" width="70" height="70" fill="#18211F"/>
+            <g fill="#22302C">
+              <rect x="8" y="44" width="10" height="10"/><rect x="26" y="44" width="10" height="10"/><rect x="8" y="66" width="10" height="10"/>
+              <rect x="84" y="34" width="9" height="9"/><rect x="102" y="34" width="9" height="9"/><rect x="84" y="56" width="9" height="9"/>
+              <rect x="182" y="52" width="12" height="10"/><rect x="206" y="52" width="12" height="10"/>
+            </g>
+            <rect x="0" y="110" width="240" height="40" fill="#1B2321"/>
+            <rect x="0" y="104" width="240" height="7" fill="#243029"/>
+            <g>
+              <rect x="132" y="78" width="4" height="30" fill="#2A3A32"/>
+              <circle cx="134" cy="72" r="20" fill="#1E4034"/>
+              <circle cx="122" cy="80" r="13" fill="#20463A"/>
+            </g>
+            <g>
+              <rect x="160" y="88" width="3" height="20" fill="#2A3A32"/>
+              <circle cx="161" cy="84" r="14" fill="#1D3C31"/>
+            </g>
+            <polygon points="114,104 168,104 200,150 96,150" fill="#0A0F0E" opacity=".55"/>
+            <g class="detect" font-family="monospace" font-size="6">
+              <rect x="108" y="50" width="56" height="46" fill="none" stroke="#5FE3C0" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="110" y="47" fill="#5FE3C0">树冠 .91</text>
+              <rect x="0" y="118" width="240" height="30" fill="none" stroke="#FF8A6B" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="4" y="115" fill="#FF8A6B">沥青 .88</text>
+              <rect x="146" y="76" width="34" height="34" fill="none" stroke="#5FE3C0" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="182" y="90" fill="#5FE3C0">行道树 .86</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cvbody">
+          <div class="score"><span class="lab">遮荫得分</span><span class="sb"><i style="width:72%"></i></span><span class="sv">0.72</span></div>
+          <div class="tags"><span class="tg">行道树 ×6 <b>0.91</b></span><span class="tg">沥青路面 <b>0.88</b></span><span class="tg">建筑阴影 <b>0.76</b></span></div>
+          <button class="cvbtn" type="button">显示 / 隐藏识别框</button>
+        </div>
+      </div>
+
+      <!-- card 2 -->
+      <div class="cvcard">
+        <div class="cvtop"><span class="s">南街东段 · 13:50</span><span class="m">CAM-11</span></div>
+        <div class="cvscene">
+          <svg class="scene" viewBox="0 0 240 150">
+            <rect width="240" height="150" fill="#12100E"/>
+            <rect x="0" y="20" width="70" height="90" fill="#1E1B18"/>
+            <rect x="150" y="30" width="90" height="80" fill="#1E1B18"/>
+            <g fill="#2B2621">
+              <rect x="10" y="32" width="12" height="11"/><rect x="34" y="32" width="12" height="11"/><rect x="10" y="58" width="12" height="11"/>
+              <rect x="162" y="44" width="14" height="11"/><rect x="192" y="44" width="14" height="11"/><rect x="162" y="70" width="14" height="11"/>
+            </g>
+            <rect x="0" y="110" width="240" height="40" fill="#221E1A"/>
+            <rect x="0" y="104" width="240" height="7" fill="#2E2823"/>
+            <polygon points="240,110 240,150 60,150 130,110" fill="#2F2A24" opacity=".6"/>
+            <g>
+              <rect x="86" y="96" width="42" height="3" fill="#3A3B33"/>
+              <rect x="90" y="99" width="2" height="11" fill="#3A3B33"/>
+              <rect x="122" y="99" width="2" height="11" fill="#3A3B33"/>
+            </g>
+            <g class="detect" font-family="monospace" font-size="6">
+              <rect x="0" y="116" width="240" height="32" fill="none" stroke="#FF8A6B" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="4" y="113" fill="#FF8A6B">沥青 .94 · 62℃</text>
+              <rect x="84" y="93" width="46" height="18" fill="none" stroke="#FFD166" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="132" y="106" fill="#FFD166">遮阳棚 .41</text>
+              <text x="8" y="14" fill="#FF5B3D" font-size="7">未检出树冠</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cvbody">
+          <div class="score"><span class="lab">遮荫得分</span><span class="sb"><i style="width:11%;background:linear-gradient(90deg,#FF8A4C,#FF5B3D)"></i></span><span class="sv" style="color:var(--hot)">0.11</span></div>
+          <div class="tags"><span class="tg">沥青路面 <b style="color:#FF8A6B">0.94</b></span><span class="tg">无行道树</span><span class="tg">临时遮阳棚 <b style="color:#FFD166">0.41</b></span></div>
+          <button class="cvbtn" type="button">显示 / 隐藏识别框</button>
+        </div>
+      </div>
+
+      <!-- card 3 -->
+      <div class="cvcard">
+        <div class="cvtop"><span class="s">街心公园北径 · 15:05</span><span class="m">CAM-07</span></div>
+        <div class="cvscene">
+          <svg class="scene" viewBox="0 0 240 150">
+            <rect width="240" height="150" fill="#0C1512"/>
+            <rect x="0" y="30" width="240" height="86" fill="#101E19"/>
+            <g>
+              <circle cx="40" cy="52" r="30" fill="#1B4537"/>
+              <circle cx="86" cy="44" r="24" fill="#1E4C3D"/>
+              <circle cx="140" cy="50" r="28" fill="#1B4537"/>
+              <circle cx="196" cy="46" r="26" fill="#1E4C3D"/>
+              <circle cx="16" cy="66" r="20" fill="#17372C"/>
+            </g>
+            <g fill="#294A3D" opacity=".7">
+              <circle cx="60" cy="30" r="10"/><circle cx="118" cy="26" r="9"/><circle cx="168" cy="28" r="11"/>
+            </g>
+            <path d="M0 96 Q120 84 240 96 L240 116 Q120 106 0 116 Z" fill="#1B2A23"/>
+            <g stroke="#2A3B32" stroke-width="1">
+              <line x1="0" y1="106" x2="240" y2="100"/><line x1="0" y1="110" x2="240" y2="104"/>
+            </g>
+            <rect x="0" y="116" width="240" height="34" fill="#16261F"/>
+            <g>
+              <rect x="186" y="104" width="22" height="4" rx="2" fill="#3C4A40"/>
+              <rect x="188" y="108" width="3" height="8" fill="#3C4A40"/>
+              <rect x="203" y="108" width="3" height="8" fill="#3C4A40"/>
+            </g>
+            <g class="detect" font-family="monospace" font-size="6">
+              <rect x="6" y="18" width="228" height="56" fill="none" stroke="#5FE3C0" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="10" y="15" fill="#5FE3C0">乔冠层 .93</text>
+              <rect x="0" y="100" width="240" height="14" fill="none" stroke="#5FE3C0" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="4" y="98" fill="#5FE3C0">透水砖 .81</text>
+              <rect x="184" y="100" width="28" height="20" fill="none" stroke="#FFD166" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="150" y="130" fill="#FFD166">座椅 + 饮水点 .55</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cvbody">
+          <div class="score"><span class="lab">遮荫得分</span><span class="sb"><i style="width:86%"></i></span><span class="sv">0.86</span></div>
+          <div class="tags"><span class="tg">乔冠层 <b>0.93</b></span><span class="tg">透水砖 <b>0.81</b></span><span class="tg">座椅 / 饮水点 <b>0.55</b></span></div>
+          <button class="cvbtn" type="button">显示 / 隐藏识别框</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARE -->
+  <section class="reveal">
+    <div class="shead">
+      <div>
+        <div class="snum">03 / 关怀视图</div>
+        <h2>比路线更重要的，是名单</h2>
+      </div>
+      <div class="sdesc">同一个热模型，反过来用：不是给人找路，而是给社区工作者排今天的敲门顺序。</div>
+    </div>
+
+    <div class="care">
+      <div class="careintro">
+        <p id="careP1">社区网格员每天只有 3 小时能出门。凉径的热模型把楼栋、时段、人口结构叠在一起，输出一份<b style="color:var(--ink)">按热风险排序</b>的走访清单——把有限的人力放在最可能出事的地方。</p>
+        <p>名单不是判决书：每一条都附了可执行的动作，和一句「为什么是它」。</p>
+        <div class="note">
+          风险分 = 楼栋热暴露（40%）+ 人口脆弱度（35%）+ 建筑散热条件（25%）。<br>
+          人口数据仅使用社区已授权的匿名统计口径，不包含个人身份信息。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="t">今日走访优先级 · 11 月 14 日</span>
+          <div style="flex:1"></div><span class="mono" style="font-size:10px;color:var(--hot)">14:00 高温橙色预警</span></div>
+        <div style="padding:16px 12px 6px">
+          <table class="risk">
+            <thead><tr><th style="width:31%">楼栋</th><th style="width:19%">热风险</th><th style="width:14%">独居老人</th><th>建议动作</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="bname">老城住宅 A · 3 号楼</div><div class="bmeta">顶楼无隔热 · 西晒</div></td>
+                <td><div class="riskbar"><div class="rb"><i style="width:87%;background:linear-gradient(90deg,#FF8A4C,#FF5B3D)"></i></div><span>87</span></div></td>
+                <td class="mono" style="color:var(--hot)">12 户</td>
+                <td class="act">14:00 前电话确认 + 送水 <span class="tagx now">立即</span></td>
+              </tr>
+              <tr>
+                <td><div class="bname">快递驿站 · 沿街</div><div class="bmeta">骑手聚集 · 无遮荫</div></td>
+                <td><div class="riskbar"><div class="rb"><i style="width:79%;background:linear-gradient(90deg,#FF8A4C,#FF5B3D)"></i></div><span>79</span></div></td>
+                <td class="mono" style="color:var(--dim)">—</td>
+                <td class="act">开放冰柜 + 补水点 <span class="tagx now">立即</span></td>
+              </tr>
+              <tr>
+                <td><div class="bname">社区小学 · 操场</div><div class="bmeta">无乔冠层 · 硬质铺装</div></td>
+                <td><div class="riskbar"><div class="rb"><i style="width:74%;background:linear-gradient(90deg,#FFA45C,#FF8A4C)"></i></div><span>74</span></div></td>
+                <td class="mono" style="color:var(--dim)">—</td>
+                <td class="act">户外课调至 10:00 前 <span class="tagx soon">今日</span></td>
+              </tr>
+              <tr>
+                <td><div class="bname">住宅 C · 2 号楼</div><div class="bmeta">低层通风差 · 老年住户多</div></td>
+                <td><div class="riskbar"><div class="rb"><i style="width:68%;background:linear-gradient(90deg,#FFD166,#FFA45C)"></i></div><span>68</span></div></td>
+                <td class="mono">7 户</td>
+                <td class="act">开放楼道降温点 <span class="tagx soon">今日</span></td>
+              </tr>
+              <tr>
+                <td><div class="bname">便民菜场 · 西侧棚</div><div class="bmeta">铁皮顶 · 午后人流高</div></td>
+                <td><div class="riskbar"><div class="rb"><i style="width:61%;background:linear-gradient(90deg,#FFD166,#FFA45C)"></i></div><span>61</span></div></td>
+                <td class="mono" style="color:var(--dim)">—</td>
+                <td class="act">加遮阳网 · 延长早晚时段 <span class="tagx soon">本周</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section class="reveal">
+    <div class="shead">
+      <div>
+        <div class="snum">04 / 方法与边界</div>
+        <h2>它能做什么，不能做什么</h2>
+      </div>
+      <div class="sdesc">评审标准里权重最高的两条是「气候相关性」和「AI 集成」，但最容易失分的是把原型说成产品。所以这一节写得比前面都直白。</div>
+    </div>
+
+    <div class="mgrid">
+      <div class="mcard">
+        <h4><i></i>数据</h4>
+        <ul>
+          <li>演示用合成街道网络 + 简化地表热模型：T = T_air + ΔT·(1−shade)</li>
+          <li>真实部署接 Landsat 8/9 TIRS、ECOSTRESS 地表温度产品 + 街景影像 + 社区气象站</li>
+          <li>人口脆弱度用社区授权的匿名统计口径</li>
+        </ul>
+      </div>
+      <div class="mcard">
+        <h4><i></i>AI 做了什么</h4>
+        <ul>
+          <li>视觉分割：街景中提取树冠、铺装、遮阳设施 → 遮荫系数</li>
+          <li>路径优化：以「累计热暴露」为目标函数的多目标最短路，而非最短距离</li>
+          <li>LLM：把数值结果改写成老人听得懂的一句话建议</li>
+        </ul>
+      </div>
+      <div class="mcard lim">
+        <h4><i></i>局限</h4>
+        <ul>
+          <li>热模型未用实测标定，绝对温度不可信，只有相对比较有意义</li>
+          <li>体感温度未纳入湿度、风速、个体生理差异</li>
+          <li>尚未做真实用户测试，路线收益是模型估计而非实测</li>
+        </ul>
+      </div>
+      <div class="mcard lim">
+        <h4><i></i>为什么仍然是它</h4>
+        <ul>
+          <li>问题足够具体：一段 400 米的路、一群走不快的人</li>
+          <li>AI 的位置不可替代：阴影识别无法靠人工标注覆盖全城</li>
+          <li>失败也能交付：名单和遮荫数据本身就是社区资产</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sci">
+      <div class="scih"><b>科学依据</b><span>公式是简化版，但每一项都对应可查证的公开研究</span></div>
+      <div class="scirow">
+        <div class="sciitem"><b>热应激指标</b><p>WBGT（ISO 7243）与 UTCI 是国际通用的户外热应激指标。本原型的「平均体感」是它们的简化代理。</p></div>
+        <div class="sciitem"><b>遮荫效应</b><p>美国环保署（EPA）实测：树荫下材料表面峰值温度比无遮荫低 11–25℃。模型中 shade 系数的量级来源于此。</p></div>
+        <div class="sciitem"><b>城市热制图</b><p>SOLWEIG 等模型已用街景几何 + 气象数据逐点计算平均辐射温度；Landsat 8/9 与 ECOSTRESS 提供地表温度产品。</p></div>
+        <div class="sciitem"><b>路径目标</b><p>以累计热暴露 ∫T·dt 最小化代替最短距离，是步行热暴露研究中的常用目标函数。</p></div>
+        <div class="sciitem"><b>现实先例</b><p>巴黎「清凉岛」地图与新加坡 Cooling Singapore 计划，都在把热舒适做成可查询、可规划的公共服务。</p></div>
+      </div>
+    </div>
+
+    <div class="plan">
+      <div class="step"><div class="d">NEXT · 2 周</div><div class="s">一个社区试点</div><p>选 1 个街道，采集 200 张街景，人工标注 50 张做验证集。</p></div>
+      <div class="step"><div class="d">NEXT · 4 周</div><div class="s">校准热模型</div><p>用 3 个固定测点的小时级温度，把误差压到 ±1.5℃ 以内。</p></div>
+      <div class="step"><div class="d">NEXT · 8 周</div><div class="s">真实用户测试</div><p>20 位老年住户，对照实验：走凉径 vs 走最短，测心率与主观热感。</p></div>
+      <div class="step"><div class="d">NEXT · Q1</div><div class="s">接入社区系统</div><p>与网格员走访系统打通，让名单直接落到工单。</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fin">
+      <div class="l">
+        <b>凉径 CoolPath</b> · 原型 v0.3 · 2026 年 11 月<br>
+        为 ATOX「AI for Climate 青年气候黑客松」构建。本页面全部数据为合成演示数据，用于说明交互与判断逻辑，不代表任何真实测量结果。
+      </div>
+      <div class="r">
+        单文件 HTML · 无构建 · 无追踪<br>
+        离线可用 · 键盘可操作
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- judge drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="dclose" id="dclose" type="button" aria-label="关闭">×</button>
+  <h3>评审速览</h3>
+  <div class="dd">这个原型对应手册第 08 节评审标准的五个维度。点击可关。</div>
+
+  <div class="jrow"><div class="jt"><span>30% · 气候相关性与潜在影响</span></div>
+    <p id="judgeP1">聚焦极端高温下的<strong>适应</strong>问题，用户是能指名道姓的：独居老人、骑手、婴幼儿家庭。影响路径可算：减少的户外热暴露分钟数 × 人数。</p></div>
+  <div class="jrow"><div class="jt"><span>20% · AI 应用与集成</span></div>
+    <p>三个环节各有其职：视觉分割产生遮荫数据、优化算法生成路径、LLM 负责把数值翻译成人话。第 04 节主动列出了模型失效场景。</p></div>
+  <div class="jrow"><div class="jt"><span>20% · 创新性与创造力</span></div>
+    <p id="judgeP3">不把热风险做成又一张热力图，而是做成<strong>一个决策</strong>：走哪条路、先敲谁的门。同一个模型服务两种角色。</p></div>
+  <div class="jrow"><div class="jt"><span>20% · 原型实现</span></div>
+    <p>单文件可运行，时间轴、角色、图层、路线均可交互，无需登录与网络。屏幕共享即可演示，3 分钟内讲完核心闭环。</p></div>
+  <div class="jrow"><div class="jt"><span>10% · 展示与路演</span></div>
+    <p>建议演示顺序：拖动时间轴到 20:00，让 AI 自己推翻推荐——「晚上八点，这 121 米不值得多走」。这是全篇最诚实的一秒。</p></div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- data ---------- */
+  var HOURS = [
+    {h:"14:00", air:34.8, bonus:9.6, boost:0.10},
+    {h:"16:00", air:33.6, bonus:7.0, boost:0.05},
+    {h:"18:00", air:31.2, bonus:4.2, boost:-0.06},
+    {h:"20:00", air:28.6, bonus:1.8, boost:-0.18}
+  ];
+
+  var ROUTE = {
+    a:{dist:399, shade:0.12, water:0, name:"最短路径"},
+    b:{dist:520, shade:0.71, water:2, name:"凉径"}
+  };
+
+  var PERSONA = {
+    elder:{speed:2.8, minGain:2.0},
+    rider:{speed:15, minGain:1.5},
+    parent:{speed:3.6, minGain:1.8}
+  };
+
+  var COPY = {
+    zh:{
+      tagNormal:"规则 + 模型混合生成",
+      tagOver:"已推翻：收益不足",
+      elder:function(c){ return "现在 "+c.air.toFixed(1)+"℃，正午地表最烫。建议走凉径：沿中街西段进入公园北径，全程树荫覆盖 71%，途中经过 2 个补水点。到院前在门口坐 5 分钟再进诊室。"; },
+      elderWhy:function(d,m,tm){ return "判断依据：树荫 71% / 补水点 2 / 多走 "+m+"m（+"+tm+"min）/ 体感差 "+d+"℃"; },
+      rider:function(c){ return "13:00–15:00 别接南街片区的单：那段 400 米没有一棵树，路面 62℃。凉径虽绕 "+EXTRA()+" 米，但一路树荫，等单时停在公园北门饮水点。"; },
+      riderWhy:function(d,m,tm){ return "判断依据：暴露时长最小化 / 补水点 2 / 绕行成本 "+tm+"min / 体感差 "+d+"℃"; },
+      parent:function(c){ return "南街东段无树荫、人行道仅 1.2 米宽，婴儿车通行困难且宝宝体温上升快。改走公园北径：东南角有坡道，全程无台阶，中途有座椅可停下喂水。"; },
+      parentWhy:function(d,m,tm){ return "判断依据：无台阶优先 / 树荫 71% / 多走 "+m+"m / 体感差 "+d+"℃"; },
+      night:function(d,m){ return "夜间体感差只剩 "+d+"℃，走最短路径更划算——凉径多绕的 "+m+" 米此刻换不来对应的收益。夜间注意反光与路面湿滑。"; },
+      nightWhy:function(d,th){ return "判断依据：体感差 "+d+"℃ < 阈值 "+th.toFixed(1)+"℃ → 推荐降级为最短路径（AI 主动推翻自己的推荐）"; },
+      start:{elder:"陈阿姨家", rider:"小吃街 · 取餐点", parent:"住宅 C · 2 号楼"},
+      dest:{elder:"目的地 · 社区医院", rider:"送单点 · 社区医院", parent:"目的地 · 儿科门诊"},
+      focus:{elder:"陈阿姨 · 看树荫是否连续、途中能否歇脚",
+             rider:"阿哲 · 看无遮荫路段的暴露时长",
+             parent:"林女士 · 看坡道、台阶与能停下的地方"},
+      sim:{
+        who:{elder:"陈阿姨 78", rider:"阿哲 26", parent:"林女士 34"},
+        lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ",
+             tip:"WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出",
+             done:"到达 · 医院门诊大厅", again:"再走一次"},
+        nav:{straight:"继续直行", left:"左转", right:"右转", now:"前方", arrive:"即将到达 · 社区医院",
+             mAfter:"米后", remain:"剩余"},
+        summary:function(m,s,su,pk){ return "步行 "+m+" 米 · 用时 "+s+" 秒 · 其中在太阳下 "+su
+          +" 秒。体感峰值 "+pk+"℃ —— 这就是这条路的代价。"; }
+      },
+      air:"气温 ", water:"处"
+    },
+    en:{
+      tagNormal:"RULE + MODEL",
+      tagOver:"OVERRIDDEN",
+      elder:function(c){ return "It is "+c.air.toFixed(1)+"℃ and the pavement is at its hottest. Take the cool path: west along Central Street into the park path — 71% tree cover the whole way, two water stops en route. Sit for five minutes at the clinic door before going in."; },
+      elderWhy:function(d,m,tm){ return "Basis: 71% shade / 2 water stops / +"+m+" m (+"+tm+" min) / felt-temp gap "+d+"℃"; },
+      rider:function(c){ return "Skip South Street orders between 13:00 and 15:00 — 400 metres without a single tree, road surface at 62℃. The cool path adds "+EXTRA()+" m but stays shaded; wait for orders at the park north-gate water point."; },
+      riderWhy:function(d,m,tm){ return "Basis: minimise exposure / 2 water stops / detour cost "+tm+" min / felt gap "+d+"℃"; },
+      parent:function(c){ return "South Street East has no shade and a 1.2 m pavement — hard for a stroller, and the baby heats up fast. Take the park path instead: ramp at the southeast corner, no steps, benches to stop and feed."; },
+      parentWhy:function(d,m,tm){ return "Basis: step-free priority / 71% shade / +"+m+" m / felt gap "+d+"℃"; },
+      night:function(d,m){ return "The felt-temperature gap is down to "+d+"℃ — the shortest path wins. The extra "+m+" metres no longer buy anything at this hour. Watch for glare and wet pavement after dark."; },
+      nightWhy:function(d,th){ return "Basis: gap "+d+"℃ < threshold "+th.toFixed(1)+"℃ → recommendation downgraded to the shortest path (the AI overrules itself)"; },
+      start:{elder:"Chen's home", rider:"Food street · pickup", parent:"Housing C · Bldg 2"},
+      dest:{elder:"Destination · clinic", rider:"Drop-off · clinic", parent:"Destination · paediatrics"},
+      focus:{elder:"Chen · watching shade continuity and places to rest",
+             rider:"Zhe · watching exposure time on the unshaded stretch",
+             parent:"Lin · watching ramps, steps and places to stop"},
+      sim:{
+        who:{elder:"Chen, 78", rider:"Zhe, 26", parent:"Lin, 34"},
+        lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ",
+             tip:"WASD to move · Space to jump · Shift to run · drag to look · ESC to exit",
+             done:"Arrived · clinic lobby", again:"Walk again"},
+        nav:{straight:"Keep straight", left:"Turn left", right:"Turn right", now:"Ahead:",
+             arrive:"Almost there · clinic", mAfter:"m then ", remain:"Left"},
+        summary:function(m,s,su,pk){ return m+" m walked in "+s+" s, "+su
+          +" s of it in direct sun. Peak felt temperature "+pk+"°C — that is the price of this route."; }
+      },
+      air:"AIR ", water:"stops"
+    }
+  };
+
+  function EXTRA(){ return ROUTE.b.dist - ROUTE.a.dist; }
+
+  /* ---------- i18n ---------- */
+  var DICT = {
+ "凉径 CoolPath": "CoolPath",
+ "演示数据 · 合成": "DEMO DATA · SYNTHETIC",
+ "评审速览": "JUDGE VIEW",
+ "进入模拟世界": "Enter the simulation",
+ "第三人称跟随 · WASD 移动 · 空格 跳跃 · Shift 快走": "Third-person chase cam · WASD to move · Space to jump · Shift to run",
+ "城市高温 · 气候适应与社区韧性": "URBAN HEAT · ADAPTATION & COMMUNITY RESILIENCE",
+ "同一起终点 · 体感温度降幅": "Same origin & destination · felt-temp drop",
+ "路径树荫覆盖率": "Tree-shade coverage of route",
+ "户": " households",
+ "今日需优先走访的高风险住户": "High-risk households to visit today",
+ "01 / 规划台": "01 / PLANNER",
+ "同一段路，两种走法": "One trip, two ways",
+ "深圳福田 · 园岭社区（合成街道网络）。拖动时间轴，看 AI 的推荐如何随气温改变判断。": "Futian, Shenzhen · Yuanling community (synthetic street network). Drag the timeline and watch the recommendation change with the temperature.",
+ "园岭社区 · 热暴露地图": "Yuanling community · heat exposure map",
+ "08:00 — 22:00 模拟": "08:00 — 22:00 SIM",
+ "热力": "Heat",
+ "遮荫": "Shade",
+ "补水点": "Water",
+ "老城住宅 A": "Old housing A",
+ "街心公园": "Central park",
+ "便民菜场": "Market",
+ "快递驿站": "Parcel hub",
+ "社区小学": "Primary school",
+ "社区医院": "Clinic",
+ "住宅 B": "Housing B",
+ "住宅 C": "Housing C",
+ "公园北径": "Park path",
+ "陈阿姨家": "Chen's home",
+ "目的地 · 社区医院": "Destination · clinic",
+ "地表温度": "SURFACE TEMP",
+ "低": "LOW",
+ "高": "HIGH",
+ "合成街道网络 · 非真实底图": "SYNTHETIC STREET NETWORK · NOT A REAL BASEMAP",
+ "路径严格沿街巷与公园步道生成，不穿越建筑体块；公园为可通行空间。": "Routes follow streets and park footpaths only — never through buildings. The park is walkable.",
+ "谁在走这条路": "Who is walking",
+ "选择角色": "SELECT PERSONA",
+ "角色": "PERSONA",
+ "陈阿姨 78": "Chen, 78",
+ "独居 · 高血压 · 步行 2.8km/h": "Lives alone · hypertension · 2.8 km/h",
+ "阿哲 26": "Zhe, 26",
+ "外卖骑手 · 日均户外 9h": "Delivery rider · 9 h outdoors daily",
+ "林女士 34": "Lin, 34",
+ "推婴儿车 · 带 8 月龄宝宝": "Stroller · 8-month-old baby",
+ "路线": "ROUTE",
+ "最短路径": "Shortest path",
+ "沿主干道 · 无遮荫": "Arterial road · no shade",
+ "体感": "Felt",
+ "· 树荫": "· Shade",
+ "凉径（推荐）": "Cool path (recommended)",
+ "穿公园北径 · 2 个补水点": "Park path · 2 water stops",
+ "距离": "Distance",
+ "步行用时": "Walk time",
+ "平均体感": "Avg felt",
+ "处": "stops",
+ "AI 出行建议": "AI ROUTE ADVICE",
+ "规则 + 模型混合生成": "RULE + MODEL",
+ "生成分享链接": "Share link",
+ "推送给家属": "Send to family",
+ "02 / 感知层": "02 / PERCEPTION",
+ "先让模型学会看阴影": "First, teach the model to see shade",
+ "真实部署时，树荫不是地图上的图层，而是要从街景影像里分割出来的东西。以下是三张街景切片的识别结果演示。": "In production, shade is not a map layer — it has to be segmented out of street-level imagery. Three street slices with detection overlays.",
+ "园岭中路 · 14:20": "Yuanling Rd · 14:20",
+ "树冠 .91": "canopy .91",
+ "沥青 .88": "asphalt .88",
+ "行道树 .86": "tree .86",
+ "遮荫得分": "SHADE SCORE",
+ "行道树 ×6": "street trees ×6",
+ "沥青路面": "asphalt",
+ "建筑阴影": "building shadow",
+ "显示 / 隐藏识别框": "Toggle detection boxes",
+ "南街东段 · 13:50": "South St E · 13:50",
+ "沥青 .94 · 62℃": "asphalt .94 · 62℃",
+ "遮阳棚 .41": "awning .41",
+ "未检出树冠": "NO CANOPY DETECTED",
+ "无行道树": "no canopy",
+ "临时遮阳棚": "awning",
+ "街心公园北径 · 15:05": "Park path · 15:05",
+ "乔冠层 .93": "canopy layer .93",
+ "透水砖 .81": "permeable paving .81",
+ "座椅 + 饮水点 .55": "bench + fountain .55",
+ "乔冠层": "canopy layer",
+ "透水砖": "permeable paving",
+ "座椅 / 饮水点": "bench / fountain",
+ "03 / 关怀视图": "03 / CARE VIEW",
+ "比路线更重要的，是名单": "The list matters more than the route",
+ "同一个热模型，反过来用：不是给人找路，而是给社区工作者排今天的敲门顺序。": "Same heat model, inverted: instead of routing a person, it ranks today's door-knocking order for community workers.",
+ "名单不是判决书：每一条都附了可执行的动作，和一句「为什么是它」。": "The list is not a verdict: every row carries one executable action and one line of why this one first.",
+ "风险分 = 楼栋热暴露（40%）+ 人口脆弱度（35%）+ 建筑散热条件（25%）。": "Risk = building heat exposure (40%) + population vulnerability (35%) + building thermal performance (25%).",
+ "人口数据仅使用社区已授权的匿名统计口径，不包含个人身份信息。": "Population data uses only community-authorised anonymised statistics — no personal identifiers.",
+ "今日走访优先级 · 11 月 14 日": "Today's visiting priority · 14 Nov",
+ "14:00 高温橙色预警": "14:00 HEAT ALERT (ORANGE)",
+ "楼栋": "Building",
+ "热风险": "Heat risk",
+ "独居老人": "Elderly",
+ "建议动作": "Action",
+ "老城住宅 A · 3 号楼": "Old housing A · Bldg 3",
+ "顶楼无隔热 · 西晒": "Top floor, no insulation · west sun",
+ "12 户": "12",
+ "14:00 前电话确认 + 送水": "Call + water delivery before 14:00",
+ "立即": "NOW",
+ "快递驿站 · 沿街": "Parcel hub · street front",
+ "骑手聚集 · 无遮荫": "Rider hotspot · no shade",
+ "开放冰柜 + 补水点": "Open ice chest + water point",
+ "社区小学 · 操场": "Primary school · yard",
+ "无乔冠层 · 硬质铺装": "No canopy · hard paving",
+ "户外课调至 10:00 前": "Move outdoor classes before 10:00",
+ "今日": "TODAY",
+ "住宅 C · 2 号楼": "Housing C · Bldg 2",
+ "低层通风差 · 老年住户多": "Poor low-floor ventilation · many elderly",
+ "7 户": "7",
+ "开放楼道降温点": "Open a cooling point in the lobby",
+ "便民菜场 · 西侧棚": "Market · west canopy",
+ "铁皮顶 · 午后人流高": "Tin roof · afternoon crowds",
+ "加遮阳网 · 延长早晚时段": "Shade netting · shift hours",
+ "本周": "THIS WK",
+ "04 / 方法与边界": "04 / METHODS & LIMITS",
+ "它能做什么，不能做什么": "What it can and cannot do",
+ "评审标准里权重最高的两条是「气候相关性」和「AI 集成」，但最容易失分的是把原型说成产品。所以这一节写得比前面都直白。": "The two heaviest criteria are climate relevance and AI integration. The easiest way to lose points is calling a prototype a product — so this section is blunter than the rest.",
+ "数据": "DATA",
+ "演示用合成街道网络 + 简化地表热模型：T = T_air + ΔT·(1−shade)": "Synthetic street network + simplified surface-heat model: T = T_air + ΔT·(1−shade)",
+ "真实部署接 Landsat 8/9 TIRS、ECOSTRESS 地表温度产品 + 街景影像 + 社区气象站": "Production feeds on Landsat 8/9 TIRS and ECOSTRESS land-surface temperature products, street imagery, community weather stations",
+ "人口脆弱度用社区授权的匿名统计口径": "Vulnerability from community-authorised anonymised statistics",
+ "AI 做了什么": "WHAT THE AI DOES",
+ "视觉分割：街景中提取树冠、铺装、遮阳设施 → 遮荫系数": "Vision: segment canopy, paving and awnings from street imagery → shade coefficient",
+ "路径优化：以「累计热暴露」为目标函数的多目标最短路，而非最短距离": "Optimisation: multi-objective shortest path on cumulative heat exposure, not on distance",
+ "LLM：把数值结果改写成老人听得懂的一句话建议": "LLM: rewrite the numbers into one sentence an 80-year-old can act on",
+ "局限": "LIMITS",
+ "热模型未用实测标定，绝对温度不可信，只有相对比较有意义": "Heat model is uncalibrated — absolute temperatures are not trustworthy, only relative comparisons are",
+ "体感温度未纳入湿度、风速、个体生理差异": "Felt temperature ignores humidity, wind and individual physiology",
+ "尚未做真实用户测试，路线收益是模型估计而非实测": "No user testing yet: route benefits are modelled, not measured",
+ "为什么仍然是它": "WHY THIS ANYWAY",
+ "问题足够具体：一段 400 米的路、一群走不快的人": "The problem is concrete: a 400-metre stretch, a group of people who cannot walk fast",
+ "AI 的位置不可替代：阴影识别无法靠人工标注覆盖全城": "AI is not replaceable here: shade detection cannot be hand-labelled city-wide",
+ 
+ "科学依据": "SCIENCE BASIS",
+ "公式是简化版，但每一项都对应可查证的公开研究": "The formula is simplified, but every part maps to published, verifiable research",
+ "热应激指标": "Thermal-stress indices",
+ "WBGT（ISO 7243）与 UTCI 是国际通用的户外热应激指标。本原型的「平均体感」是它们的简化代理。": "WBGT (ISO 7243) and UTCI are the standard outdoor heat-stress metrics. This prototype's \"avg felt\" is a simplified proxy for them.",
+ "遮荫效应": "Shade effect",
+ "美国环保署（EPA）实测：树荫下材料表面峰值温度比无遮荫低 11–25℃。模型中 shade 系数的量级来源于此。": "US EPA field data: shaded surfaces run 11–25°C cooler at peak than unshaded ones. The magnitude of the shade coefficient comes from this.",
+ "城市热制图": "Urban heat mapping",
+ "SOLWEIG 等模型已用街景几何 + 气象数据逐点计算平均辐射温度；Landsat 8/9 与 ECOSTRESS 提供地表温度产品。": "Models such as SOLWEIG compute mean radiant temperature point-by-point from street geometry and weather; Landsat 8/9 and ECOSTRESS provide land-surface temperature products.",
+ "路径目标": "Route objective",
+ "以累计热暴露 ∫T·dt 最小化代替最短距离，是步行热暴露研究中的常用目标函数。": "Minimising cumulative exposure ∫T·dt instead of distance is a common objective in pedestrian heat-exposure research.",
+ "现实先例": "Real-world precedent",
+ "巴黎「清凉岛」地图与新加坡 Cooling Singapore 计划，都在把热舒适做成可查询、可规划的公共服务。": "Paris's cool-islands map and Singapore's Cooling Singapore programme both turn thermal comfort into a queryable, plannable public service.",
+ "失败也能交付：名单和遮荫数据本身就是社区资产": "It delivers even if it fails: the list and the shade data are community assets",
+ "NEXT · 2 周": "NEXT · 2 WEEKS",
+ "一个社区试点": "One pilot community",
+ "选 1 个街道，采集 200 张街景，人工标注 50 张做验证集。": "Pick one subdistrict, capture 200 street images, hand-label 50 as a validation set.",
+ "NEXT · 4 周": "NEXT · 4 WEEKS",
+ "校准热模型": "Calibrate the heat model",
+ "用 3 个固定测点的小时级温度，把误差压到 ±1.5℃ 以内。": "Three fixed sensors, hourly readings, error under ±1.5℃.",
+ "NEXT · 8 周": "NEXT · 8 WEEKS",
+ "真实用户测试": "Real user testing",
+ "20 位老年住户，对照实验：走凉径 vs 走最短，测心率与主观热感。": "20 elderly residents, controlled trial: cool path vs shortest path, heart rate and subjective heat.",
+ "NEXT · Q1": "NEXT · Q1",
+ "接入社区系统": "Integrate with the community system",
+ "与网格员走访系统打通，让名单直接落到工单。": "Hook into the grid-worker system so the list becomes work orders.",
+ "· 原型 v0.3 · 2026 年 11 月": "· prototype v0.3 · Nov 2026",
+ "为 ATOX「AI for Climate 青年气候黑客松」构建。本页面全部数据为合成演示数据，用于说明交互与判断逻辑，不代表任何真实测量结果。": "Built for ATOX AI for Climate Youth Hackathon. All data on this page is synthetic demo data, used to illustrate interaction and decision logic — not a real measurement.",
+ "单文件 HTML · 无构建 · 无追踪": "SINGLE-FILE HTML · NO BUILD · NO TRACKING",
+ "离线可用 · 键盘可操作": "WORKS OFFLINE · KEYBOARD ACCESSIBLE",
+ "这个原型对应手册第 08 节评审标准的五个维度。点击可关。": "This prototype maps to the five judging criteria in section 08 of the handbook.",
+ "30% · 气候相关性与潜在影响": "30% · Climate relevance & potential impact",
+ "20% · AI 应用与集成": "20% · AI application & integration",
+ "三个环节各有其职：视觉分割产生遮荫数据、优化算法生成路径、LLM 负责把数值翻译成人话。第 04 节主动列出了模型失效场景。": "Three stages, three jobs: vision produces the shade data, the optimiser builds the route, the LLM turns numbers into plain language. Section 04 lists the model’s failure modes.",
+ "20% · 创新性与创造力": "20% · Innovation & creativity",
+ "20% · 原型实现": "20% · Prototype execution",
+ "10% · 展示与路演": "10% · Pitch & storytelling",
+ "单文件可运行，时间轴、角色、图层、路线均可交互，无需登录与网络。屏幕共享即可演示，3 分钟内讲完核心闭环。": "Runs from a single file. Timeline, personas, layers and routes are all interactive — no login, no network. Screenshare-ready; the core loop fits in three minutes.",
+ "建议演示顺序：拖动时间轴到 20:00，让 AI 自己推翻推荐——「晚上八点，这 121 米不值得多走」。这是全篇最诚实的一秒。": "Suggested demo: drag the timeline to 20:00 and let the AI overrule itself — “at 8pm those 121 metres aren't worth it.” It is the most honest second on this page."
+};
+  var HTML_EN = {
+ "heroH1": "The hottest <span class=\"hot\">300 meters</span>,<br>deserve a <em><span class=\"cool\">cooler path</span></em>",
+ "heroLead": "Extreme heat is the quietest killer in a city. It doesn't tear roofs off — it just keeps an older person on the way to the market, one afternoon at a time. <b>CoolPath</b> turns heat risk into an executable route: a <b>lowest-exposure walk</b> for vulnerable people, and a door-to-door list of who to check on first for community workers.",
+ "careP1": "A grid worker has about three hours on foot each day. CoolPath stacks building heat, time of day and population structure into a ranked visiting list — putting scarce capacity where something is most likely to happen.",
+ "judgeP1": "Focused on <strong>adaptation</strong> to extreme heat, with users you can name: elderly people living alone, delivery riders, families with infants. The impact path is computable: outdoor exposure minutes avoided × people reached.",
+ "judgeP3": "Not another heat map, but a <strong>decision</strong>: which path to take, whose door to knock on first. One model serving two roles."
+};
+  var HTML_IDS = ["heroH1","heroLead","careP1","judgeP1","judgeP3"];
+  var HTML_ZH = {};
+  var textNodes = [];
+  var LANG = (function(){
+    var m = location.search.match(/[?&]lang=(en|zh)/);
+    if(m) return m[1];
+    try { return localStorage.getItem("coolpath.lang") || "zh"; } catch(e){ return "zh"; }
+  })();
+
+  function collectTextNodes(){
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode:function(n){
+      if(!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if(n.parentNode && n.parentNode.closest && n.parentNode.closest("script,style,#heroH1,#heroLead,#careP1,#judgeP1,#judgeP3,#sim")) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }});
+    var n;
+    while((n = w.nextNode())){
+      textNodes.push({el:n, raw:n.nodeValue, key:n.nodeValue.replace(/\s+/g," ").trim()});
+    }
+    for(var i=0;i<HTML_IDS.length;i++){
+      var el = document.getElementById(HTML_IDS[i]);
+      if(el) HTML_ZH[HTML_IDS[i]] = el.innerHTML;
+    }
+  }
+
+  function applyStatic(lang){
+    for(var i=0;i<HTML_IDS.length;i++){
+      var id = HTML_IDS[i], el = document.getElementById(id);
+      if(!el) continue;
+      el.innerHTML = (lang === "en" && HTML_EN[id]) ? HTML_EN[id] : HTML_ZH[id];
+    }
+    for(var j=0;j<textNodes.length;j++){
+      var it = textNodes[j];
+      if(lang === "en"){
+        var en = DICT[it.key];
+        if(en === undefined) continue;
+        var m = it.raw.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        it.el.nodeValue = m[1] + en + m[3];
+      }else{
+        it.el.nodeValue = it.raw;
+      }
+    }
+  }
+
+  function setLang(lang){
+    LANG = lang;
+    document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+    document.title = lang === "en"
+      ? "CoolPath · a cooler way through the hottest 300 metres"
+      : "凉径 CoolPath · 让最热的三百米，有一条更凉的路";
+    applyStatic(lang);
+    var bEn = document.getElementById("langEn"), bZh = document.getElementById("langZh");
+    if(bEn && bZh){
+      bEn.classList.toggle("on", lang === "en");
+      bZh.classList.toggle("on", lang !== "en");
+    }
+    try { localStorage.setItem("coolpath.lang", lang); } catch(e){}
+    if(typeof SIM !== "undefined" && SIM.isOpen()) SIM.labels();
+    render();
+  }
+
+  var state = {hour:0, persona:"elder", route:"b", layers:{heat:true, shade:true, water:false}};
+  /* 支持 ?p=rider|parent 直链，方便演示直接跳到某个角色 */
+  (function(){
+    var m = location.search.match(/[?&]p=(elder|rider|parent)/);
+    if(m) state.persona = m[1];
+    var h = location.search.match(/[?&]h=(\d)/);
+    if(h) state.hour = Math.max(0, Math.min(3, parseInt(h[1],10)));
+  })();
+
+  /* ---------- seeded random ---------- */
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  var rnd = mulberry32(20261114);
+
+  var TREES = [];
+  (function(){
+    var i;
+    for(i=0;i<22;i++){
+      TREES.push({x:455+rnd()*180, y:132+rnd()*160, r:13+rnd()*8, park:true});
+    }
+    var spots = [[120,292],[160,292],[300,292],[340,292],[380,292],[500,292],[540,292],
+                 [120,126],[260,126],[320,126],[520,126],[560,126],
+                 [430,400],[440,450],[176,360],[176,450],[656,180],[656,240],[656,400],[656,450]];
+    for(i=0;i<spots.length;i++){
+      TREES.push({x:spots[i][0], y:spots[i][1], r:12+rnd()*7, park:false});
+    }
+  })();
+
+  var WATER = [
+    {x:300,y:284,n:"中街饮水点"},
+    {x:560,y:196,n:"公园北门饮水点"},
+    {x:620,y:470,n:"医院门厅"}
+  ];
+
+  var ROADS = [
+    ["h",110,30,785],["h",310,30,785],["h",500,30,785],
+    ["v",180,30,575],["v",430,30,575],["v",660,30,575]
+  ];
+
+  function distToRoad(x,y){
+    var m = 999;
+    for(var i=0;i<ROADS.length;i++){
+      var r = ROADS[i];
+      var d = r[0]==="h" ? Math.abs(y-r[1]) : Math.abs(x-r[1]);
+      if(x>=r[2]-10 && x<=r[3]+10 && y>=20 && y<=580) m = Math.min(m,d);
+    }
+    return m;
+  }
+  function inPark(x,y){ return x>446 && x<646 && y>124 && y<304; }
+
+  /* ---------- color ---------- */
+  function hex(c){ return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)]; }
+  var C1 = hex("#2E8B78"), C2 = hex("#FFC15E"), C3 = hex("#FF4B2B");
+  function lerp(a,b,t){ return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function heatColor(t){
+    var c = t<0.5 ? lerp(C1,C2,t/0.5) : lerp(C2,C3,(t-0.5)/0.5);
+    return "rgb("+c[0]+","+c[1]+","+c[2]+")";
+  }
+
+  /* ---------- build heat ---------- */
+  var NS = "http://www.w3.org/2000/svg";
+  var heatLayer = document.getElementById("heatLayer");
+  var shadeLayer = document.getElementById("shadeLayer");
+  var treeLayer = document.getElementById("treeLayer");
+  var waterLayer = document.getElementById("waterLayer");
+
+  var CELLS = [];
+  (function(){
+    var cell = 50, cols = 16, rows = 12;
+    for(var gy=0; gy<rows; gy++){
+      for(var gx=0; gx<cols; gx++){
+        CELLS.push({x:gx*cell+25, y:gy*cell+25, el:null});
+      }
+    }
+  })();
+
+  function drawHeat(){
+    var cfg = HOURS[state.hour];
+    for(var i=0;i<CELLS.length;i++){
+      var c = CELLS[i];
+      var shade = 0;
+      for(var t=0;t<TREES.length;t++){
+        var tr = TREES[t];
+        var d = Math.hypot(c.x-tr.x, c.y-tr.y);
+        if(d < tr.r*3.6) shade += (1 - d/(tr.r*3.6)) * 0.44;
+      }
+      if(inPark(c.x,c.y)) shade += 0.5;
+      shade = Math.min(1, shade);
+      var asphalt = distToRoad(c.x,c.y) < 15 ? 1 : 0.5;
+      var v = 0.08 + 0.86*asphalt*(1-shade*shade) + cfg.boost;
+      v = Math.max(0.02, Math.min(1, v));
+
+      if(!c.el){
+        c.el = document.createElementNS(NS,"circle");
+        c.el.setAttribute("cx",c.x); c.el.setAttribute("cy",c.y);
+        c.el.setAttribute("r", 37);
+        heatLayer.appendChild(c.el);
+      }
+      c.el.setAttribute("fill", heatColor(v));
+      c.el.setAttribute("opacity", (0.16 + v*0.30).toFixed(2));
+      c.el.dataset.v = v;
+    }
+  }
+
+  function drawTrees(){
+    treeLayer.innerHTML = "";
+    for(var i=0;i<TREES.length;i++){
+      var t = TREES[i];
+      var g = document.createElementNS(NS,"g");
+      var c = document.createElementNS(NS,"circle");
+      c.setAttribute("cx",t.x); c.setAttribute("cy",t.y); c.setAttribute("r",t.r);
+      c.setAttribute("fill", t.park ? "rgba(46,124,102,.55)" : "rgba(52,110,92,.5)");
+      c.setAttribute("stroke","rgba(95,227,192,.20)");
+      c.setAttribute("stroke-width",".8");
+      g.appendChild(c);
+      treeLayer.appendChild(g);
+    }
+  }
+
+  function drawShade(){
+    shadeLayer.innerHTML = "";
+    for(var i=0;i<TREES.length;i++){
+      var t = TREES[i];
+      var c = document.createElementNS(NS,"circle");
+      c.setAttribute("cx",t.x); c.setAttribute("cy",t.y);
+      c.setAttribute("r", t.r*2.5);
+      c.setAttribute("fill","rgba(95,227,192,.07)");
+      c.setAttribute("stroke","rgba(95,227,192,.22)");
+      c.setAttribute("stroke-width","1");
+      c.setAttribute("stroke-dasharray","4 5");
+      shadeLayer.appendChild(c);
+    }
+  }
+
+  function drawWater(){
+    waterLayer.innerHTML = "";
+    for(var i=0;i<WATER.length;i++){
+      var w = WATER[i];
+      var g = document.createElementNS(NS,"g");
+      var halo = document.createElementNS(NS,"circle");
+      halo.setAttribute("cx",w.x); halo.setAttribute("cy",w.y); halo.setAttribute("r",13);
+      halo.setAttribute("fill","#5FE3C0"); halo.setAttribute("opacity",".22");
+      halo.setAttribute("filter","url(#pinGlow)");
+      var c = document.createElementNS(NS,"circle");
+      c.setAttribute("cx",w.x); c.setAttribute("cy",w.y); c.setAttribute("r",5.5);
+      c.setAttribute("fill","#0A0E0D"); c.setAttribute("stroke","#5FE3C0"); c.setAttribute("stroke-width","2");
+      var dot = document.createElementNS(NS,"circle");
+      dot.setAttribute("cx",w.x); dot.setAttribute("cy",w.y); dot.setAttribute("r",1.8);
+      dot.setAttribute("fill","#5FE3C0");
+      g.appendChild(halo); g.appendChild(c); g.appendChild(dot);
+      waterLayer.appendChild(g);
+    }
+  }
+
+  /* ---------- route lengths ---------- */
+  var routeEls = {a:document.getElementById("routeA"), b:document.getElementById("routeB")};
+  var SCALE = 0.553;
+  ["a","b"].forEach(function(k){
+    var len = routeEls[k].getTotalLength() * SCALE;
+    ROUTE[k].dist = Math.round(len);
+  });
+  ROUTE.b.dist = Math.max(ROUTE.b.dist, ROUTE.a.dist + 110);
+
+  /* ---------- render ---------- */
+  function tempOf(k){
+    var cfg = HOURS[state.hour];
+    return cfg.air + cfg.bonus * (1 - ROUTE[k].shade);
+  }
+  function timeOf(k){
+    var speed = PERSONA[state.persona].speed * 1000 / 60; // m per min
+    return ROUTE[k].dist / speed;
+  }
+
+  function setRoute(k){
+    state.route = k;
+    document.querySelectorAll(".rt").forEach(function(el){
+      el.classList.toggle("on", el.dataset.r === k);
+    });
+    routeEls.a.style.opacity = (k==="a") ? "1" : ".28";
+    routeEls.b.style.opacity = (k==="b") ? "1" : ".28";
+    routeEls.a.style.strokeWidth = (k==="a") ? "4.5" : "3";
+    routeEls.b.style.strokeWidth = (k==="b") ? "4.5" : "3";
+    render();
+  }
+
+  /* ---------- persona focus layer ---------- */
+  var personaLayer = document.getElementById("personaLayer");
+  function mk(tag, attrs){
+    var e = document.createElementNS(NS, tag);
+    for(var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function focusChip(str, warm){
+    document.getElementById("pfocusText").textContent = str;
+    document.getElementById("pfocus").classList.toggle("warm", !!warm);
+  }
+  function drawPersona(){
+    personaLayer.innerHTML = "";
+    var L = COPY[LANG].focus, p = state.persona;
+    var cL = COPY[LANG];
+    var sl = document.getElementById("startLabel"), dl = document.getElementById("destLabel");
+    if(sl) sl.textContent = cL.start[p];
+    if(dl) dl.textContent = cL.dest[p];
+    if(p === "rider"){
+      /* 最短路径的中街段：无遮荫、路面最烫 */
+      personaLayer.appendChild(mk("path",{d:"M185 305 L597 305",fill:"none",
+        stroke:"rgba(255,91,61,.20)","stroke-width":17,"stroke-linecap":"round"}));
+      personaLayer.appendChild(mk("path",{d:"M185 305 L597 305",fill:"none",
+        stroke:"rgba(255,91,61,.8)","stroke-width":2,"stroke-dasharray":"2 8","stroke-linecap":"round"}));
+      focusChip(L.rider, true);
+    }else if(p === "parent"){
+      /* 三个转角：坡道、无台阶、可停下 */
+      [[185,505],[185,315],[435,315]].forEach(function(pt){
+        personaLayer.appendChild(mk("circle",{cx:pt[0],cy:pt[1],r:15,fill:"none",
+          stroke:"rgba(127,211,255,.85)","stroke-width":1.6,"stroke-dasharray":"4 4"}));
+      });
+      focusChip(L.parent, false);
+    }else{
+      /* 公园北径：连续树荫 + 可歇脚点 */
+      personaLayer.appendChild(mk("path",{d:"M435 215 L625 215",fill:"none",
+        stroke:"rgba(95,227,192,.20)","stroke-width":17,"stroke-linecap":"round"}));
+      personaLayer.appendChild(mk("path",{d:"M446 215 L646 215",fill:"none",
+        stroke:"rgba(95,227,192,.85)","stroke-width":2,"stroke-dasharray":"2 8","stroke-linecap":"round"}));
+      personaLayer.appendChild(mk("circle",{cx:530,cy:215,r:16,fill:"none",
+        stroke:"rgba(95,227,192,.55)","stroke-width":1.4,"stroke-dasharray":"4 5"}));
+      focusChip(L.elder, false);
+    }
+  }
+
+  function render(){
+    var cfg = HOURS[state.hour];
+    var p = PERSONA[state.persona];
+    var tA = tempOf("a"), tB = tempOf("b");
+    var dA = timeOf("a"), dB = timeOf("b");
+
+    document.getElementById("airTemp").textContent = COPY[LANG].air + cfg.air.toFixed(1) + "℃";
+    document.getElementById("nowTime").textContent = cfg.h;
+
+    document.getElementById("tempA").textContent = tA.toFixed(1) + "℃";
+    document.getElementById("tempB").textContent = tB.toFixed(1) + "℃";
+    document.getElementById("shadeA").textContent = Math.round(ROUTE.a.shade*100) + "%";
+    document.getElementById("shadeB").textContent = Math.round(ROUTE.b.shade*100) + "%";
+
+    document.getElementById("barA").style.width = Math.min(100, 40 + tA) + "%";
+    document.getElementById("barB").style.width = Math.min(100, 40 + tB) + "%";
+
+    var cur = state.route === "a" ? "a" : "b";
+    document.getElementById("mdist").innerHTML = ROUTE[cur].dist + "<u>m</u>";
+    document.getElementById("mtime").innerHTML = timeOf(cur).toFixed(1) + "<u>min</u>";
+    document.getElementById("mfeel").innerHTML = tempOf(cur).toFixed(1) + "<u>℃</u>";
+    document.getElementById("mwater").innerHTML = ROUTE[cur].water + "<u>" + COPY[LANG].water + "</u>";
+
+    var L = COPY[LANG];
+    var diff = tA - tB;
+    var worth = diff >= p.minGain;
+    var advEl = document.getElementById("advText");
+    var whyEl = document.getElementById("advWhy");
+    var tagEl = document.getElementById("advTag");
+    var extraM = ROUTE.b.dist - ROUTE.a.dist;
+    var extraMin = (extraM / (p.speed*1000/60)).toFixed(1);
+
+    if(!worth){
+      advEl.textContent = L.night(diff.toFixed(1), extraM);
+      whyEl.textContent = L.nightWhy(diff.toFixed(1), p.minGain);
+      tagEl.textContent = L.tagOver;
+      tagEl.style.color = "var(--amber)";
+      tagEl.style.borderColor = "rgba(255,164,92,.35)";
+    }else{
+      advEl.textContent = L[state.persona](cfg);
+      whyEl.textContent = L[state.persona + "Why"](diff.toFixed(1), extraM, extraMin);
+      tagEl.textContent = L.tagNormal;
+      tagEl.style.color = "";
+      tagEl.style.borderColor = "";
+    }
+
+    // hero numbers follow the demo
+    var heroEl = document.getElementById("h1n");
+    heroEl.innerHTML = diff.toFixed(1) + "<span>℃</span>";
+
+    drawPersona();
+  }
+
+  /* ---------- events ---------- */
+  document.getElementById("hour").addEventListener("input", function(e){
+    state.hour = parseInt(e.target.value,10);
+    drawHeat();
+    render();
+  });
+
+  document.querySelectorAll(".pcard").forEach(function(el){
+    el.classList.toggle("on", el.dataset.p === state.persona);
+    el.addEventListener("click", function(){
+      document.querySelectorAll(".pcard").forEach(function(x){ x.classList.remove("on"); });
+      el.classList.add("on");
+      state.persona = el.dataset.p;
+      render();
+    });
+  });
+
+  document.querySelectorAll(".rt").forEach(function(el){
+    el.addEventListener("click", function(){ setRoute(el.dataset.r); });
+  });
+
+  document.querySelectorAll(".chip").forEach(function(el){
+    el.addEventListener("click", function(){
+      var k = el.dataset.layer;
+      state.layers[k] = !state.layers[k];
+      el.classList.toggle("on", state.layers[k]);
+      if(k==="heat") heatLayer.style.opacity = state.layers[k] ? ".92" : "0";
+      if(k==="shade") shadeLayer.setAttribute("opacity", state.layers[k] ? "1" : "0");
+      if(k==="water") waterLayer.style.opacity = state.layers[k] ? "1" : "0";
+    });
+  });
+
+  document.querySelectorAll(".cvbtn").forEach(function(el){
+    el.addEventListener("click", function(){
+      el.closest(".cvcard").classList.toggle("shown");
+    });
+  });
+
+  document.getElementById("langEn").addEventListener("click", function(){ setLang("en"); });
+  document.getElementById("langZh").addEventListener("click", function(){ setLang("zh"); });
+
+
+  /* 窗口尺寸变化后重新校准双语锁定高度 */
+  var _rsT;
+  window.addEventListener("resize", function(){
+    clearTimeout(_rsT);
+    _rsT = setTimeout(function(){ stabilizeLayout(); render(); }, 180);
+  });
+
+  var scrim = document.getElementById("scrim"), drawer = document.getElementById("drawer");
+  function openDrawer(){ drawer.classList.add("on"); scrim.classList.add("on"); drawer.setAttribute("aria-hidden","false"); }
+  function closeDrawer(){ drawer.classList.remove("on"); scrim.classList.remove("on"); drawer.setAttribute("aria-hidden","true"); }
+  document.getElementById("judgeBtn").addEventListener("click", openDrawer);
+  document.getElementById("dclose").addEventListener("click", closeDrawer);
+  scrim.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeDrawer(); });
+
+  // reveal
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, {threshold:0.08});
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  /* ---------- layout stabilizer ----------
+     分别测量中/英两种文案下各文本容器的高度，取最大值锁定，
+     保证切换语言时图形与区块位置零位移。 */
+  var STAB_SELS = [".lead", ".sdesc", ".hstat .k", ".mapcaption", ".advice",
+                   ".pcard .pd", ".rt .rsub", ".rt .rtemp", ".cvbody", ".careintro",
+                   ".sciitem", ".scih span", ".mcard", ".step p", ".fin .l", ".fin .r", ".metric .k"];
+  function stabSnap(){
+    var out = STAB_SELS.map(function(sel){
+      var a = [];
+      document.querySelectorAll(sel).forEach(function(e){ a.push(Math.ceil(e.getBoundingClientRect().height)); });
+      return a;
+    });
+    var rows = [];
+    document.querySelectorAll(".risk tr").forEach(function(tr){ rows.push(Math.ceil(tr.getBoundingClientRect().height)); });
+    out.push(rows);
+    return out;
+  }
+  function stabMeasure(lang){
+    applyStatic(lang);
+    /* 建议卡高度按「三种角色文案取最长」测量，避免运行时切换角色再引起位移 */
+    var at = document.getElementById("advText"), aw = document.getElementById("advWhy");
+    var advBox = at.closest(".advice"), best = 0;
+    ["elder","rider","parent"].forEach(function(k){
+      at.textContent = COPY[lang][k](HOURS[0]);
+      aw.textContent = COPY[lang][k+"Why"]("5.6","121","2.6");
+      best = Math.max(best, Math.ceil(advBox.getBoundingClientRect().height));
+    });
+    var s = stabSnap();
+    var ai = STAB_SELS.indexOf(".advice");
+    if(s[ai][0] < best) s[ai][0] = best + 12; /* 余量：夜间推翻文案等 */
+    return s;
+  }
+  function stabilizeLayout(){
+    var zh = stabMeasure("zh"), en = stabMeasure("en");
+    STAB_SELS.forEach(function(sel, i){
+      document.querySelectorAll(sel).forEach(function(e, j){
+        var h = Math.max(zh[i][j] || 0, en[i][j] || 0);
+        if(h) e.style.minHeight = h + "px";
+      });
+    });
+    document.querySelectorAll(".risk tr").forEach(function(tr, j){
+      var h = Math.max(zh[STAB_SELS.length][j] || 0, en[STAB_SELS.length][j] || 0);
+      if(h) tr.style.height = h + "px";
+    });
+    applyStatic(LANG);
+  }
+
+  /* ---------- init ---------- */
+  collectTextNodes();
+  stabilizeLayout();
+  setLang(LANG);
+  drawHeat();
+  drawTrees();
+  drawShade();
+  drawWater();
+  setRoute("b");
+  setTimeout(function(){ document.querySelectorAll(".cvcard").forEach(function(c,i){
+    setTimeout(function(){ c.classList.add("shown"); }, 300 + i*260);
+  }); }, 900);
+  /* ---------- first-person simulation world ---------- */
+  var SIM = (function(){
+    /* ============================================================
+       第三人称街区模拟 3.0
+       · 逐列贴图射线投射（墙面）
+       · 真三维体块渲染：树 / 饮水点 / 围栏 / 小区门 / 校门 / 医院门廊
+       · 骨骼角色（世界坐标驱动，任意视角都成立）
+       · 天柱信标：高于全城所有建筑
+       ============================================================ */
+    var W = 20, H = 15, MPT = 22;
+    var EYE = 0.075, CAM_BACK = 0.34, FOV = 66 * Math.PI / 180;
+    var START = {x:2.5, y:12.5};
+    var GOAL  = {x:13.0, y:8.90};      /* 医院门诊大厅内（玻璃门内侧 2 m） */
+    var WPTS  = [[4.5,12.5],[4.5,7.5],[10.5,7.5],[10.5,5.5],[15.5,5.5],[15.5,9.5],[13.0,9.45]];
+    var SPEED = {elder:1.45, rider:3.3, parent:1.75};
+    var BEAM_H = 1.62;                 /* 天柱 ≈ 36 m，全城最高楼 18.5 m */
+
+    var grid = [], bh = [], bt = [], bid = [], shd = [];
+    var SOL = [], SPH = [], FENCES = [];
+    var cv = null, ctx = null, off = null, offctx = null, offimg = null, gw = 0, gh = 0;
+    var Wcv = 0, Hcv = 0, focal = 900, hz = 0, gsf = 3, CSW = 3;
+    var open = false, raf = 0, last = 0, hudT = 0, keys = {}, drag = null;
+    var done = false, sunSec = 0, peak = 0, walked = 0, elapsed = 0, wpIdx = 0;
+    var zbd = [], zbh = [];
+    var cam = {x:0, y:0, back:CAM_BACK};
+    var pl = {x:START.x, y:START.y, a:0, pitch:-0.06, z:0, vz:0, ph:0};
+    var camA = 0;
+
+    function camY(){ return EYE + pl.z; }
+
+    /* ---------------- 基础工具 ---------------- */
+    function rnd(seed){
+      var s = seed % 2147483647; if(s <= 0) s += 2147483646;
+      return function(){ s = s * 16807 % 2147483647; return (s - 1) / 2147483646; };
+    }
+    function hash2(x, y){
+      var n = (x * 73856093) ^ (y * 19349663);
+      n = (n ^ (n >>> 13)) * 1274126177;
+      return Math.abs(n) % 100000;
+    }
+    function C(h){ return [parseInt(h.substr(1,2),16), parseInt(h.substr(3,2),16), parseInt(h.substr(5,2),16)]; }
+    var FOG = [226, 202, 170];
+    function mix(c, d){
+      var t = 1 - Math.exp(-d/30);
+      if(t > 0.95) t = 0.95;
+      return [c[0]+(FOG[0]-c[0])*t, c[1]+(FOG[1]-c[1])*t, c[2]+(FOG[2]-c[2])*t];
+    }
+    function css(c, a){
+      var r = c[0]<0?0:(c[0]>255?255:c[0]|0);
+      var g = c[1]<0?0:(c[1]>255?255:c[1]|0);
+      var b = c[2]<0?0:(c[2]>255?255:c[2]|0);
+      return "rgba(" + r + "," + g + "," + b + "," + (a===undefined?1:a) + ")";
+    }
+    var SUNV = (function(){ var v=[-0.46,-0.40,0.79], L=Math.hypot(v[0],v[1],v[2]); return [v[0]/L,v[1]/L,v[2]/L]; })();
+
+    /* ---------------- 地图 ---------------- */
+    function build(){
+      grid = [];
+      for(var y=0;y<H;y++){ var r=[]; for(var x=0;x<W;x++) r.push("#"); grid.push(r); }
+      function rect(x0,y0,x1,y1,ch){
+        for(var y=y0;y<=y1;y++) for(var x=x0;x<=x1;x++)
+          if(y>=0 && y<H && x>=0 && x<W) grid[y][x] = ch;
+      }
+      rect(0,12,W-1,12,".");        /* 南街 */
+      rect(0,7,W-1,7,".");          /* 中街 */
+      rect(4,7,4,12,".");           /* 西纵街 */
+      rect(10,5,10,7,"s");          /* 公园西入口步道 */
+      rect(10,5,16,5,"s");          /* 公园北径 */
+      rect(15,8,15,9,".");          /* 医院东侧街（不穿公园） */
+      rect(11,9,15,9,".");          /* 医院前场 */
+      rect(11,3,16,4,"g");          /* 公园草坪 */
+      rect(11,6,16,6,"g");
+      rect(1,9,3,9,"c");            /* 老小区中庭 */
+      rect(2,10,3,10,"c");          /* 小区通道 */
+      rect(1,11,3,11,"c");          /* 小区入口广场 */
+      rect(16,10,18,11,"c");        /* 小学校园 */
+
+      bh = []; bt = []; bid = []; shd = [];
+      for(var y=0;y<H;y++){
+        var rb=[], rt=[], ri=[], rs=[];
+        for(var x=0;x<W;x++){ rb.push(0); rt.push(-1); ri.push(0); rs.push(1); }
+        bh.push(rb); bt.push(rt); bid.push(ri); shd.push(rs);
+      }
+      for(var y=0;y<H;y++) for(var x=0;x<W;x++){
+        if(grid[y][x] !== "#") continue;
+        var blk = hash2(x >> 1, y >> 1);           /* 2×2 格一栋楼 */
+        var hb = blk % 11;
+        var t = 0, hh = 0.56 + (hb % 4) * 0.05;
+        if(y === 8 && x >= 11 && x <= 15){ t = 4; hh = 0.52; }          /* 社区医院 */
+        else if(y === 11 && x >= 5 && x <= 9){ t = 1; hh = 0.6; }       /* 沿街商铺 */
+        else if(y === 6 && x >= 5 && x <= 9){ t = 1; hh = 0.58; }
+        else if(y <= 2){ t = 2; hh = 0.74 + (hb % 4) * 0.045; }         /* 北侧公寓 */
+        else if(y === 8 && x <= 3){ t = 5; hh = 0.80; }                 /* 住宅C · 2号楼（6层板楼） */
+        else if(y === 10 && x === 1){ t = 6; hh = 0.66; }               /* 住宅C · 3号楼（5层） */
+        else if(x === 0 && y >= 9 && y <= 11){ t = 7; hh = 0.72; }      /* 住宅C · 西侧老楼 */
+        else if(hb % 8 === 0){ t = 3; hh = 0.5; }                       /* 砖楼 */
+        bh[y][x] = hh; bt[y][x] = t; bid[y][x] = blk;
+      }
+      for(var y=0;y<H;y++) for(var x=0;x<W;x++){
+        var c = grid[y][x];
+        if(c === "#"){ shd[y][x] = 1; continue; }
+        var s = 1;
+        if(c === "g") s = 0.78;
+        else if(c === "s") s = 0.6;
+        else if(c === "c") s = 0.9;
+        else {
+          var near = 0;
+          if(y>0 && grid[y-1][x]==="#") near++;
+          if(y<H-1 && grid[y+1][x]==="#") near++;
+          if(x>0 && grid[y][x-1]==="#") near++;
+          if(x<W-1 && grid[y][x+1]==="#") near++;
+          s = near ? 0.88 : 1.04;
+        }
+        shd[y][x] = s;
+      }
+      texCache = {};
+      buildProps();
+    }
+    function cellAt(x,y){
+      var cx = Math.floor(x), cy = Math.floor(y);
+      if(cx<0||cy<0||cx>=W||cy>=H) return "#";
+      return grid[cy][cx];
+    }
+    function blockedAt(x,y,r){
+      r = (r === undefined) ? 0.024 : r;
+      if(cellAt(x-r,y-r)==="#" || cellAt(x+r,y-r)==="#" ||
+         cellAt(x-r,y+r)==="#" || cellAt(x+r,y+r)==="#") return true;
+      return hitFence(x, y, 0.032);
+    }
+    function hitFence(x, y, r){
+      for(var i=0;i<FENCES.length;i++){
+        var f = FENCES[i];
+        var vx = f[2]-f[0], vy = f[3]-f[1];
+        var wx = x-f[0], wy = y-f[1];
+        var L2 = vx*vx + vy*vy;
+        var t = L2 ? (wx*vx + wy*vy)/L2 : 0;
+        if(t < 0) t = 0; else if(t > 1) t = 1;
+        var px = f[0] + vx*t - x, py = f[1] + vy*t - y;
+        if(px*px + py*py < r*r) return true;
+      }
+      return false;
+    }
+    function sunFactor(){
+      var c = cellAt(pl.x, pl.y);
+      return c === "." ? 1 : (c === "s" ? 0.3 : (c === "c" ? 0.72 : 0.22));
+    }
+    function felt(){
+      var cfg = HOURS[state.hour];
+      var rate = state.persona === "elder" ? 1.35 : (state.persona === "rider" ? 1 : 1.15);
+      return cfg.air + cfg.bonus*sunFactor() + Math.min(3.4, sunSec*0.075*rate);
+    }
+
+    /* ---------------- 三维道具 ---------------- */
+    function box(x, y, z0, z1, hw, hd, rot, col, cx, cy){
+      SOL.push({x:x, y:y, z0:z0, z1:z1, hw:hw, hd:hd, rot:rot, c:col, cx:cx, cy:cy});
+    }
+    function ball(x, y, z, r, col, cx, cy){
+      SPH.push({x:x, y:y, z:z, r:r, c:col, cx:cx, cy:cy});
+    }
+
+    function addTree(x, y, seed){
+      var R = rnd(seed);
+      var th = 0.22 + R()*0.06;
+      var tw = 0.0085 + R()*0.0035;
+      box(x, y, 0, th + 0.05, tw, tw, R()*3.14, C("#5C4433"));
+      var n = 3;
+      for(var i=0;i<n;i++){
+        var a = R()*6.283, rr = 0.012 + R()*0.022;
+        ball(x + Math.cos(a)*rr, y + Math.sin(a)*rr,
+             th + 0.008 + R()*0.028, 0.042 + R()*0.024,
+             C(i === 1 ? "#4E8259" : "#3E6E4C"));
+      }
+      ball(x, y, th + 0.026, 0.062, C("#447A52"));
+    }
+    function addFountain(x, y){
+      var st = C("#CFD4CF"), mt = C("#8E9A96");
+      box(x, y, 0, 0.012, 0.026, 0.026, 0, mt);
+      box(x, y, 0.012, 0.050, 0.013, 0.013, 0, st);
+      box(x, y, 0.050, 0.058, 0.030, 0.024, 0, st);
+      box(x, y, 0.058, 0.064, 0.009, 0.007, 0, mt);
+      box(x, y+0.013, 0.054, 0.057, 0.018, 0.008, 0, C("#63E7C4"));
+      ball(x, y+0.013, 0.052, 0.004, C("#9BF6DD"));
+    }
+    function addBench(x, y, rot){
+      var wd = C("#B08E62"), lg = C("#4B5250");
+      var cs = Math.cos(rot), sn = Math.sin(rot);
+      box(x, y, 0.020, 0.027, 0.052, 0.013, rot, wd);
+      box(x - cs*0.052, y - sn*0.052, 0.027, 0.050, 0.004, 0.013, rot, wd);
+      box(x + cs*0.038, y + sn*0.038, 0, 0.020, 0.004, 0.011, rot, lg);
+      box(x - cs*0.038, y - sn*0.038, 0, 0.020, 0.004, 0.011, rot, lg);
+    }
+    function addLamp(x, y){
+      box(x, y, 0, 0.235, 0.0032, 0.0032, 0, C("#3B4341"));
+      box(x, y, 0.235, 0.247, 0.021, 0.011, 0, C("#48504E"));
+      ball(x + 0.012, y, 0.232, 0.0065, C("#FFEDBE"));
+    }
+    function addBin(x, y){
+      box(x, y, 0, 0.034, 0.010, 0.010, 0.4, C("#586A60"));
+      box(x, y, 0.034, 0.039, 0.012, 0.012, 0.4, C("#43524A"));
+    }
+    function addPlanter(x, y, w, d){
+      box(x, y, 0, 0.014, w, d, 0, C("#A9A296"));
+      box(x, y, 0.014, 0.018, w*0.92, d*0.92, 0, C("#5B4A38"));
+      ball(x, y, 0.018 + Math.min(w,d)*0.5, Math.min(w,d)*0.95, C("#4C7C56"));
+    }
+    function addFence(x1, y1, x2, y2){
+      FENCES.push([x1, y1, x2, y2]);
+      var len = Math.hypot(x2-x1, y2-y1);
+      if(len < 0.05) return;
+      var rot = Math.atan2(y2-y1, x2-x1);
+      var mx = (x1+x2)/2, my = (y1+y2)/2;
+      var c = C("#5A6663");
+      box(mx, my, 0.046, 0.051, len/2, 0.0022, rot, c);
+      box(mx, my, 0.012, 0.017, len/2, 0.0022, rot, c);
+      var n = Math.max(3, Math.round(len/0.16));
+      for(var i=0;i<=n;i++){
+        var t = i/n;
+        box(x1 + (x2-x1)*t, y1 + (y2-y1)*t, 0, 0.058, 0.0036, 0.0036, rot, c);
+      }
+    }
+    function addGate(x, y, rot, wide, hi, pillar, leaf){
+      var cs = Math.cos(rot), sn = Math.sin(rot);
+      function P(f, s){ return [x + cs*f - sn*s, y + sn*f + cs*s]; }
+      var a = P(0, -wide/2), b = P(0, wide/2);
+      box(a[0], a[1], 0, hi, 0.016, 0.016, rot, pillar);
+      box(b[0], b[1], 0, hi, 0.016, 0.016, rot, pillar);
+      box(x, y, hi, hi+0.014, 0.013, wide/2, rot + Math.PI/2, pillar);
+      /* 门楣横匾（大门敞开，可穿行） */
+      box(x, y, hi*0.62, hi*0.80, 0.011, wide*0.30, rot + Math.PI/2, leaf);
+    }
+
+    function buildProps(){
+      SOL = []; SPH = []; FENCES = [];
+      var i;
+      /* 公园树 */
+      var tr = [[12.3,3.4],[14.0,3.3],[15.7,4.1],[11.8,4.6],[13.4,6.55],[15.2,6.55],
+                [16.5,3.5],[10.6,4.1],[11.6,5.92],[13.1,5.92],[14.6,5.92],[16.0,5.92]];
+      for(i=0;i<tr.length;i++) addTree(tr[i][0], tr[i][1], 100 + i*37);
+      /* 饮水点 */
+      addFountain(7.55, 7.46);
+      addFountain(13.9, 5.94);
+      addFountain(12.35, 9.42);
+      /* 长椅 / 垃圾桶 / 路灯 */
+      addBench(11.9, 5.86, 0);
+      addBench(15.1, 5.86, 0);
+      addBench(11.8, 9.62, Math.PI);
+      addBench(14.2, 9.62, Math.PI);
+      addBin(7.95, 7.60); addBin(11.55, 9.24); addBin(15.35, 5.90);
+      var lp = [[0.85,12.22],[6.2,12.22],[10.6,12.22],[16.4,12.22],[3.2,7.28],[8.6,7.28],[10.75,5.9],[15.85,5.15]];
+      for(i=0;i<lp.length;i++) addLamp(lp[i][0], lp[i][1]);
+      /* 花坛 */
+      addPlanter(10.58, 4.35, 0.10, 0.065);
+      addPlanter(16.35, 4.60, 0.09, 0.060);
+      addPlanter(11.30, 9.90, 0.12, 0.060);
+
+      /* ---- 老小区（住宅C）：2号楼沿北、3号楼居中、西楼贴西，
+              围栏只围院子，大门朝南街敞开 ---- */
+      addFence(3.85, 9.00, 3.85, 11.86);        /* 东围栏（2号楼墙角起） */
+      addFence(1.05, 11.86, 2.20, 11.86);       /* 南围栏（西段，贴西楼东墙） */
+      addFence(3.00, 11.86, 3.85, 11.86);       /* 南围栏（东段） */
+      addGate(2.60, 11.86, 0, 0.80, 0.098, C("#8C8375"), C("#D8D2C4"));
+      /* 非机动车棚（贴 2 号楼南墙） */
+      box(2.40, 9.30, 0.086, 0.094, 0.26, 0.10, 0, C("#7C8A84"));
+      var cp = [[2.16,9.22],[2.64,9.22],[2.16,9.38],[2.64,9.38]];
+      for(i=0;i<cp.length;i++) box(cp[i][0], cp[i][1], 0, 0.088, 0.005, 0.005, 0, C("#66726D"));
+      /* 2 号楼单元门雨棚（贴南墙，与贴图单元门对位） */
+      var uc2 = [0.75, 1.95, 3.15];
+      for(i=0;i<uc2.length;i++){
+        box(uc2[i], 9.06, 0.095, 0.104, 0.13, 0.060, 0, C("#B7B2A4"));
+        box(uc2[i]-0.115, 9.05, 0, 0.095, 0.007, 0.007, 0, C("#6E6A5E"));
+        box(uc2[i]+0.115, 9.05, 0, 0.095, 0.007, 0.007, 0, C("#6E6A5E"));
+      }
+      /* 3 号楼单元门雨棚（贴北墙） */
+      box(1.19, 9.95, 0.088, 0.097, 0.10, 0.050, 0, C("#B7B2A4"));
+      box(1.10, 9.94, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
+      box(1.28, 9.94, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
+      /* 晾衣架 */
+      box(2.90, 9.62, 0.058, 0.062, 0.09, 0.004, 0, C("#9AA3A0"));
+      box(2.81, 9.62, 0, 0.060, 0.004, 0.004, 0, C("#8A9390"));
+      box(2.99, 9.62, 0, 0.060, 0.004, 0.004, 0, C("#8A9390"));
+      /* 院内绿化与歇脚处 */
+      addTree(1.35, 9.52, 310);
+      addTree(3.50, 10.48, 347);
+      addBench(1.90, 9.58, Math.PI/2);
+      addBin(3.32, 11.42);
+      addLamp(2.60, 10.62);
+
+      /* ---- 小学：围墙 + 校门 + 操场设施 ---- */
+      addFence(15.55, 10.10, 15.55, 11.86);
+      addFence(15.55, 10.10, 18.45, 10.10);
+      addFence(18.45, 10.10, 18.45, 11.86);
+      addFence(15.55, 11.86, 16.88, 11.86);
+      addFence(17.72, 11.86, 18.45, 11.86);
+      addGate(17.30, 11.86, 0, 0.84, 0.112, C("#B4593E"), C("#C9C2AF"));
+      /* 单杠 / 篮球架 / 旗杆 */
+      box(16.95, 10.55, 0, 0.145, 0.004, 0.004, 0, C("#7C8A86"));
+      box(16.99, 10.55, 0.13, 0.14, 0.045, 0.006, 0, C("#E4E6DC"));
+      box(18.1, 10.6, 0, 0.150, 0.003, 0.003, 0, C("#C8CCBE"));
+      box(18.1, 10.6, 0.150, 0.152, 0.028, 0.028, 0, C("#C4452F"));
+
+      /* ---- 社区医院入口（终点）---- */
+      var wh = C("#EDF0EA"), gl = C("#4E6E70"), st = C("#C6C9C0");
+      box(13.0, 9.30, 0, 0.007, 0.150, 0.098, 0, C("#AEB2A6"));
+      box(13.0, 9.36, 0, 0.014, 0.132, 0.082, 0, C("#BEC2B6"));
+      /* 四根柱子 */
+      var pl2 = [[12.86,9.60],[13.14,9.60],[12.86,9.06],[13.14,9.06]];
+      for(i=0;i<pl2.length;i++) box(pl2[i][0], pl2[i][1], 0.014, 0.132, 0.0075, 0.0075, 0, wh);
+      /* 雨棚 + 边沿 + 底面 */
+      box(13.0, 9.33, 0.132, 0.148, 0.168, 0.118, 0, wh);
+      box(13.0, 9.33, 0.126, 0.133, 0.172, 0.121, 0, C("#DDE1D8"));
+      /* 自动玻璃门 */
+      box(13.0, 9.02, 0.014, 0.118, 0.098, 0.006, 0, gl);
+      box(13.0, 9.03, 0.014, 0.118, 0.003, 0.008, 0, C("#2F3E3E"));
+      /* 门楣灯箱（绿十字） */
+      box(13.0, 9.28, 0.150, 0.182, 0.040, 0.012, 0, C("#EAF3EE"));
+      box(13.0, 9.27, 0.158, 0.174, 0.020, 0.014, 0, C("#2E9E72"));
+      /* 导医牌 */
+      box(12.62, 9.52, 0, 0.072, 0.012, 0.005, 0.25, C("#F2F4EE"));
+      box(12.62, 9.52, 0.072, 0.078, 0.013, 0.006, 0.25, C("#2E9E72"));
+
+      /* ---- 屋顶设备 & 沿街雨棚 ---- */
+      for(var y=0;y<H;y++) for(var x=0;x<W;x++){
+        if(grid[y][x] !== "#") continue;
+        var hb = hash2(x*7+3, y*5+1);
+        var hh = bh[y][x];
+        if(hb % 3 === 0){
+          var px = x + 0.3 + (hb % 5) * 0.09;
+          var py = y + 0.35 + (hb % 7) * 0.07;
+          var kind = hb % 4;
+          if(kind === 0){                       /* 屋顶水箱 */
+            box(px, py, hh, hh+0.030, 0.022, 0.022, 0, C("#B4BAB4"), x, y);
+            box(px, py, hh+0.030, hh+0.034, 0.026, 0.026, 0, C("#8E9690"), x, y);
+          }else if(kind === 1){                 /* 电梯机房 */
+            box(px, py, hh, hh+0.026, 0.036, 0.030, 0, C("#C2C3BA"), x, y);
+            box(px, py, hh+0.026, hh+0.030, 0.040, 0.034, 0, C("#9A9C94"), x, y);
+          }else if(kind === 2){                 /* 太阳能热水器 */
+            box(px, py, hh, hh+0.008, 0.030, 0.020, 0.2, C("#5B6E86"), x, y);
+            box(px, py-0.014, hh+0.008, hh+0.020, 0.028, 0.006, 0.2, C("#9FB0C4"), x, y);
+          }else{                                /* 天线 */
+            box(px, py, hh, hh+0.070, 0.0028, 0.0028, 0, C("#6E7672"), x, y);
+            box(px, py, hh+0.062, hh+0.066, 0.014, 0.002, 0, C("#6E7672"), x, y);
+          }
+        }
+        /* 沿街雨棚：只有靠街的一面 */
+        if(hb % 5 === 0){
+          var dirx = 0, diry = 0;
+          if(y+1 < H && grid[y+1][x] !== "#") { diry = 1; }
+          else if(y-1 >= 0 && grid[y-1][x] !== "#") { diry = -1; }
+          else if(x+1 < W && grid[y][x+1] !== "#") { dirx = 1; }
+          else if(x-1 >= 0 && grid[y][x-1] !== "#") { dirx = -1; }
+          if(dirx || diry){
+            var reach = 0.05;
+            var ax = x + 0.5 + dirx*(reach/2), ay = y + 0.5 + diry*(0.5 + reach/2);
+            var w2 = diry ? 0.17 : reach/2, d2 = diry ? reach/2 : 0.17;
+            box(ax, ay, 0.054, 0.062, w2, d2, 0, C("#D8D0BA"), x, y);
+            var pxa = ax + (diry ? w2*0.85 : 0), pya = ay + (diry ? reach/2 : 0);
+            var pxb = ax - (diry ? w2*0.85 : 0), pyb = ay - (diry ? 0 : reach/2);
+            box(pxa, pya, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
+            box(pxb, pyb, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
+          }
+        }
+      }
+    }
+
+    /* ---------------- 立面贴图 ---------------- */
+    var TW = 192, TH = 448, texCache = {};
+    var PAL = [
+      {w:"#C6B49A", trim:"#E8DFCE", glass:"#5E7276", dark:"#8E7C63"},  /* 0 老住宅抹灰 */
+      {w:"#D3C4AC", trim:"#F1E9DA", glass:"#51645F", dark:"#957F65"},  /* 1 沿街楼 */
+      {w:"#95A4AB", trim:"#CBD8DC", glass:"#405764", dark:"#6F7D83"},  /* 2 公寓 */
+      {w:"#AA6A50", trim:"#EADECE", glass:"#4D5D58", dark:"#7F4B37"},  /* 3 砖楼 */
+      {w:"#E0E4E0", trim:"#F6F8F4", glass:"#5C706E", dark:"#AAB1AB"},  /* 4 医院 */
+      {w:"#C9B9A0", trim:"#E4DAC6", glass:"#58707A", dark:"#9A8568"},  /* 5 住宅C · 2号楼 */
+      {w:"#C2B39A", trim:"#E0D6C2", glass:"#56707A", dark:"#937F64"},  /* 6 住宅C · 3号楼 */
+      {w:"#BBA98F", trim:"#DACFB9", glass:"#546C74", dark:"#8C795E"}   /* 7 住宅C · 西楼 */
+    ];
+
+    function mkFacade(type, hh, seed){
+      var c = document.createElement("canvas");
+      c.width = TW; c.height = TH;
+      var g = c.getContext("2d");
+      var R = rnd(seed), pal = PAL[type];
+      var floors = Math.max(2, Math.min(7, Math.round(hh * 22 / 3.1)));
+      var fh = TH / floors;
+
+      g.fillStyle = pal.w; g.fillRect(0,0,TW,TH);
+      for(var i=0;i<420;i++){
+        g.fillStyle = R() < 0.5 ? "rgba(255,252,240,.05)" : "rgba(58,46,32,.05)";
+        g.fillRect(R()*TW, R()*TH, 2+R()*22, 2+R()*30);
+      }
+      for(var i=0;i<9;i++){
+        var sx = R()*TW;
+        var lg = g.createLinearGradient(0,0,0,TH);
+        lg.addColorStop(0,"rgba(70,56,40,0)");
+        lg.addColorStop(1,"rgba(70,56,40,.13)");
+        g.fillStyle = lg; g.fillRect(sx, TH*0.3, 3+R()*9, TH*0.7);
+      }
+
+      var cols = 5, cw = TW / cols;
+
+      for(var f=0; f<floors; f++){
+        var y0 = TH - (f+1)*fh;
+        var ground = (f === 0);
+
+        /* ---- 住宅C 板楼：外凸阳台 + 楼梯间 + 单元门 + 楼号牌 ---- */
+        if(type >= 5 && type <= 7){
+          var doorNo = type === 5 ? "2" : (type === 6 ? "3" : "");
+          if(ground){
+            /* 底层：勒脚 + 单元门 + 楼号牌 + 储藏间小窗 */
+            g.fillStyle = "rgba(64,54,42,.35)"; g.fillRect(0, y0, TW, fh*0.14);
+            for(var u=0; u<3; u++){
+              var dx = TW*(0.13 + u*0.30), dw = TW*0.115;
+              g.fillStyle = "#3E5048"; g.fillRect(dx, y0+fh*0.26, dw, fh*0.66);
+              g.fillStyle = "#33423C"; g.fillRect(dx, y0+fh*0.26, dw*0.46, fh*0.66);
+              g.fillStyle = "rgba(255,246,218,.55)"; g.fillRect(dx+dw*0.55, y0+fh*0.42, dw*0.28, fh*0.14);
+              g.fillStyle = "#D9D4C6"; g.fillRect(dx+dw+5, y0+fh*0.34, 24, 15);
+              g.fillStyle = "#5A4632"; g.fillRect(dx+dw+6, y0+fh*0.34+1, 22, 13);
+              if(doorNo){
+                g.fillStyle = "#EFEADB"; g.font = "bold 10px sans-serif";
+                g.fillText(doorNo + " 号楼", dx+dw+7, y0+fh*0.34+11);
+              }
+            }
+            for(var b=0; b<5; b++){
+              if(Math.abs(b*cw + cw*0.5 - TW*0.5) < cw*0.08) continue;
+              var bx0 = b*cw + cw*0.30, bw = cw*0.34;
+              g.fillStyle = "rgba(44,52,56,.85)"; g.fillRect(bx0-2, y0+fh*0.44, bw+4, fh*0.28);
+              g.fillStyle = "#6E8088"; g.fillRect(bx0, y0+fh*0.44, bw, fh*0.28);
+              g.fillStyle = "rgba(28,36,40,.6)"; g.fillRect(bx0+bw*0.5-1, y0+fh*0.44, 2, fh*0.28);
+            }
+          }else{
+            for(var ci=0; ci<5; ci++){
+              var wx = ci*cw + cw*0.17, ww = cw*0.66;
+              var wy = y0 + fh*0.12, wh = fh*0.40;
+              /* 居室窗/推拉门 */
+              g.fillStyle = "rgba(50,44,38,.8)"; g.fillRect(wx-2, wy-2, ww+4, wh+4);
+              var gg = g.createLinearGradient(wx, wy, wx, wy+wh);
+              var lit = R() < 0.08;
+              if(lit){ gg.addColorStop(0, "#D9C69C"); gg.addColorStop(1, "#8F7A55"); }
+              else{ gg.addColorStop(0, "#B9CDD3"); gg.addColorStop(0.45, pal.glass); gg.addColorStop(1, "#2E3E46"); }
+              g.fillStyle = gg; g.fillRect(wx, wy, ww, wh);
+              g.fillStyle = "rgba(30,36,36,.55)"; g.fillRect(wx+ww*0.5-1, wy, 2, wh);
+              if(!lit && R() < 0.3){
+                g.fillStyle = "rgba(255,255,255,.18)";
+                g.fillRect(wx + ww*(0.12+R()*0.5), wy, Math.max(2, ww*0.13), wh);
+              }
+              /* 阳台顶板投影 */
+              g.fillStyle = "rgba(58,48,36,.32)"; g.fillRect(wx-6, wy+wh+1, ww+12, 4);
+              /* 外凸阳台栏板 */
+              var by = y0 + fh*0.56, bh2 = fh*0.30;
+              g.fillStyle = pal.trim; g.fillRect(wx-5, by, ww+10, bh2);
+              g.fillStyle = "rgba(255,250,238,.4)"; g.fillRect(wx-5, by, ww+10, 2);
+              g.fillStyle = "rgba(56,48,36,.34)"; g.fillRect(wx-5, by+bh2-3, ww+10, 3);
+              for(var vx = wx; vx < wx+ww+2; vx += 5){
+                g.fillStyle = "rgba(80,72,58,.42)"; g.fillRect(vx, by+2.5, 1.4, bh2-6);
+              }
+              /* 阳台侧挂空调外机 */
+              if(R() < 0.5){
+                var ax2 = (R() < 0.5 ? wx-8.5 : wx+ww+1.5), ay2 = by + bh2*0.26;
+                g.fillStyle = "#C9CCC6"; g.fillRect(ax2, ay2, 9.5, 8);
+                g.fillStyle = "#8E928C"; g.fillRect(ax2+1, ay2+1, 7.5, 6);
+                g.fillStyle = "rgba(52,48,40,.4)"; g.fillRect(ax2-1, ay2+8, 11.5, 1.6);
+              }
+            }
+            /* 楼梯间（中间跨）：通高窄窗 */
+            var sx0 = TW*0.5 - cw*0.22, sxw = cw*0.44;
+            g.fillStyle = pal.dark; g.fillRect(sx0, y0, sxw, fh);
+            for(var s2=0; s2<3; s2++){
+              var swy = y0 + fh*(0.14 + s2*0.28);
+              g.fillStyle = "rgba(40,48,52,.9)"; g.fillRect(sx0+3, swy-2, sxw-6, fh*0.16+4);
+              g.fillStyle = R() < 0.15 ? "#C9B78E" : "#7C949C";
+              g.fillRect(sx0+4.5, swy, sxw-9, fh*0.16);
+            }
+            /* 层间梁 */
+            g.fillStyle = "rgba(58,48,36,.34)"; g.fillRect(0, y0+fh*0.92, TW, Math.max(2.5, fh*0.08));
+            g.fillStyle = "rgba(255,244,220,.16)"; g.fillRect(0, y0+fh*0.92, TW, 1.6);
+          }
+          continue;
+        }
+
+        if(ground && type === 1){
+          if(type === 1){
+            g.fillStyle = "#37302A"; g.fillRect(0, y0+fh*0.34, TW, fh*0.66);
+            for(var sy = y0+fh*0.4; sy < TH-5; sy += 4){
+              g.fillStyle = "rgba(190,196,196,.22)";
+              g.fillRect(5, sy, TW-10, 1.4);
+            }
+            var sign = ["#C4452F","#1F6F5C","#C98A2E","#3A6EA5"][Math.floor(R()*4)];
+            g.fillStyle = sign; g.fillRect(0, y0+fh*0.12, TW, fh*0.2);
+            g.fillStyle = "rgba(255,248,232,.88)";
+            for(var k=0;k<5;k++) g.fillRect(12+k*34, y0+fh*0.185, 20, fh*0.055);
+            g.fillStyle = "rgba(226,214,190,.92)";
+            g.fillRect(0, y0+fh*0.32, TW, 4);
+            g.fillStyle = "rgba(0,0,0,.25)";
+            g.fillRect(0, y0+fh*0.32+4, TW, 3);
+          }
+          continue;
+        }
+
+        /* 层间梁：楼层结构线 */
+        g.fillStyle = "rgba(58,48,36,.34)";
+        g.fillRect(0, y0+fh*0.80, TW, Math.max(2.5, fh*0.075));
+        g.fillStyle = "rgba(255,244,220,.16)";
+        g.fillRect(0, y0+fh*0.80, TW, 1.6);
+        for(var ci=0; ci<cols; ci++){
+          var wx = ci*cw + cw*0.17, ww = cw*0.66;
+          var wy = y0 + fh*0.17, wh = fh*0.50;
+          g.fillStyle = "rgba(52,46,40,.85)";
+          g.fillRect(wx-2.5, wy-2.5, ww+5, wh+5);
+          var gg = g.createLinearGradient(wx, wy, wx, wy+wh);
+          var lit = R() < 0.06;
+          if(lit){
+            gg.addColorStop(0, "#CBB88E"); gg.addColorStop(1, "#8F7A55");
+          }else{
+            gg.addColorStop(0, "#AEC3CB");
+            gg.addColorStop(0.4, pal.glass);
+            gg.addColorStop(1, "#2C3C44");
+          }
+          g.fillStyle = gg; g.fillRect(wx, wy, ww, wh);
+          if(!lit && R() < 0.30){
+            g.fillStyle = "rgba(255,255,255,.20)";
+            g.fillRect(wx + ww*(0.12+R()*0.5), wy, Math.max(2, ww*0.14), wh);
+          }
+          if(R() < 0.3){
+            g.fillStyle = "rgba(238,232,214,.62)";
+            g.fillRect(wx, wy, ww*(0.2+R()*0.3), wh);
+          }
+          g.fillStyle = "rgba(28,34,36,.5)";
+          g.fillRect(wx + ww*0.5 - 1, wy, 2.2, wh);
+          g.fillStyle = "rgba(48,38,26,.28)";
+          g.fillRect(wx-2.5, wy+wh+2.5, ww+5, 2.2);
+          if(R() < 0.34){
+            var ax = wx + ww*(R()<0.5 ? -0.12 : 0.7), ay = wy + wh - fh*0.14;
+            g.fillStyle = "#BEC2BB"; g.fillRect(ax, ay, 16, 11);
+            g.fillStyle = "#92988F"; g.fillRect(ax+1, ay+1, 14, 9);
+            g.strokeStyle = "rgba(80,86,82,.7)"; g.lineWidth = 1;
+            g.beginPath(); g.arc(ax+8, ay+5.5, 3.4, 0, Math.PI*2); g.stroke();
+          }
+        }
+        if((f % 2 === 1) && type !== 2){
+          g.fillStyle = "rgba(250,246,236,.72)";
+          g.fillRect(0, y0+fh*0.74, TW, 2.6);
+          g.fillStyle = "rgba(250,246,236,.5)";
+          for(var bx=4; bx<TW; bx+=8) g.fillRect(bx, y0+fh*0.74, 1.6, fh*0.14);
+          g.fillStyle = "rgba(40,32,22,.16)";
+          g.fillRect(0, y0+fh*0.88, TW, 2.6);
+        }
+      }
+
+      /* 贴图左右边缘覆盖墙色：防止掠射角采样到窗框形成竖白条 */
+      g.fillStyle = pal.w; g.fillRect(0,0,3,TH); g.fillRect(TW-3,0,3,TH);
+      g.fillStyle = pal.trim; g.fillRect(0,0,TW,9);
+      g.fillStyle = "rgba(20,16,12,.28)"; g.fillRect(0,9,TW,5);
+      var bg = g.createLinearGradient(0,TH*0.78,0,TH);
+      bg.addColorStop(0,"rgba(52,42,30,0)"); bg.addColorStop(1,"rgba(52,42,30,.4)");
+      g.fillStyle = bg; g.fillRect(0,TH*0.78,TW,TH*0.22);
+      g.fillStyle = "rgba(255,224,176,.07)"; g.fillRect(0,0,TW,TH);
+      return c;
+    }
+
+    function getTex(type, hh, side, bk){
+      var key = type + "|" + hh.toFixed(2) + "|" + side + "|" + (bk % 6);
+      if(texCache[key]) return texCache[key];
+      var base = mkFacade(type, hh, type*37 + Math.round(hh*100) + bk * 13);
+      if(side){
+        var c = document.createElement("canvas");
+        c.width = base.width; c.height = base.height;
+        var g = c.getContext("2d");
+        g.drawImage(base,0,0);
+        g.fillStyle = "rgba(26,38,54,.32)";
+        g.fillRect(0,0,c.width,c.height);
+        base = c;
+      }
+      texCache[key] = base;
+      return base;
+    }
+
+    /* ---------------- 投影 ---------------- */
+    function pp(wx, wy, wz){
+      var dx = wx - cam.x, dy = wy - cam.y;
+      var ca = Math.cos(pl.a), sa = Math.sin(pl.a);
+      var dep = dx*ca + dy*sa;
+      if(dep < 0.07) return null;
+      var lat = -dx*sa + dy*ca;
+      return {d:dep, x:Wcv/2 + focal*lat/dep, y:hz - focal*(wz - camY())/dep};
+    }
+    function proj(wx, wy, h){ return pp(wx, wy, h); }
+
+    /* ---------------- 射线 ---------------- */
+    function castRay(px, py, ang){
+      var dx = Math.cos(ang), dy = Math.sin(ang);
+      var mx = Math.floor(px), my = Math.floor(py);
+      var ddx = Math.abs(1/dx), ddy = Math.abs(1/dy);
+      var sx = dx<0 ? -1 : 1, sy = dy<0 ? -1 : 1;
+      var sdx = (dx<0 ? (px-mx) : (mx+1-px)) * ddx;
+      var sdy = (dy<0 ? (py-my) : (my+1-py)) * ddy;
+      var side = 0, guard = 0, hh = 0.6, tp = 0, bk = 0;
+      while(guard++ < 90){
+        if(sdx < sdy){ sdx += ddx; mx += sx; side = 0; }
+        else { sdy += ddy; my += sy; side = 1; }
+        if(mx<0||my<0||mx>=W||my>=H){ hh = 0; tp = 0; break; }
+        if(grid[my][mx] === "#"){ hh = bh[my][mx]; tp = bt[my][mx]; bk = bid[my][mx]; break; }
+      }
+      var dist = side===0 ? (sdx-ddx) : (sdy-ddy);
+      var hx = px + dx*Math.max(0.02,dist), hy = py + dy*Math.max(0.02,dist);
+      var u = side===0 ? (hy - Math.floor(hy)) : (hx - Math.floor(hx));
+      return {d: Math.max(0.02,dist), side:side, h:hh, t:tp, u:u, bk:bk};
+    }
+
+    /* ---------------- 相机 ---------------- */
+    function camPos(){
+      var back = CAM_BACK;
+      for(var i=0;i<7;i++){
+        var bx = pl.x - Math.cos(pl.a)*back, by = pl.y - Math.sin(pl.a)*back;
+        if(!blockedAt(bx,by,0.03)){ cam.x = bx; cam.y = by; cam.back = back; return; }
+        back *= 0.74;
+      }
+      cam.x = pl.x; cam.y = pl.y; cam.back = 0.16;
+    }
+
+    /* ---------------- 天空 ---------------- */
+    function drawSky(){
+      var sky = ctx.createLinearGradient(0,0,0,Math.max(1,hz));
+      sky.addColorStop(0,"#4E7FA6");
+      sky.addColorStop(0.45,"#9EBBD0");
+      sky.addColorStop(0.8,"#E4D2B0");
+      sky.addColorStop(1,"#F6C892");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0,0,Wcv,Math.max(1,hz)+2);
+
+      var sx = Wcv*0.72, sy = hz - Hcv*0.34;
+      var sg = ctx.createRadialGradient(sx,sy,2,sx,sy,Hcv*0.3);
+      sg.addColorStop(0,"rgba(255,248,220,.95)");
+      sg.addColorStop(0.12,"rgba(255,235,180,.55)");
+      sg.addColorStop(1,"rgba(255,220,160,0)");
+      ctx.fillStyle = sg;
+      ctx.beginPath(); ctx.arc(sx,sy,Hcv*0.3,0,Math.PI*2); ctx.fill();
+
+      ctx.fillStyle = "rgba(255,252,246,.30)";
+      var cl = [[0.16,0.12,0.13],[0.42,0.06,0.09],[0.86,0.16,0.1]];
+      for(var i=0;i<cl.length;i++){
+        var cx2 = Wcv*cl[i][0], cy2 = hz*cl[i][1] + Hcv*0.02, rr = Wcv*cl[i][2]*0.16;
+        for(var k=0;k<5;k++){
+          var ox = (k-2)*rr*0.55;
+          ctx.beginPath();
+          ctx.ellipse(cx2+ox, cy2+Math.sin(k*1.7)*rr*0.16, rr*(0.62-Math.abs(k-2)*0.11), rr*0.32, 0, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+
+    /* ---------------- 地面 ---------------- */
+    function drawGround(){
+      var d = offimg.data, camH = camY();
+      var ca = Math.cos(pl.a), sa = Math.sin(pl.a);
+      var n = 0;
+      for(var py=0; py<gh; py++){
+        var sy = py*gsf + gsf*0.5;
+        var rowBase = py*gw*4;
+        if(sy <= hz + 0.8 || camH <= 0){
+          for(var px=0; px<gw; px++){
+            var o = rowBase + px*4;
+            d[o] = FOG[0]; d[o+1] = FOG[1]; d[o+2] = FOG[2]; d[o+3] = 255;
+          }
+          continue;
+        }
+        var dep = focal*camH/(sy - hz);
+        var fogT = 1 - Math.exp(-dep/30);
+        var fr = FOG[0], fg = FOG[1], fb = FOG[2];
+        if(dep > 70){ dep = 70; fogT = 0.99; }
+        var R_,G_,B_;
+        for(var px=0; px<gw; px++){
+          var sx = px*gsf + gsf*0.5;
+          var lat = (sx - Wcv/2)*dep/focal;
+          var wx = cam.x + ca*dep - sa*lat;
+          var wy = cam.y + sa*dep + ca*lat;
+          var cx = Math.floor(wx), cy = Math.floor(wy);
+          var o = rowBase + px*4;
+          var rr, gg2, bb;
+          if(cx<0||cy<0||cx>=W||cy>=H){
+            rr = 104; gg2 = 98; bb = 88;
+          }else{
+            var cell = grid[cy][cx];
+            var fx = wx - cx, fy = wy - cy;
+            var lit = shd[cy][cx];
+            if(cell === "g"){
+              rr = 92; gg2 = 116; bb = 76;
+              if(((Math.floor(wx*9) + Math.floor(wy*9)) & 1) === 0){ rr += 6; gg2 += 8; bb += 4; }
+            }else if(cell === "s"){
+              rr = 146; gg2 = 152; bb = 134;
+              if(fy > 0.46 && fy < 0.54){ rr = 126; gg2 = 130; bb = 116; }
+            }else if(cell === "c"){
+              if(cx >= 16){
+                /* 小学操场：环形跑道 + 内场 */
+                var dx2 = (wx - 17.45) * 0.92, dy2 = wy - 10.95;
+                var rad = Math.hypot(dx2, dy2);
+                if(rad < 0.40){ rr = 152; gg2 = 92; bb = 78; }
+                else if(rad < 0.30){ rr = 96; gg2 = 126; bb = 84; }
+                else { rr = 150; gg2 = 148; bb = 140; }
+                if(Math.abs(rad-0.40) < 0.012 || Math.abs(rad-0.30) < 0.012){ rr = 232; gg2 = 230; bb = 220; }
+              }else{
+                rr = 148; gg2 = 146; bb = 139;
+                /* 停车位划线 */
+                if(wx > 0.75 && wx < 3.3 && wy > 8.25 && wy < 10.2){
+                  var gxf = wx*1.6;
+                  if((gxf - Math.floor(gxf)) < 0.018){ rr = 186; gg2 = 184; bb = 172; }
+                }
+              }
+            }else{
+              rr = 128; gg2 = 117; bb = 102;
+              var sw = 0, horiz = true;
+              if(cx>0 && grid[cy][cx-1]==="#" && fx < 0.17) sw = 1;
+              if(cx<W-1 && grid[cy][cx+1]==="#" && fx > 0.83) sw = 1;
+              if(cy>0 && grid[cy-1][cx]==="#" && fy < 0.17) sw = 1;
+              if(cy<H-1 && grid[cy+1][cx]==="#" && fy > 0.83) sw = 1;
+              horiz = !!(cx>0 && grid[cy][cx-1]!=="#" && cx<W-1 && grid[cy][cx+1]!=="#");
+              if(sw){ rr = 184; gg2 = 174; bb = 156; }
+              else if((fx>0.16&&fx<0.185) || (fy>0.16&&fy<0.185)){ rr = 92; gg2 = 88; bb = 82; }
+            }
+            var nz = (Math.imul(Math.floor(wx*22), 2654435761) ^ Math.imul(Math.floor(wy*31), 340573321)) >>> 0;
+            var lv = lit * (1 + ((nz % 7) - 3) * 0.007);
+            rr *= lv; gg2 *= lv; bb *= lv;
+            if(cell === "." && !sw){
+              var dash = false;
+              if(horiz){ dash = Math.abs(fy-0.5) < 0.02 && ((Math.floor(wx*0.7) & 1) === 0); }
+              else { dash = Math.abs(fx-0.5) < 0.02 && ((Math.floor(wy*0.7) & 1) === 0); }
+              if(dash){ rr = 216*lv; gg2 = 182*lv; bb = 92*lv; }
+            }
+          }
+          d[o]   = rr + (fr-rr)*fogT;
+          d[o+1] = gg2 + (fg-gg2)*fogT;
+          d[o+2] = bb + (fb-bb)*fogT;
+          d[o+3] = 255;
+        }
+      }
+      offctx.putImageData(offimg, 0, 0);
+      ctx.globalAlpha = 1;
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(off, 0, 0, Wcv, Hcv);
+    }
+
+    /* ---------------- 墙 ---------------- */
+    function drawWalls(){
+      CSW = Wcv > 1240 ? 3 : 2;
+      var colN = Math.ceil(Wcv/CSW);
+      zbd = new Array(colN); zbh = new Array(colN);
+      for(var i=0; i<colN; i++){
+        var x = i*CSW;
+        var ang = pl.a - FOV/2 + (x + CSW/2)/Wcv*FOV;
+        var r = castRay(cam.x, cam.y, ang);
+        var dep = Math.max(0.07, r.d * Math.cos(ang - pl.a));
+        zbd[i] = dep; zbh[i] = r.h;
+        var yTop = hz - focal*(r.h - camY())/dep;
+        var yBot = hz + focal*camY()/dep;
+        if(r.h < 0.02){ continue; }
+        if(yBot < 0 || yTop > Hcv) continue;
+        var tex = getTex(r.t, r.h, r.side, r.bk);
+        var sxTex = Math.min(TW-1, Math.max(0, Math.floor(r.u*TW)));
+        var vis = Math.exp(-dep/34);
+        if(vis < 0.04) vis = 0.04;
+        ctx.globalAlpha = Math.min(1, vis*1.45);
+        ctx.drawImage(tex, sxTex, 0, 1, TH, x, yTop, CSW + 0.6, Math.max(1, yBot-yTop));
+      }
+      ctx.globalAlpha = 1;
+      /* 楼顶受光檐口，强化体量 */
+      for(var i=0; i<colN; i+=1){
+        var dep2 = zbd[i];
+        if(dep2 > 42) continue;
+        var yT2 = hz - focal*(zbh[i] - camY())/dep2;
+        if(yT2 < -20 || yT2 > Hcv) continue;
+        ctx.fillStyle = "rgba(255,240,206," + (0.22*Math.exp(-dep2/28)).toFixed(3) + ")";
+        ctx.fillRect(i*CSW, yT2, CSW + 0.5, Math.max(1.2, 2.4*Math.exp(-dep2/30)));
+      }
+    }
+    function zAt(x){
+      var i = Math.floor(x/CSW);
+      if(i < 0) i = 0;
+      if(i >= zbd.length) i = zbd.length-1;
+      var v = zbd[i];
+      return v === undefined ? 999 : v;
+    }
+    function wallTopAt(x){
+      var i = Math.floor(x/CSW);
+      if(i < 0) i = 0;
+      if(i >= zbd.length) i = zbd.length-1;
+      if(zbd[i] === undefined) return -1e5;
+      return hz - focal*(zbh[i] - camY())/zbd[i];
+    }
+
+    /* ---------------- 体块绘制 ---------------- */
+    function boxFaces(b){
+      var ca = Math.cos(pl.a), sa = Math.sin(pl.a);
+      var dxc = b.x - cam.x, dyc = b.y - cam.y;
+      var dc = dxc*ca + dyc*sa;
+      if(dc < 0.1 || dc > 46) return null;
+      var cs = Math.cos(b.rot), sn = Math.sin(b.rot);
+      var qx = [-1,1,1,-1], qy = [-1,-1,1,1];
+      var bx = [], by0 = [], by1 = [];
+      var minx = 1e9, maxx = -1e9;
+      for(var i=0;i<4;i++){
+        var lx = qx[i]*b.hw, ly = qy[i]*b.hd;
+        var wx = b.x + lx*cs - ly*sn;
+        var wy = b.y + lx*sn + ly*cs;
+        var p0 = pp(wx, wy, b.z0), p1 = pp(wx, wy, b.z1);
+        if(!p0 || !p1) return null;
+        bx.push(p0.x); by0.push(p0.y); by1.push(p1.y);
+        if(p0.x < minx) minx = p0.x;
+        if(p0.x > maxx) maxx = p0.x;
+      }
+      if(maxx < -60 || minx > Wcv+60) return null;
+      var midX = (minx+maxx)/2;
+      if(b.cx !== undefined){
+        var ci = Math.floor(midX/CSW);
+        if(ci >= 0 && ci < zbd.length && Math.abs(zbd[ci] - dc) > 1.1) return null;
+      }else{
+        if(dc > zAt(midX) + 0.35) return null;
+      }
+      var out = [];
+      var nxA = [0,1,0,-1], nyA = [-1,0,1,0];
+      for(var i=0;i<4;i++){
+        var nx = nxA[i]*cs - nyA[i]*sn;
+        var ny = nxA[i]*sn + nyA[i]*cs;
+        var j = (i+1) % 4;
+        var fx = (bx[i] + bx[j])/2, fy = (by0[i] + by0[j] + by1[i] + by1[j])/4;
+        var isFront = (nx*(cam.x - (b.x + (qx[i]+qx[j])*0.25*b.hw*cs)) +
+                       ny*(cam.y - (b.y + (qy[i]+qy[j])*0.25*b.hd*sn))) > 0;
+        var dot = nx*SUNV[0] + ny*SUNV[1];
+        var lit = 0.74 + 0.42*(dot > 0 ? dot : 0) + 0.10*(dot < 0 ? -dot : 0);
+        var col = mix([b.c[0]*lit, b.c[1]*lit, b.c[2]*lit], dc);
+        if(isFront){
+          out.push({p:[bx[i],by0[i], bx[j],by0[j], bx[j],by1[j], bx[i],by1[j]], c:col});
+        }
+        out.push(null);
+      }
+      /* 顶面 */
+      var topLit = 0.70 + 0.46*SUNV[2];
+      var topCol = mix([b.c[0]*topLit, b.c[1]*topLit, b.c[2]*topLit], dc);
+      out.push({p:[bx[0],by1[0], bx[1],by1[1], bx[2],by1[2], bx[3],by1[3]], c:topCol, top:true});
+      var res = [];
+      for(var i=0;i<out.length;i++) if(out[i]) res.push(out[i]);
+      return res;
+    }
+    function drawBox(b){
+      var fs = boxFaces(b);
+      if(!fs) return;
+      for(var i=0;i<fs.length;i++){
+        var f = fs[i];
+        ctx.fillStyle = css(f.c);
+        ctx.beginPath();
+        ctx.moveTo(f.p[0], f.p[1]);
+        for(var k=2;k<f.p.length;k+=2) ctx.lineTo(f.p[k], f.p[k+1]);
+        ctx.closePath();
+        ctx.fill();
+        if(!f.top){
+          ctx.strokeStyle = css([f.c[0]*0.86, f.c[1]*0.86, f.c[2]*0.86], 0.5);
+          ctx.lineWidth = 0.7; ctx.stroke();
+        }
+      }
+    }
+    function drawBall(s){
+      var p = pp(s.x, s.y, s.z);
+      if(!p) return;
+      if(s.cx !== undefined){
+        var ci = Math.floor(p.x/CSW);
+        if(ci >= 0 && ci < zbd.length && Math.abs(zbd[ci] - p.d) > 1.1) return;
+      }else if(p.d > zAt(p.x) + 0.35) return;
+      if(p.x < -200 || p.x > Wcv+200) return;
+      var R = focal*s.r/p.d;
+      if(R < 0.7) return;
+      if(R > Hcv*1.6) R = Hcv*1.6;
+      var col = mix(s.c, p.d);
+      var g = ctx.createRadialGradient(p.x - R*0.32, p.y - R*0.38, R*0.12, p.x, p.y, R*1.02);
+      g.addColorStop(0, css([col[0]*1.42+18, col[1]*1.42+18, col[2]*1.42+18]));
+      g.addColorStop(0.62, css(col));
+      g.addColorStop(1, css([col[0]*0.58, col[1]*0.62, col[2]*0.58]));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, Math.PI*2); ctx.fill();
+    }
+    function drawSolids(){
+      var ca = Math.cos(pl.a), sa = Math.sin(pl.a);
+      var list = [], i, o, d;
+      for(i=0;i<SOL.length;i++){
+        o = SOL[i];
+        d = (o.x-cam.x)*ca + (o.y-cam.y)*sa;
+        if(d > 0.14 && d < 44){ o.dep = d; list.push(o); }
+      }
+      for(i=0;i<SPH.length;i++){
+        o = SPH[i];
+        d = (o.x-cam.x)*ca + (o.y-cam.y)*sa;
+        if(d > 0.14 && d < 44){ o.dep = d; list.push(o); }
+      }
+      list.sort(function(a,b){ return b.dep - a.dep; });
+      for(i=0;i<list.length;i++){
+        o = list[i];
+        if(o.r !== undefined) drawBall(o); else drawBox(o);
+      }
+    }
+
+    /* ---------------- 天空信标 ---------------- */
+    function drawBeacon(){
+      var pr = pp(GOAL.x, GOAL.y, 0);
+      if(!pr || pr.d < 0.2 || pr.d > 120) return false;
+      var x0 = pr.x, y0 = pr.y;
+      if(x0 < -Wcv*0.8 || x0 > Wcv*1.8) return false;
+      var yTop = hz - focal*(BEAM_H - camY())/pr.d;
+      var halfW = Math.max(9, Math.min(190, focal*0.085/pr.d));
+      var t = performance.now()/1000;
+
+      function endY(x){
+        var i = Math.floor(x/CSW);
+        if(i < 0 || i >= zbd.length || zbd[i] === undefined) return y0;
+        if(zbd[i] < pr.d - 0.05) return Math.min(y0, wallTopAt(x));
+        return y0;
+      }
+      function paint(a){
+        var span = Math.max(1, y0 - yTop);
+        var g1 = ctx.createLinearGradient(0, yTop, 0, y0);
+        g1.addColorStop(0, "rgba(120,240,212," + (0.06*a).toFixed(3) + ")");
+        g1.addColorStop(0.5, "rgba(130,244,216," + (0.30*a).toFixed(3) + ")");
+        g1.addColorStop(1, "rgba(200,255,242," + (0.55*a).toFixed(3) + ")");
+        ctx.fillStyle = g1;
+        ctx.fillRect(x0-halfW, yTop, halfW*2, span);
+        var g2 = ctx.createLinearGradient(0, yTop, 0, y0);
+        g2.addColorStop(0, "rgba(240,255,252," + (0.03*a).toFixed(3) + ")");
+        g2.addColorStop(0.6, "rgba(242,255,252," + (0.25*a).toFixed(3) + ")");
+        g2.addColorStop(1, "rgba(255,255,255," + (0.85*a).toFixed(3) + ")");
+        ctx.fillStyle = g2;
+        ctx.fillRect(x0-halfW*0.30, yTop, halfW*0.60, span);
+      }
+
+      /* 地面光斑 */
+      var gr = Math.max(8, Math.min(200, focal*0.11/pr.d));
+      var gg = ctx.createRadialGradient(x0, y0, 1, x0, y0, gr);
+      gg.addColorStop(0, "rgba(150,255,225,.38)");
+      gg.addColorStop(1, "rgba(120,240,210,0)");
+      ctx.fillStyle = gg;
+      ctx.beginPath(); ctx.ellipse(x0, y0, gr, gr*0.36, 0, 0, Math.PI*2); ctx.fill();
+
+      /* 第一层：穿过建筑也看得见的半透明光柱 */
+      paint(0.5);
+
+      /* 第二层：未被遮挡的区段加强 */
+      var xL = x0 - halfW, xR = x0 + halfW;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(xL, yTop);
+      ctx.lineTo(xR, yTop);
+      for(var x = xR; x >= xL; x -= 4){
+        var ey = endY(x);
+        if(ey < yTop) ey = yTop;
+        ctx.lineTo(x, ey);
+      }
+      ctx.closePath();
+      ctx.clip();
+      ctx.globalCompositeOperation = "lighter";
+      paint(1);
+      for(var k=0;k<6;k++){
+        var f = ((t*0.30 + k/6) % 1);
+        var zz = f*BEAM_H;
+        var py = hz - focal*(zz - camY())/pr.d;
+        var rw = halfW*(0.5 + 0.8*f);
+        ctx.strokeStyle = "rgba(180,255,240," + (0.30*(1-f)).toFixed(3) + ")";
+        ctx.lineWidth = Math.max(1, focal*0.0022/pr.d);
+        ctx.beginPath(); ctx.ellipse(x0, py, rw, rw*0.26, 0, 0, Math.PI*2); ctx.stroke();
+      }
+      ctx.restore();
+
+      /* 顶端光晕 */
+      if(yTop > -Hcv*1.1){
+        var hy = Math.max(yTop, -Hcv*0.4);
+        var hg = ctx.createRadialGradient(x0, hy, 1, x0, hy, halfW*4.5);
+        hg.addColorStop(0, "rgba(215,255,246,.5)");
+        hg.addColorStop(1, "rgba(180,255,235,0)");
+        ctx.fillStyle = hg;
+        ctx.beginPath(); ctx.arc(x0, hy, halfW*4.5, 0, Math.PI*2); ctx.fill();
+      }
+      return true;
+    }
+
+    /* ---------------- 导航路径线 ---------------- */
+    function routePts(){
+      var pts = [[pl.x, pl.y]];
+      for(var i=wpIdx;i<WPTS.length;i++) pts.push(WPTS[i]);
+      return pts;
+    }
+    function drawRouteLine(){
+      var pts = routePts();
+      var total = 0, segs = [];
+      for(var i=0;i<pts.length-1;i++){
+        var dx = pts[i+1][0]-pts[i][0], dy = pts[i+1][1]-pts[i][1];
+        var len = Math.hypot(dx,dy);
+        if(len < 0.001) continue;
+        segs.push({x:pts[i][0], y:pts[i][1], dx:dx/len, dy:dy/len, len:len});
+        total += len;
+      }
+      var step = 0.24, acc = 0;
+      ctx.save();
+      for(var i=0;i<segs.length;i++){
+        var sg = segs[i], t = 0;
+        while(t < sg.len){
+          var s = t;
+          var wx = sg.x + sg.dx*s, wy = sg.y + sg.dy*s;
+          t += step;
+          var pr = proj(wx, wy, 0.012);
+          if(!pr || pr.d < 1.2 || pr.d > 34) continue;
+          if(pr.d > zAt(pr.x) + 0.05) continue;
+          var rr = Math.max(1.2, Math.min(13, focal*0.033/pr.d));
+          var a = 0.5 * (1 - Math.min(1, (pr.d-6)/22));
+          var dg = Math.hypot(wx-GOAL.x, wy-GOAL.y);
+          if(dg < 1.1) a *= Math.max(0, (dg-0.5)/0.6);
+          if(a <= 0.02) continue;
+          ctx.globalAlpha = a;
+          ctx.fillStyle = "#7DF0D4";
+          ctx.beginPath();
+          ctx.ellipse(pr.x, pr.y, rr, rr*0.42, 0, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    /* ---------------- 终点标签 ---------------- */
+    function drawGoalLabel(){
+      var lp = proj(GOAL.x, GOAL.y, 0.26);
+      if(!lp || lp.d > 40) return;
+      if(lp.d > zAt(lp.x) + 0.2) return;
+      var name = COPY[LANG].dest[state.persona].replace(/^.*·\s*/, "");
+      var dTxt = Math.round(Math.hypot(GOAL.x-pl.x, GOAL.y-pl.y)*MPT) + " m";
+      var fs = Math.max(11, Math.min(17, Wcv/85));
+      ctx.font = "650 " + fs + "px system-ui, sans-serif";
+      var tw1 = ctx.measureText(name).width;
+      ctx.font = "500 " + Math.round(fs*0.78) + "px ui-monospace, monospace";
+      var tw2 = ctx.measureText(dTxt).width;
+      var bwid = tw1 + tw2 + fs*1.9, bhig = fs*2.1;
+      var bx = Math.max(4, Math.min(Wcv-bwid-4, lp.x - bwid/2));
+      var by = Math.max(4, lp.y - bhig);
+      ctx.fillStyle = "rgba(8,15,13,.82)";
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(bx, by, bwid, bhig, bhig/2); else ctx.rect(bx, by, bwid, bhig);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(95,227,192,.55)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "#EAF6F1";
+      ctx.font = "650 " + fs + "px system-ui, sans-serif";
+      ctx.textBaseline = "middle";
+      ctx.fillText(name, bx + fs*0.75, by + bhig/2);
+      ctx.fillStyle = "#7DF0D4";
+      ctx.font = "500 " + Math.round(fs*0.78) + "px ui-monospace, monospace";
+      ctx.fillText(dTxt, bx + fs*0.75 + tw1 + fs*0.6, by + bhig/2);
+      ctx.textBaseline = "alphabetic";
+    }
+
+    /* ---------------- 角色（骨骼） ---------------- */
+    function avatarPal(){
+      if(state.persona === "rider")
+        return {top:C("#F0C24B"), top2:C("#E0A93A"), pants:C("#2F3B40"), skin:C("#E4C09C"),
+                hair:C("#26262A"), shoe:C("#1E2426"), prop:"box", accent:C("#2EC79F")};
+      if(state.persona === "parent")
+        return {top:C("#CFE8DA"), top2:C("#B7D9C7"), pants:C("#8B8177"), skin:C("#F0D0B4"),
+                hair:C("#3B2A23"), shoe:C("#5B544C"), prop:"stroller", accent:C("#7FA695")};
+      return {top:C("#93A7B9"), top2:C("#7C91A4"), pants:C("#4C525A"), skin:C("#E9CBB0"),
+              hair:C("#B9B5AC"), shoe:C("#3A3A3C"), prop:"cane", accent:C("#B08A5E")};
+    }
+    function shadeC(c, k){
+      return [c[0]*k, c[1]*k, c[2]*k];
+    }
+    function boxN(x, y, z0, z1, hw, hd, rot, col){
+      drawBox({x:x, y:y, z0:z0, z1:z1, hw:hw, hd:hd, rot:rot, c:col});
+    }
+    function ballN(x, y, z, r, col){
+      drawBall({x:x, y:y, z:z, r:r, c:col});
+    }
+    function limb3(a, b, wm, col, hi){
+      var pa = pp(a[0], a[1], a[2]), pb = pp(b[0], b[1], b[2]);
+      if(!pa || !pb) return;
+      var d = (pa.d + pb.d)/2;
+      var w = focal*wm/d;
+      if(w < 0.8) return;
+      var cc = mix(col, d);
+      ctx.strokeStyle = css(cc);
+      ctx.lineWidth = w; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+      if(w > 6 && hi !== false){
+        ctx.strokeStyle = "rgba(255,248,228,.10)";
+        ctx.lineWidth = Math.max(1, w*0.16);
+        ctx.beginPath();
+        ctx.moveTo(pa.x - w*0.22, pa.y - w*0.06);
+        ctx.lineTo(pb.x - w*0.22, pb.y - w*0.06);
+        ctx.stroke();
+      }
+    }
+    function drawAvatar(A){
+      if(cam.back > CAM_BACK*1.3) return;
+      var P = avatarPal();
+      var moving = (walked > 0) && (keys.KeyW||keys.KeyS||keys.KeyA||keys.KeyD||keys.ArrowUp||keys.ArrowDown||keys.ArrowLeft||keys.ArrowRight);
+      var ph = pl.ph;
+      var bob = moving ? Math.abs(Math.sin(ph))*0.0016 : Math.sin(performance.now()/760)*0.0007;
+      var cs = Math.cos(A), sn = Math.sin(A);
+      function W(f, s, z){
+        return [pl.x + cs*f - sn*s, pl.y + sn*f + cs*s, z + bob];
+      }
+      var sw = Math.sin(ph);
+      var movingScale = moving ? 1 : 0;
+      var fwdL = sw*0.0085*movingScale, fwdR = -sw*0.0085*movingScale;
+      var liftL = Math.max(0, Math.cos(ph))*0.0035*movingScale;
+      var liftR = Math.max(0, -Math.cos(ph))*0.0035*movingScale;
+      var hipZ = 0.0375, shoulderZ = 0.0615;
+
+      /* 影子 */
+      var sp = pp(pl.x, pl.y, 0.001);
+      if(sp){
+        var sr = focal*0.011/sp.d;
+        ctx.fillStyle = "rgba(28,34,26,.26)";
+        ctx.beginPath(); ctx.ellipse(sp.x, sp.y, sr*1.4, sr*0.5, 0, 0, Math.PI*2); ctx.fill();
+      }
+
+      /* 后侧肢体 */
+      limb3(W(0, -0.0052, hipZ), W(fwdR*0.6, -0.0052, 0.019), 0.0042, shadeC(P.pants, 0.82));
+      limb3(W(fwdR*0.6, -0.0052, 0.019), W(fwdR, -0.0052, 0.003 + liftR), 0.0038, shadeC(P.pants, 0.82));
+      limb3(W(0, -0.0100, shoulderZ), W(-sw*0.006, -0.0100, 0.040), 0.0034, shadeC(P.top2, 0.8), false);
+
+      /* 后腿鞋 */
+      var fr = W(fwdR, -0.0052, 0.003 + liftR);
+      limb3(fr, [fr[0] + cs*0.004, fr[1] + sn*0.004, fr[2]-0.001], 0.0042, shadeC(P.shoe, 0.85), false);
+
+      /* 躯干 */
+      boxN(pl.x + 0*cs, pl.y + 0*sn, 0.0345 + bob, 0.0635 + bob, 0.0058, 0.0090, A, P.top);
+      /* 前襟阴影 */
+      limb3(W(0.0058, 0, 0.063), W(0.0058, 0, 0.035), 0.0035, shadeC(P.top, 0.84), false);
+
+      /* 前腿 */
+      limb3(W(0, 0.0052, hipZ), W(fwdL*0.6, 0.0052, 0.019), 0.0044, P.pants);
+      limb3(W(fwdL*0.6, 0.0052, 0.019), W(fwdL, 0.0052, 0.003 + liftL), 0.0040, P.pants);
+      var fl = W(fwdL, 0.0052, 0.003 + liftL);
+      limb3(fl, [fl[0] + cs*0.004, fl[1] + sn*0.004, fl[2]-0.001], 0.0044, P.shoe, false);
+
+      /* 手臂（前） */
+      limb3(W(0, 0.0100, shoulderZ), W(sw*0.006, 0.0102, 0.040), 0.0035, P.top);
+      limb3(W(sw*0.006, 0.0102, 0.040), W(sw*0.0075, 0.0104, 0.0305), 0.0032, shadeC(P.skin, 0.95));
+
+      /* 头 */
+      var hp = W(0, 0, 0.0700);
+      var pp2 = pp(hp[0], hp[1], hp[2]);
+      if(pp2){
+        var R = focal*0.0054/pp2.d;
+        if(R > 0.6){
+          var hc = mix(P.skin, pp2.d);
+          var hg = ctx.createRadialGradient(pp2.x - R*0.34, pp2.y - R*0.36, R*0.1, pp2.x, pp2.y, R*1.05);
+          hg.addColorStop(0, css([hc[0]*1.16+14, hc[1]*1.16+12, hc[2]*1.16+10]));
+          hg.addColorStop(0.68, css(hc));
+          hg.addColorStop(1, css([hc[0]*0.62, hc[1]*0.6, hc[2]*0.58]));
+          ctx.fillStyle = hg;
+          ctx.beginPath(); ctx.arc(pp2.x, pp2.y, R, 0, Math.PI*2); ctx.fill();
+
+          /* 头发 / 头盔 */
+          var hairC = mix(P.hair, pp2.d);
+          ctx.fillStyle = css(hairC);
+          ctx.beginPath();
+          ctx.arc(pp2.x, pp2.y - R*0.14, R*1.05, Math.PI*0.94, Math.PI*2.06);
+          ctx.fill();
+          if(P.prop === "box"){
+            ctx.fillStyle = css(mix(P.top, pp2.d));
+            ctx.beginPath(); ctx.arc(pp2.x, pp2.y - R*0.1, R*1.2, Math.PI, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "rgba(30,40,42,.8)";
+            ctx.fillRect(pp2.x - R*1.2, pp2.y - R*0.16, R*2.4, Math.max(1, R*0.24));
+          }else if(P.prop === "cane"){
+            ctx.beginPath(); ctx.arc(pp2.x, pp2.y - R*0.80, R*0.30, 0, Math.PI*2); ctx.fill();
+          }else{
+            ctx.beginPath();
+            ctx.ellipse(pp2.x, pp2.y - R*0.5, R*0.55, R*0.95, 0, 0, Math.PI*2);
+            ctx.fill();
+          }
+        }
+      }
+
+      /* 道具 */
+      if(P.prop === "cane"){
+        var hand = W(sw*0.0075, 0.0125, 0.030);
+        limb3(hand, [hand[0] + cs*0.003, hand[1] + sn*0.003, 0.001], 0.0016, P.accent, false);
+        /* 布袋 */
+        boxN(pl.x - sn*(-0.013)*1, pl.y + cs*(-0.013)*1, 0.030 + bob, 0.045 + bob, 0.005, 0.004, A, C("#C9B79B"));
+      }
+      if(P.prop === "box"){
+        /* 外卖箱：背在身后 */
+        boxN(pl.x - cs*0.0095, pl.y - sn*0.0095, 0.0415 + bob, 0.0645 + bob, 0.0045, 0.0088, A, C("#EFB93F"));
+        boxN(pl.x - cs*0.0095, pl.y - sn*0.0095, 0.0470 + bob, 0.0560 + bob, 0.0048, 0.0091, A, C("#2E3A3C"));
+      }
+      if(P.prop === "stroller"){
+        var sx2 = pl.x + cs*0.014, sy2 = pl.y + sn*0.014;
+        boxN(sx2, sy2, 0.012 + bob, 0.020 + bob, 0.0075, 0.0065, A, C("#9FB6AC"));
+        boxN(sx2, sy2, 0.020 + bob, 0.024 + bob, 0.0078, 0.0068, A, C("#5B6560"));
+        ballN(sx2 - sn*0.006, sy2 + cs*0.006, 0.0038, 0.0038, C("#3C4642"));
+        ballN(sx2 + sn*0.006, sy2 - cs*0.006, 0.0038, 0.0038, C("#3C4642"));
+      }
+    }
+
+    /* ---------------- 主绘制 ---------------- */
+    function draw(){
+      camPos();
+      hz = Hcv*0.5 + focal*Math.tan(pl.pitch);
+      var realA = pl.a;
+      pl.a = camA;
+      drawSky();
+      drawGround();
+      drawWalls();
+      drawRouteLine();
+      drawSolids();
+      var onScreen = drawBeacon();
+      drawGoalLabel();
+      drawAvatar(realA);
+      pl.a = realA;
+
+      var ha = Math.max(0, Math.min(.22, (felt()-36)/30));
+      if(ha > 0.01){
+        var vig = ctx.createRadialGradient(Wcv/2, Hcv*0.52, Hcv*0.14, Wcv/2, Hcv*0.52, Hcv*0.95);
+        vig.addColorStop(0,"rgba(255,120,40,0)");
+        vig.addColorStop(1,"rgba(255,86,30," + ha.toFixed(3) + ")");
+        ctx.fillStyle = vig; ctx.fillRect(0,0,Wcv,Hcv);
+      }
+      drawMinimap();
+      return onScreen;
+    }
+
+    /* ---------------- 小地图 ---------------- */
+    var mm = null;
+    function drawMinimap(){
+      if(!mm) return;
+      var m = mm.getContext("2d");
+      var w = mm.width, h = mm.height, cw = w/W, ch = h/H;
+      m.clearRect(0,0,w,h);
+      for(var y=0;y<H;y++) for(var x=0;x<W;x++){
+        var c = grid[y][x];
+        if(c === "#") m.fillStyle = "rgba(220,232,226,.13)";
+        else if(c === "g") m.fillStyle = "rgba(110,160,110,.5)";
+        else if(c === "s") m.fillStyle = "rgba(95,227,192,.30)";
+        else if(c === "c") m.fillStyle = "rgba(210,206,192,.30)";
+        else m.fillStyle = "rgba(255,255,255,.05)";
+        m.fillRect(x*cw, y*ch, cw-0.6, ch-0.6);
+      }
+      /* 围栏 */
+      m.strokeStyle = "rgba(190,210,204,.55)";
+      m.lineWidth = 1;
+      for(var i=0;i<FENCES.length;i++){
+        var f = FENCES[i];
+        m.beginPath(); m.moveTo(f[0]*cw, f[1]*ch); m.lineTo(f[2]*cw, f[3]*ch); m.stroke();
+      }
+      /* 路径 */
+      var pts = routePts();
+      m.strokeStyle = "rgba(125,240,212,.85)";
+      m.lineWidth = 1.6;
+      m.beginPath();
+      m.moveTo(pts[0][0]*cw, pts[0][1]*ch);
+      for(var i=1;i<pts.length;i++) m.lineTo(pts[i][0]*cw, pts[i][1]*ch);
+      m.stroke();
+      /* 终点 + 信标 */
+      m.fillStyle = "rgba(125,240,212,.35)";
+      m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 7, 0, Math.PI*2); m.fill();
+      m.fillStyle = "#5FE3C0";
+      m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 3.4, 0, Math.PI*2); m.fill();
+      /* 玩家 */
+      m.save();
+      m.translate(pl.x*cw, pl.y*ch);
+      m.rotate(pl.a + Math.PI/2);
+      m.fillStyle = "#FF6B4A";
+      m.beginPath(); m.moveTo(0,-5.5); m.lineTo(4,4); m.lineTo(0,2); m.lineTo(-4,4); m.closePath(); m.fill();
+      m.restore();
+    }
+
+    /* ---------------- 逻辑 ---------------- */
+    function step(dt){
+      var sp = SPEED[state.persona] || 1;
+      if(keys.ShiftLeft || keys.ShiftRight) sp *= 1.8;
+      var fx = 0, fy = 0;
+      if(keys.KeyW || keys.ArrowUp) fx += 1;
+      if(keys.KeyS || keys.ArrowDown) fx -= 0.75;
+      if(keys.KeyA) fy -= 1;
+      if(keys.KeyD) fy += 1;
+      if(keys.ArrowLeft) pl.a -= 2.1*dt;
+      if(keys.ArrowRight) pl.a += 2.1*dt;
+      var len = Math.hypot(fx,fy);
+      if(len > 0 && !done){
+        fx /= len; fy /= len;
+        var dx = (Math.cos(pl.a)*fx - Math.sin(pl.a)*fy) * sp * dt;
+        var dy = (Math.sin(pl.a)*fx + Math.cos(pl.a)*fy) * sp * dt;
+        var moved = 0;
+        if(!blockedAt(pl.x+dx, pl.y)){ pl.x += dx; moved += Math.abs(dx); }
+        if(!blockedAt(pl.x, pl.y+dy)){ pl.y += dy; moved += Math.abs(dy); }
+        walked += moved;
+        pl.ph += moved * 7.6;
+      }
+      /* 相机朝向滞后跟随，转身时能看到角色侧面 */
+      var da = pl.a - camA;
+      while(da > Math.PI) da -= Math.PI*2;
+      while(da < -Math.PI) da += Math.PI*2;
+      camA += da * Math.min(1, dt*9);
+
+      if(pl.z > 0 || pl.vz !== 0){
+        pl.vz -= 0.45*dt; pl.z += pl.vz*dt;
+        if(pl.z <= 0){ pl.z = 0; pl.vz = 0; }
+      }
+      /* 到达后计时与暴晒累计一起冻结 */
+      if(!done){
+        elapsed += dt;
+        sunSec += dt * sunFactor();
+        peak = Math.max(peak, felt());
+      }
+      while(wpIdx < WPTS.length && Math.hypot(WPTS[wpIdx][0]-pl.x, WPTS[wpIdx][1]-pl.y) < 0.55) wpIdx++;
+      if(wpIdx < WPTS.length){
+        var bd = Math.hypot(WPTS[wpIdx][0]-pl.x, WPTS[wpIdx][1]-pl.y), best = wpIdx;
+        for(var k=wpIdx+1;k<WPTS.length;k++){
+          var dk = Math.hypot(WPTS[k][0]-pl.x, WPTS[k][1]-pl.y);
+          if(dk < bd - 0.25){ bd = dk; best = k; }
+        }
+        wpIdx = best;
+      }
+      if(!done && Math.hypot(GOAL.x-pl.x, GOAL.y-pl.y) < 0.22) arrive();
+    }
+
+    function arrive(){
+      done = true;
+      var L = COPY[LANG].sim;
+      document.getElementById("simSummary").textContent =
+        L.summary(Math.round(walked*MPT), Math.round(elapsed), Math.round(sunSec), peak.toFixed(1));
+      document.getElementById("lblDone").textContent = L.lbl.done;
+      document.getElementById("lblAgain").textContent = L.lbl.again;
+      document.getElementById("simDone").classList.add("on");
+      document.getElementById("simNavText").textContent = L.lbl.done;
+    }
+
+    function navInfo(){
+      var L = COPY[LANG].sim.nav;
+      var target = wpIdx < WPTS.length ? WPTS[wpIdx] : [GOAL.x, GOAL.y];
+      var dx = target[0]-pl.x, dy = target[1]-pl.y;
+      var distM = Math.hypot(dx,dy)*MPT;
+      var bearing = Math.atan2(dy,dx) - pl.a;
+      while(bearing > Math.PI) bearing -= Math.PI*2;
+      while(bearing < -Math.PI) bearing += Math.PI*2;
+
+      var turn = "straight";
+      if(wpIdx < WPTS.length){
+        var nxt = wpIdx+1 < WPTS.length ? WPTS[wpIdx+1] : [GOAL.x, GOAL.y];
+        var a1 = Math.atan2(target[1]-pl.y, target[0]-pl.x);
+        var a2 = Math.atan2(nxt[1]-target[1], nxt[0]-target[0]);
+        var dd = a2 - a1;
+        while(dd > Math.PI) dd -= Math.PI*2;
+        while(dd < -Math.PI) dd += Math.PI*2;
+        if(dd > 0.35) turn = "right";
+        else if(dd < -0.35) turn = "left";
+      }
+      var isLast = (wpIdx >= WPTS.length - 1);
+      var txt;
+      if(isLast) txt = L.arrive;
+      else if(distM < 14 && turn !== "straight") txt = L.now + L[turn];
+      else if(turn === "straight") txt = L.straight;
+      else txt = Math.round(distM) + " " + L.mAfter + L[turn];
+
+      var remain = 0;
+      var prev = [pl.x, pl.y];
+      for(var i=wpIdx;i<WPTS.length;i++){ remain += Math.hypot(WPTS[i][0]-prev[0], WPTS[i][1]-prev[1]); prev = WPTS[i]; }
+      remain += Math.hypot(GOAL.x-prev[0], GOAL.y-prev[1]);
+
+      return {bearing:bearing, text:txt, remain:Math.round(remain*MPT), distM:distM};
+    }
+
+    function hud(force){
+      var t = performance.now();
+      if(!force && t-hudT < 100) return;
+      hudT = t;
+      var L = COPY[LANG].sim;
+      document.getElementById("simTemp").textContent = felt().toFixed(1);
+      document.getElementById("simDist").textContent = Math.round(Math.hypot(GOAL.x-pl.x, GOAL.y-pl.y)*MPT);
+      document.getElementById("simSun").textContent = Math.round(sunSec);
+      document.getElementById("simWho").textContent = L.who[state.persona];
+      document.getElementById("simFrom").textContent = L.lbl.from + COPY[LANG].start[state.persona];
+
+      if(!done){
+        var nav = navInfo();
+        var arrow = document.getElementById("simArrow");
+        if(arrow) arrow.style.transform = "rotate(" + (nav.bearing*180/Math.PI).toFixed(1) + "deg)";
+        document.getElementById("simNavText").textContent = nav.text;
+        document.getElementById("simNavSub").textContent = L.nav.remain + " " + nav.remain + " m";
+      }
+    }
+
+    function labels(){
+      var L = COPY[LANG].sim;
+      document.getElementById("lblTemp").textContent = L.lbl.temp;
+      document.getElementById("lblDist").textContent = L.lbl.dist;
+      document.getElementById("lblSun").textContent = L.lbl.sun;
+      document.getElementById("lblExit").textContent = L.lbl.exit;
+      document.getElementById("lblTip").textContent = L.lbl.tip;
+      document.getElementById("lblAgain").textContent = L.lbl.again;
+      document.getElementById("lblDone").textContent = L.lbl.done;
+      document.getElementById("simNavDest").textContent = COPY[LANG].dest[state.persona].replace(/^.*·\s*/, "");
+      hud(true);
+    }
+
+    function resize(){
+      if(!cv) return;
+      var dpr = Math.min(1.2, window.devicePixelRatio || 1);
+      Wcv = Math.max(760, Math.min(1480, Math.round(window.innerWidth * dpr)));
+      Hcv = Math.max(420, Math.round(Wcv * window.innerHeight / window.innerWidth));
+      cv.width = Wcv; cv.height = Hcv;
+      focal = (Wcv/2) / Math.tan(FOV/2);
+      gsf = Wcv > 1180 ? 3 : 2;
+      gw = Math.ceil(Wcv/gsf); gh = Math.ceil(Hcv/gsf);
+      if(!off){ off = document.createElement("canvas"); offctx = off.getContext("2d"); }
+      off.width = gw; off.height = gh;
+      offimg = offctx.createImageData(gw, gh);
+    }
+
+    function frame(t){
+      if(!open) return;
+      var dt = Math.min(0.05, (t - (last || t))/1000);
+      last = t;
+      step(dt); draw(); hud();
+      raf = requestAnimationFrame(frame);
+    }
+
+    function bindLook(){
+      cv.addEventListener("pointerdown", function(e){
+        drag = {x:e.clientX, y:e.clientY, a:pl.a, p:pl.pitch};
+        try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+        cv.style.cursor = "grabbing";
+      });
+      cv.addEventListener("pointermove", function(e){
+        if(!drag) return;
+        pl.a = drag.a + (e.clientX - drag.x) * 0.005;
+        camA = pl.a;
+        pl.pitch = Math.max(-0.42, Math.min(0.34, drag.p - (e.clientY - drag.y) * 0.0022));
+      });
+      cv.addEventListener("pointerup", function(){ drag = null; cv.style.cursor = "grab"; });
+      cv.addEventListener("pointercancel", function(){ drag = null; cv.style.cursor = "grab"; });
+    }
+
+    function openSim(){
+      if(!cv){
+        cv = document.getElementById("simc");
+        ctx = cv.getContext("2d");
+        mm = document.getElementById("simmap");
+        bindLook();
+      }
+      build();
+      pl = {x:START.x, y:START.y, a:0, pitch:-0.06, z:0, vz:0, ph:0};
+      camA = 0;
+      sunSec = 0; peak = 0; walked = 0; elapsed = 0; done = false; wpIdx = 0;
+      keys = {}; drag = null;
+      cancelAnimationFrame(raf);              /* 防止“再走一次”后叠加第二条渲染循环 */
+      document.getElementById("simDone").classList.remove("on");
+      document.getElementById("sim").classList.add("on");
+      document.getElementById("sim").setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+      open = true;
+      resize(); labels();
+      window.__simTeleport = function(x,y,a){ pl.x=x; pl.y=y; pl.a=(a===undefined?0:a); camA = pl.a; };
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+    function closeSim(){
+      open = false;
+      cancelAnimationFrame(raf);
+      document.getElementById("sim").classList.remove("on");
+      document.getElementById("sim").setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    window.addEventListener("keydown", function(e){
+      if(!open) return;
+      if(e.code === "Escape"){ closeSim(); return; }
+      keys[e.code] = true;
+      if(e.code === "Space"){
+        e.preventDefault();
+        if(pl.z === 0 && !done){ pl.vz = 0.2; }
+      }
+      if(e.code.indexOf("Arrow") === 0) e.preventDefault();
+    });
+    window.addEventListener("keyup", function(e){ keys[e.code] = false; });
+    window.addEventListener("resize", function(){ if(open) resize(); });
+
+    return { open:openSim, close:closeSim, labels:labels, isOpen:function(){ return open; } };
+  })();
+
+  /* 模拟层 DOM 在本脚本之后才解析，必须等解析完成再绑定，
+     否则 simX / simAgain 取到 null 会抛错，两个按钮全部失效 */
+  function bindSimUI(){
+    var bOpen = document.getElementById("simBtn");
+    var bExit = document.getElementById("simX");
+    var bAgain = document.getElementById("simAgain");
+    if(bOpen) bOpen.addEventListener("click", SIM.open);
+    if(bExit) bExit.addEventListener("click", SIM.close);
+    if(bAgain) bAgain.addEventListener("click", SIM.open);
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", bindSimUI);
+  }else{
+    bindSimUI();
+  }
+})();
+</script>
+<!-- first-person simulation -->
+<div class="sim" id="sim" aria-hidden="true">
+  <canvas id="simc"></canvas>
+  <div class="simhud">
+    <div class="simbar">
+      <span class="simwho" id="simWho">陈阿姨 78</span>
+      <span class="simk"><b id="simTemp">43.2</b><i>℃</i><em id="lblTemp">体感</em></span>
+      <span class="simk"><b id="simDist">330</b><i>m</i><em id="lblDist">到医院</em></span>
+      <span class="simk"><b id="simSun">0</b><i>s</i><em id="lblSun">暴晒</em></span>
+      <span class="simfrom" id="simFrom">起点 · 陈阿姨家</span>
+      <button class="simx" id="simX" type="button"><span id="lblExit">退出 ESC</span></button>
+    </div>
+    <div class="simnav">
+      <div class="simnav-arrow" id="simArrow">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="21" fill="rgba(8,13,12,.62)" stroke="rgba(95,227,192,.45)"/>
+          <path d="M24 10 L33 28 L24 23.4 L15 28 Z" fill="#7DF0D4"/>
+        </svg>
+      </div>
+      <div class="simnav-t" id="simNavText">沿南街直行</div>
+      <div class="simnav-s"><span id="simNavSub">剩余 231 m</span> · <span id="simNavDest">社区医院</span></div>
+    </div>
+    <canvas class="simmap" id="simmap" width="344" height="258"></canvas>
+    <div class="simtip" id="lblTip">WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出</div>
+    <div class="simdone" id="simDone">
+      <h4 id="lblDone">到达 · 社区医院</h4>
+      <p id="simSummary"></p>
+      <button class="simbtn" id="simAgain" type="button"><span id="lblAgain">再走一次</span></button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

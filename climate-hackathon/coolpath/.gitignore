@@ -1,0 +1,11 @@
+.tmp_shot.html
+Thumbs.db
+.DS_Store
+*.lnk
+.workbuddy/
+_prof_*/
+_t_*.html
+_dump_*.html
+shots/
+sim_new.js
+coolpath.bak.html
