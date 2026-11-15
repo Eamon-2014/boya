@@ -4681,6 +4681,8 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     }
     function cellAt(x,y){
       var cx = Math.floor(x), cy = Math.floor(y);
+      /* 东西向主街（中街/南街）向两端无限延伸：走不完的路 */
+      if(cy === 7 || cy === 12) return ".";
       if(cx<0||cy<0||cx>=W||cy>=H) return "#";
       return grid[cy][cx];
     }
@@ -5214,11 +5216,16 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       var sx = dx<0 ? -1 : 1, sy = dy<0 ? -1 : 1;
       var sdx = (dx<0 ? (px-mx) : (mx+1-px)) * ddx;
       var sdy = (dy<0 ? (py-my) : (my+1-py)) * ddy;
-      var side = 0, guard = 0, hh = 0.6, tp = 0, bk = 0;
+      var side = 0, guard = 0, hh = 0, tp = 0, bk = 0;
       while(guard++ < 90){
         if(sdx < sdy){ sdx += ddx; mx += sx; side = 0; }
         else { sdy += ddy; my += sy; side = 1; }
-        if(mx<0||my<0||mx>=W||my>=H){ hh = 0; tp = 0; break; }
+        if(mx<0||my<0||mx>=W||my>=H){
+          if(my===7 || my===12) continue;               /* 主街延伸出世界：路继续 */
+          hh = 0.56 + (hash2(mx,my) % 5) * 0.04;        /* 世界之外：延续的城市建筑 */
+          tp = 2; bk = hash2(mx,my);
+          break;
+        }
         if(grid[my][mx] === "#"){ hh = bh[my][mx]; tp = bt[my][mx]; bk = bid[my][mx]; break; }
       }
       var dist = side===0 ? (sdx-ddx) : (sdy-ddy);
@@ -5298,7 +5305,15 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
           var o = rowBase + px*4;
           var rr, gg2, bb;
           if(cx<0||cy<0||cx>=W||cy>=H){
-            rr = 104; gg2 = 98; bb = 88;
+            if(cy===7 || cy===12){
+              /* 主街延伸段：路面继续，带中线虚线 */
+              var fy3 = wy - cy;
+              rr = 128; gg2 = 117; bb = 102;
+              if(fy3 > 0.16 && fy3 < 0.185){ rr = 92; gg2 = 88; bb = 82; }
+              else if(Math.abs(fy3-0.5) < 0.02 && ((Math.floor(wx*0.7) & 1) === 0)){ rr = 216; gg2 = 182; bb = 92; }
+            }else{
+              rr = 104; gg2 = 98; bb = 88;
+            }
           }else{
             var cell = grid[cy][cx];
             var fx = wx - cx, fy = wy - cy;
@@ -5329,11 +5344,11 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             }else{
               rr = 128; gg2 = 117; bb = 102;
               var sw = 0, horiz = true;
-              if(cx>0 && grid[cy][cx-1]==="#" && fx < 0.17) sw = 1;
-              if(cx<W-1 && grid[cy][cx+1]==="#" && fx > 0.83) sw = 1;
-              if(cy>0 && grid[cy-1][cx]==="#" && fy < 0.17) sw = 1;
-              if(cy<H-1 && grid[cy+1][cx]==="#" && fy > 0.83) sw = 1;
-              horiz = !!(cx>0 && grid[cy][cx-1]!=="#" && cx<W-1 && grid[cy][cx+1]!=="#");
+              if(cx>0 && cellAt(cx-1,cy)==="#" && fx < 0.17) sw = 1;
+              if(cellAt(cx+1,cy)==="#" && fx > 0.83) sw = 1;
+              if(cy>0 && cellAt(cx,cy-1)==="#" && fy < 0.17) sw = 1;
+              if(cellAt(cx,cy+1)==="#" && fy > 0.83) sw = 1;
+              horiz = !!(cellAt(cx-1,cy)!=="#" && cellAt(cx+1,cy)!=="#");
               if(sw){ rr = 184; gg2 = 174; bb = 156; }
               else if((fx>0.16&&fx<0.185) || (fy>0.16&&fy<0.185)){ rr = 92; gg2 = 88; bb = 82; }
             }
@@ -5871,9 +5886,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 7, 0, Math.PI*2); m.fill();
       m.fillStyle = "#5FE3C0";
       m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 3.4, 0, Math.PI*2); m.fill();
-      /* 玩家 */
+      /* 玩家（钳制在小地图范围内，主街延伸时不飞出） */
       m.save();
-      m.translate(pl.x*cw, pl.y*ch);
+      var mcx = Math.max(4, Math.min(w-4, pl.x*cw)), mcy = Math.max(4, Math.min(h-4, pl.y*ch));
+      m.translate(mcx, mcy);
       m.rotate(pl.a + Math.PI/2);
       m.fillStyle = "#FF6B4A";
       m.beginPath(); m.moveTo(0,-5.5); m.lineTo(4,4); m.lineTo(0,2); m.lineTo(-4,4); m.closePath(); m.fill();
