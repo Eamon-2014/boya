@@ -11,6 +11,7 @@
 |---|---|
 | **▶ 作品文件（点开下载后双击即可运行）** | [climate-hackathon/breeze.html](climate-hackathon/breeze.html) |
 | **📊 方案演示（PPT）** | [climate-hackathon/Breeze-气候黑客松-方案.pptx](climate-hackathon/Breeze-气候黑客松-方案.pptx) |
+| **🌐 方案演示（网页版，浏览器直接打开）** | [climate-hackathon/Breeze-方案-网页版.html](climate-hackathon/Breeze-方案-网页版.html) |
 | **🖼 截图** | [screenshots](climate-hackathon/coolpath/screenshots) |
 
 > 作品是**单文件零依赖 HTML**，不需要服务器、不需要联网、不加载任何外部资源，浏览器双击打开就能跑。在 GitHub 上请点 **Download raw file** 下载后本地打开——GitHub 不会渲染 HTML 页面。
