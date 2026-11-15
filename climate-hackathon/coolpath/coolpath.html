@@ -3104,10 +3104,14 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       var n = parseFloat(v);
       if(!isFinite(n) || n <= 0) n = 1;
       n = Math.round(n*100)/100;
-      n = Math.max(0.25, Math.min(10, n));
+      n = Math.max(0.25, Math.min(2147483647, n));   /* INT_MAX */
       spdMul = n;
       var inp = document.getElementById("spdInput");
-      if(inp && rewrite !== false) inp.value = String(n);
+      if(inp && rewrite !== false){
+        inp.value = String(n);
+        /* 位数变多时自动加宽，避免 2147483647 被挤成一串 */
+        inp.style.width = Math.max(30, Math.min(84, String(n).length * 8 + 14)) + "px";
+      }
       var box = document.getElementById("simSpd");
       if(box) box.classList.toggle("hot", n > 1.001);
     }
@@ -3170,7 +3174,10 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       /* 倍率作用在整段模拟时间上：走得更快，计时/暴晒同步加速，结算数据不因倍率而变。
          高倍率拆成多个子步，避免单帧位移过大穿过墙体。 */
       var sdt = dt * spdMul;
-      var n = Math.max(1, Math.min(24, Math.ceil(sdt / 0.034)));
+      /* 倍率可以设到 INT_MAX，但一帧能真正推进的模拟时间必须有上限，
+         否则单帧要算上亿秒、浏览器直接卡死。5 秒/帧≈300 倍，已足够"瞬间走完"。 */
+      if(sdt > 5) sdt = 5;
+      var n = Math.max(1, Math.min(160, Math.ceil(sdt / 0.034)));
       for(var i=0;i<n;i++) step(sdt/n);
       draw(); hud();
       raf = requestAnimationFrame(frame);
