@@ -9,3 +9,11 @@ _dump_*.html
 shots/
 sim_new.js
 coolpath.bak.html
+breeze.bak.html
+_bz_*.html
+_bzprof_*/
+_bzdump_*.html
+breeze.bak.html
+_bz_*.html
+_bzprof_*/
+_bzdump_*.html
