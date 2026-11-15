@@ -674,8 +674,8 @@ svg.cp-map{display:block;width:100%;height:auto}
 
 /* ---------- simulation overlay ---------- */
 .cp-sim{position:fixed;inset:0;z-index:90;display:none;background:#0A0806}
-.cp-sim.cp-on{display:block}
-#simc{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+.cp-sim.cp-on,.cp-sim.on{display:block}
+#cp-simc{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
 .cp-simhud{position:absolute;inset:0;pointer-events:none;font-family:var(--cp-sans)}
 .cp-simbar{position:absolute;left:16px;top:14px;right:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cp-simwho{font-size:12.5px;font-weight:650;color:#06231C;
@@ -705,11 +705,35 @@ svg.cp-map{display:block;width:100%;height:auto}
 .cp-simmap{position:absolute;left:16px;bottom:58px;width:172px;height:129px;border-radius:11px;display:block;
   border:1px solid rgba(233,240,236,.14);background:rgba(6,10,9,.66);pointer-events:none;
   box-shadow:0 10px 30px rgba(0,0,0,.4)}
+/* 速度倍率 */
+.cp-simspd{position:absolute;right:16px;bottom:58px;display:flex;align-items:center;gap:6px;
+  pointer-events:auto;background:rgba(8,13,12,.74);border:1px solid rgba(233,240,236,.16);
+  border-radius:999px;padding:5px 7px 5px 12px;transition:border-color .2s,box-shadow .2s;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.cp-simspd.cp-hot{border-color:rgba(95,227,192,.45);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 3px rgba(95,227,192,.08)}
+.cp-simspd-l{font-size:10.5px;letter-spacing:.06em;color:#93A49C;margin-right:2px}
+.cp-simspd-b{width:23px;height:23px;border-radius:50%;border:1px solid rgba(233,240,236,.22);
+  background:rgba(255,255,255,.045);color:#E7EEE9;font:inherit;font-size:13px;line-height:1;
+  cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;
+  user-select:none;transition:border-color .15s,color .15s,background .15s}
+.cp-simspd-b:hover{border-color:rgba(95,227,192,.55);color:#8CF2D8;background:rgba(95,227,192,.1)}
+.cp-simspd-b:active{transform:scale(.93)}
+.cp-simspd-w{display:flex;align-items:center;gap:3px;background:rgba(0,0,0,.36);
+  border:1px solid rgba(233,240,236,.12);border-radius:999px;padding:3px 8px 3px 7px}
+.cp-simspd-w i{font-style:normal;font-size:10px;color:var(--cp-cool);font-family:var(--cp-mono)}
+.cp-simspd-i{width:30px;border:none;background:none;color:#F2F6F3;font-family:var(--cp-mono);
+  font-size:12.5px;text-align:center;padding:0;outline:none;line-height:1.2}
+.cp-simspd-i::selection{background:rgba(95,227,192,.3)}
+.cp-simspd-i::-webkit-outer-spin-button,.cp-simspd-i::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+@media (max-width:620px){
+  .cp-simspd{right:12px;bottom:auto;top:auto;bottom:56px;padding:4px 6px 4px 10px}
+  .cp-simspd-l{display:none}
+}
 .cp-simdone{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);display:none;
   pointer-events:auto;text-align:center;background:rgba(8,15,13,.94);
   border:1px solid rgba(95,227,192,.35);border-radius:16px;padding:22px 26px;
   max-width:min(440px,88vw);box-shadow:0 24px 70px rgba(0,0,0,.6)}
-.cp-simdone.cp-on{display:block}
+.cp-simdone.cp-on,.cp-simdone.on{display:block}
 .cp-simdone h4{margin:0 0 8px;font-size:16px;color:var(--cp-cool)}
 .cp-simdone p{margin:0 0 16px;font-size:12.5px;color:#C3CFC9;line-height:1.75}
 .cp-mapcaption{display:flex;align-items:center;gap:8px;padding:10px 18px;border-top:1px solid var(--cp-line);
@@ -938,8 +962,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   .globe-legend{font-size:10px;gap:8px}
   .globe-news{padding:16px}
 }
-
-
 </style>
 </head>
 <body>
@@ -1297,10 +1319,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             </g>
 
             <!-- heat layer -->
-            <g id="cp-heatLayer" filter="url(#soften)" opacity=".92"></g>
+            <g id="cp-heatLayer" filter="url(#cp-soften)" opacity=".92"></g>
 
             <!-- park base -->
-            <rect x="446" y="124" width="200" height="180" rx="16" fill="url(#parkG)" stroke="rgba(95,227,192,.16)"/>
+            <rect x="446" y="124" width="200" height="180" rx="16" fill="url(#cp-parkG)" stroke="rgba(95,227,192,.16)"/>
 
             <!-- blocks -->
             <g id="cp-blocks">
@@ -1337,7 +1359,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             </g>
 
             <!-- shade layer -->
-            <g id="cp-shadeLayer" opacity="0"></g>
+            <g id="cp-shadeLayer" opacity="1"></g>
 
             <!-- trees -->
             <g id="cp-treeLayer"></g>
@@ -1358,7 +1380,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             <g id="cp-personaLayer"></g>
 
             <!-- water points -->
-            <g id="cp-waterLayer"></g>
+            <g id="cp-waterLayer" opacity="0"></g>
 
             <!-- POI -->
             <g>
@@ -1381,7 +1403,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
                   <stop offset="0" stop-color="#2E8B78"/><stop offset=".5" stop-color="#FFC15E"/><stop offset="1" stop-color="#FF4B2B"/>
                 </linearGradient>
               </defs>
-              <rect x="0" y="0" width="112" height="6" rx="3" fill="url(#lg)"/>
+              <rect x="0" y="0" width="112" height="6" rx="3" fill="url(#cp-lg)"/>
               <text x="0" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">低</text>
               <text x="96" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">高</text>
             </g>
@@ -1889,7 +1911,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       </div>
     </div>
   </section>
-
 </main>
 
 <footer class="site-footer">
@@ -4109,7 +4130,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
              parent:"林女士 · 看坡道、台阶与能停下的地方"},
       sim:{
         who:{elder:"陈阿姨 78", rider:"阿哲 26", parent:"林女士 34"},
-        lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ",
+        lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ", spd:"速度",
              tip:"WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出",
              done:"到达 · 医院门诊大厅", again:"再走一次"},
         nav:{straight:"继续直行", left:"左转", right:"右转", now:"前方", arrive:"即将到达 · 社区医院",
@@ -4137,7 +4158,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
              parent:"Lin · watching ramps, steps and places to stop"},
       sim:{
         who:{elder:"Chen, 78", rider:"Zhe, 26", parent:"Lin, 34"},
-        lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ",
+        lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ", spd:"speed",
              tip:"WASD to move · Space to jump · Shift to run · drag to look · ESC to exit",
              done:"Arrived · clinic lobby", again:"Walk again"},
         nav:{straight:"Keep straight", left:"Turn left", right:"Turn right", now:"Ahead:",
@@ -4165,7 +4186,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
              parent:"Lin · rampalar, basamaklar ve durabilecek yerler"},
       sim:{
         who:{elder:"Chen, 78", rider:"Zhe, 26", parent:"Lin, 34"},
-        lbl:{temp:"hissedilen", dist:"kliniğe", sun:"güneşte", exit:"ÇIKIŞ ESC", from:"Başlangıç · ",
+        lbl:{temp:"hissedilen", dist:"kliniğe", sun:"güneşte", exit:"ÇIKIŞ ESC", from:"Başlangıç · ", spd:"hız",
              tip:"Hareket için WASD · zıplama için Boşluk · koşu için Shift · bakmak için sürükle · çıkmak için ESC",
              done:"Varıldı · klinik lobisi", again:"Tekrar yürü"},
         nav:{straight:"Düz devam edin", left:"Sola dönün", right:"Sağa dönün", now:"İleri:",
@@ -4748,7 +4769,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       var halo = document.createElementNS(NS,"circle");
       halo.setAttribute("cx",w.x); halo.setAttribute("cy",w.y); halo.setAttribute("r",13);
       halo.setAttribute("fill","#5FE3C0"); halo.setAttribute("opacity",".22");
-      halo.setAttribute("filter","url(#pinGlow)");
+      halo.setAttribute("filter","url(#cp-pinGlow)");
       var c = document.createElementNS(NS,"circle");
       c.setAttribute("cx",w.x); c.setAttribute("cy",w.y); c.setAttribute("r",5.5);
       c.setAttribute("fill","#0A0E0D"); c.setAttribute("stroke","#5FE3C0"); c.setAttribute("stroke-width","2");
@@ -5034,6 +5055,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     var Wcv = 0, Hcv = 0, focal = 900, hz = 0, gsf = 3, CSW = 3;
     var open = false, raf = 0, last = 0, hudT = 0, keys = {}, drag = null;
     var done = false, sunSec = 0, peak = 0, walked = 0, elapsed = 0, wpIdx = 0;
+    var spdMul = 1;                    /* 速度倍率：整体时间缩放，默认 1 */
     var zbd = [], zbh = [];
     var cam = {x:0, y:0, back:CAM_BACK};
     var pl = {x:START.x, y:START.y, a:0, pitch:-0.06, z:0, vz:0, ph:0};
@@ -5134,6 +5156,8 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     }
     function cellAt(x,y){
       var cx = Math.floor(x), cy = Math.floor(y);
+      /* 东西向主街（中街/南街）向两端无限延伸：走不完的路 */
+      if(cy === 7 || cy === 12) return ".";
       if(cx<0||cy<0||cx>=W||cy>=H) return "#";
       return grid[cy][cx];
     }
@@ -5667,11 +5691,16 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       var sx = dx<0 ? -1 : 1, sy = dy<0 ? -1 : 1;
       var sdx = (dx<0 ? (px-mx) : (mx+1-px)) * ddx;
       var sdy = (dy<0 ? (py-my) : (my+1-py)) * ddy;
-      var side = 0, guard = 0, hh = 0.6, tp = 0, bk = 0;
+      var side = 0, guard = 0, hh = 0, tp = 0, bk = 0;
       while(guard++ < 90){
         if(sdx < sdy){ sdx += ddx; mx += sx; side = 0; }
         else { sdy += ddy; my += sy; side = 1; }
-        if(mx<0||my<0||mx>=W||my>=H){ hh = 0; tp = 0; break; }
+        if(mx<0||my<0||mx>=W||my>=H){
+          if(my===7 || my===12) continue;               /* 主街延伸出世界：路继续 */
+          hh = 0.56 + (hash2(mx,my) % 5) * 0.04;        /* 世界之外：延续的城市建筑 */
+          tp = 2; bk = hash2(mx,my);
+          break;
+        }
         if(grid[my][mx] === "#"){ hh = bh[my][mx]; tp = bt[my][mx]; bk = bid[my][mx]; break; }
       }
       var dist = side===0 ? (sdx-ddx) : (sdy-ddy);
@@ -5751,7 +5780,15 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
           var o = rowBase + px*4;
           var rr, gg2, bb;
           if(cx<0||cy<0||cx>=W||cy>=H){
-            rr = 104; gg2 = 98; bb = 88;
+            if(cy===7 || cy===12){
+              /* 主街延伸段：路面继续，带中线虚线 */
+              var fy3 = wy - cy;
+              rr = 128; gg2 = 117; bb = 102;
+              if(fy3 > 0.16 && fy3 < 0.185){ rr = 92; gg2 = 88; bb = 82; }
+              else if(Math.abs(fy3-0.5) < 0.02 && ((Math.floor(wx*0.7) & 1) === 0)){ rr = 216; gg2 = 182; bb = 92; }
+            }else{
+              rr = 104; gg2 = 98; bb = 88;
+            }
           }else{
             var cell = grid[cy][cx];
             var fx = wx - cx, fy = wy - cy;
@@ -5782,11 +5819,11 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             }else{
               rr = 128; gg2 = 117; bb = 102;
               var sw = 0, horiz = true;
-              if(cx>0 && grid[cy][cx-1]==="#" && fx < 0.17) sw = 1;
-              if(cx<W-1 && grid[cy][cx+1]==="#" && fx > 0.83) sw = 1;
-              if(cy>0 && grid[cy-1][cx]==="#" && fy < 0.17) sw = 1;
-              if(cy<H-1 && grid[cy+1][cx]==="#" && fy > 0.83) sw = 1;
-              horiz = !!(cx>0 && grid[cy][cx-1]!=="#" && cx<W-1 && grid[cy][cx+1]!=="#");
+              if(cx>0 && cellAt(cx-1,cy)==="#" && fx < 0.17) sw = 1;
+              if(cellAt(cx+1,cy)==="#" && fx > 0.83) sw = 1;
+              if(cy>0 && cellAt(cx,cy-1)==="#" && fy < 0.17) sw = 1;
+              if(cellAt(cx,cy+1)==="#" && fy > 0.83) sw = 1;
+              horiz = !!(cellAt(cx-1,cy)!=="#" && cellAt(cx+1,cy)!=="#");
               if(sw){ rr = 184; gg2 = 174; bb = 156; }
               else if((fx>0.16&&fx<0.185) || (fy>0.16&&fy<0.185)){ rr = 92; gg2 = 88; bb = 82; }
             }
@@ -6324,9 +6361,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 7, 0, Math.PI*2); m.fill();
       m.fillStyle = "#5FE3C0";
       m.beginPath(); m.arc(GOAL.x*cw, GOAL.y*ch, 3.4, 0, Math.PI*2); m.fill();
-      /* 玩家 */
+      /* 玩家（钳制在小地图范围内，主街延伸时不飞出） */
       m.save();
-      m.translate(pl.x*cw, pl.y*ch);
+      var mcx = Math.max(4, Math.min(w-4, pl.x*cw)), mcy = Math.max(4, Math.min(h-4, pl.y*ch));
+      m.translate(mcx, mcy);
       m.rotate(pl.a + Math.PI/2);
       m.fillStyle = "#FF6B4A";
       m.beginPath(); m.moveTo(0,-5.5); m.lineTo(4,4); m.lineTo(0,2); m.lineTo(-4,4); m.closePath(); m.fill();
@@ -6449,16 +6487,64 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       }
     }
 
+    /* ---------------- 速度倍率 ---------------- */
+    function setSpd(v, rewrite){
+      var n = parseFloat(v);
+      if(!isFinite(n) || n <= 0) n = 1;
+      n = Math.round(n*100)/100;
+      n = Math.max(0.25, Math.min(2147483647, n));   /* INT_MAX */
+      spdMul = n;
+      var inp = document.getElementById("cp-spdInput");
+      if(inp && rewrite !== false){
+        inp.value = String(n);
+        /* 位数变多时自动加宽，避免 2147483647 被挤成一串 */
+        inp.style.width = Math.max(30, Math.min(84, String(n).length * 8 + 14)) + "px";
+      }
+      var box = document.getElementById("cp-simSpd");
+      if(box) box.classList.toggle("cp-hot", n > 1.001);
+    }
+    function bindSpd(){
+      var inp = document.getElementById("cp-spdInput");
+      var up = document.getElementById("cp-spdUp");
+      var dn = document.getElementById("cp-spdDown");
+      if(!inp || !up || !dn || inp.getAttribute("data-bound")) return;
+      inp.setAttribute("data-bound","1");
+      up.addEventListener("click", function(){ setSpd(spdMul + 1); });
+      dn.addEventListener("click", function(){ setSpd(spdMul - 1); });
+      /* 输入时只要数值合法就即时生效，不打断正在输入的字符 */
+      inp.addEventListener("input", function(){
+        var v = parseFloat(inp.value);
+        if(isFinite(v) && v > 0) setSpd(v, false);
+      });
+      /* 失焦或回车时规范化显示值（超范围会被夹到 0.25–10） */
+      inp.addEventListener("change", function(){ setSpd(inp.value); });
+      inp.addEventListener("blur", function(){ setSpd(inp.value); });
+      inp.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){ setSpd(inp.value); inp.blur(); e.preventDefault(); }
+        if(e.key === "Escape"){ inp.blur(); e.preventDefault(); }
+        /* 输入框里的方向键/加减号不要往数字里跑 */
+        if(e.key === "+" || e.key === "="){
+          e.preventDefault(); setSpd(spdMul + 1);
+        }
+        if(e.key === "-" || e.key === "_"){
+          e.preventDefault(); setSpd(spdMul - 1);
+        }
+      });
+      setSpd(spdMul);
+    }
+
     function labels(){
       var L = COPY[cpLang].sim;
       document.getElementById("cp-lblTemp").textContent = L.lbl.temp;
       document.getElementById("cp-lblDist").textContent = L.lbl.dist;
       document.getElementById("cp-lblSun").textContent = L.lbl.sun;
       document.getElementById("cp-lblExit").textContent = L.lbl.exit;
+      document.getElementById("cp-lblSpd").textContent = L.lbl.spd;
       document.getElementById("cp-lblTip").textContent = L.lbl.tip;
       document.getElementById("cp-lblAgain").textContent = L.lbl.again;
       document.getElementById("cp-lblDone").textContent = L.lbl.done;
       document.getElementById("cp-simNavDest").textContent = COPY[cpLang].dest[cpState.persona].replace(/^.*·\s*/, "");
+      bindSpd();
       hud(true);
     }
 
@@ -6480,7 +6566,15 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       if(!open) return;
       var dt = Math.min(0.05, (t - (last || t))/1000);
       last = t;
-      step(dt); draw(); hud();
+      /* 倍率作用在整段模拟时间上：走得更快，计时/暴晒同步加速，结算数据不因倍率而变。
+         高倍率拆成多个子步，避免单帧位移过大穿过墙体。 */
+      var sdt = dt * spdMul;
+      /* 倍率可以设到 INT_MAX，但一帧能真正推进的模拟时间必须有上限，
+         否则单帧要算上亿秒、浏览器直接卡死。5 秒/帧≈300 倍，已足够"瞬间走完"。 */
+      if(sdt > 5) sdt = 5;
+      var n = Math.max(1, Math.min(160, Math.ceil(sdt / 0.034)));
+      for(var i=0;i<n;i++) step(sdt/n);
+      draw(); hud();
       raf = requestAnimationFrame(frame);
     }
 
@@ -6533,6 +6627,8 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 
     window.addEventListener("keydown", function(e){
       if(!open) return;
+      /* 焦点在倍率输入框里时，按键只作用于输入框，不驱动角色 */
+      if(e.target && e.target.id === "cp-spdInput") return;
       if(e.code === "Escape"){ closeSim(); return; }
       keys[e.code] = true;
       if(e.code === "Space"){
@@ -6591,6 +6687,12 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       <div class="cp-simnav-s"><span id="cp-simNavSub">剩余 231 m</span> · <span id="cp-simNavDest">社区医院</span></div>
     </div>
     <canvas class="cp-simmap" id="cp-simmap" width="344" height="258"></canvas>
+    <div class="cp-simspd" id="cp-simSpd">
+      <span class="cp-simspd-l" id="cp-lblSpd">速度</span>
+      <button class="cp-simspd-b" id="cp-spdDown" type="button" aria-label="减速">−</button>
+      <span class="cp-simspd-w"><i>×</i><input class="cp-simspd-i" id="cp-spdInput" type="text" inputmode="decimal" value="1" aria-label="速度倍率" autocomplete="off" spellcheck="false"></span>
+      <button class="cp-simspd-b" id="cp-spdUp" type="button" aria-label="加速">+</button>
+    </div>
     <div class="cp-simtip" id="cp-lblTip">WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出</div>
     <div class="cp-simdone" id="cp-simDone">
       <h4 id="cp-lblDone">到达 · 社区医院</h4>
