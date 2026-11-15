@@ -597,8 +597,10 @@
   --cp-mono:ui-monospace,SFMono-Regular,"JetBrains Mono","Cascadia Mono",Consolas,monospace;
   --cp-sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
   --cp-r:18px;
-}.cp-wrap{max-width:1180px;margin:0 auto;padding:0 26px}
-.cp-mono{font-family:var(--cp-mono);font-variant-numeric:tabular-nums}/* ---------- top bar ---------- */
+}
+.cp-wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.cp-mono{font-family:var(--cp-mono);font-variant-numeric:tabular-nums}
+/* ---------- top bar ---------- */
 .cp-top{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);
   background:rgba(10,14,13,.72);border-bottom:1px solid var(--cp-line)}
 .cp-top .cp-in{display:flex;align-items:center;gap:16px;height:58px}
@@ -879,7 +881,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   font-size:20px;cursor:pointer;line-height:1}
 
 .cp-reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
-.cp-reveal.cp-in{opacity:1;transform:none}
+.cp-reveal.cp-in,.cp-reveal.in{opacity:1;transform:none}
 
 @media (max-width:980px){
   .cp-console,.cp-care{grid-template-columns:1fr}
@@ -936,6 +938,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   .globe-legend{font-size:10px;gap:8px}
   .globe-news{padding:16px}
 }
+
 
 </style>
 </head>
@@ -1209,11 +1212,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   </section>
 
   
+<!-- ===== CoolPath sections: route planning / perception / care / 3D sim ===== -->
 
-
-<section class="section" id="coolpath" aria-labelledby="cp-heroH1">
-
-<div class="cp-wrap">
+<section class="section" id="coolpath">
+  <div class="cp-wrap">
 
   <!-- HERO -->
   <div class="cp-hero">
@@ -1221,7 +1223,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     <h1 id="cp-heroH1">最热的那<span class="cp-hot">三百米</span>，<br>应该有一条<em><span class="cp-cool">更凉的路</span></em>。</h1>
     <p class="cp-lead" id="cp-heroLead">
       极端高温已经成为城市里最沉默的杀手：它不掀翻屋顶，只是一次次把老人留在了去买菜的路上。
-      <b>Breeze</b> 用 AI 把「热风险」翻译成一条可执行的路——给脆弱人群规划<b>最低热暴露</b>的步行路线，
+      <b>凉径</b> 用 AI 把「热风险」翻译成一条可执行的路——给脆弱人群规划<b>最低热暴露</b>的步行路线，
       同时给社区工作者一张<b>今天该先敲谁家门</b>的名单。
     </p>
 
@@ -1328,9 +1330,9 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
               <text x="468" y="290">街心公园</text>
               <text x="56" y="216">便民菜场</text>
               <text x="688" y="216">快递驿站</text>
-              <text x="212" y="414">社区小学</text>
+              <text x="212" y="414">住宅 B</text>
               <text x="470" y="414" fill="#9AA5A0">社区医院</text>
-              <text x="688" y="414">住宅 B</text>
+              <text x="688" y="414">社区小学</text>
               <text x="56" y="414">住宅 C</text>
             </g>
 
@@ -1602,7 +1604,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 
     <div class="cp-care">
       <div class="cp-careintro">
-        <p id="cp-careP1">社区网格员每天只有 3 小时能出门。Breeze 的热模型把楼栋、时段、人口结构叠在一起，输出一份<b style="color:var(--ink)">按热风险排序</b>的走访清单——把有限的人力放在最可能出事的地方。</p>
+        <p id="cp-careP1">社区网格员每天只有 3 小时能出门。凉径的热模型把楼栋、时段、人口结构叠在一起，输出一份<b style="color:var(--ink)">按热风险排序</b>的走访清单——把有限的人力放在最可能出事的地方。</p>
         <p>名单不是判决书：每一条都附了可执行的动作，和一句「为什么是它」。</p>
         <div class="cp-note">
           风险分 = 楼栋热暴露（40%）+ 人口脆弱度（35%）+ 建筑散热条件（25%）。<br>
@@ -1718,8 +1720,19 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     </div>
   </section>
 
+  <footer>
+    <div class="cp-fin">
+      <div class="cp-l">
+        <b>凉径 CoolPath</b> · 原型 v0.3 · 2026 年 11 月<br>
+        为 ATOX「AI for Climate 青年气候黑客松」构建。本页面全部数据为合成演示数据，用于说明交互与判断逻辑，不代表任何真实测量结果。
+      </div>
+      <div class="cp-r">
+        单文件 HTML · 无构建 · 无追踪<br>
+        离线可用 · 键盘可操作
+      </div>
+    </div>
+  </footer>
 </div>
-</section>
 
 <!-- judge drawer -->
 <div class="cp-scrim" id="cp-scrim"></div>
@@ -1741,7 +1754,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 </aside>
 
 
-
+<!-- ===== end CoolPath sections ===== -->
 <section class="section" id="method" aria-labelledby="methodTitle">
     <div class="wrap">
       <div class="section-head reveal">
@@ -1815,8 +1828,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       </div>
     </div>
   </section>
-
-  <!-- ===== Globe · live weather & climate news ===== -->
   <section class="section" id="globe" aria-labelledby="globeTitle">
     <div class="wrap">
       <div class="section-head reveal">
@@ -1878,6 +1889,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       </div>
     </div>
   </section>
+
 </main>
 
 <footer class="site-footer">
@@ -4035,10 +4047,9 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     setInterval(fetchGlobeWeather, 10*60*1000);
     setInterval(fetchGlobeNews, 5*60*1000);
   }
-
 })();
 
-/* ===== Route-planning module (namespaced) ===== */
+/* ===== CoolPath module (namespaced) ===== */
 (function(){
   "use strict";
   var cpLang = (typeof state !== "undefined" && state.uiLang) ? state.uiLang : "zh";
@@ -4155,7 +4166,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 
   /* ---------- i18n ---------- */
   var DICT = {
- "Breeze": "Breeze",
+ "凉径 CoolPath": "CoolPath",
  "演示数据 · 合成": "DEMO DATA · SYNTHETIC",
  "评审速览": "JUDGE VIEW",
  "进入模拟世界": "Enter the simulation",
@@ -4329,7 +4340,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
  "建议演示顺序：拖动时间轴到 20:00，让 AI 自己推翻推荐——「晚上八点，这 121 米不值得多走」。这是全篇最诚实的一秒。": "Suggested demo: drag the timeline to 20:00 and let the AI overrule itself — “at 8pm those 121 metres aren't worth it.” It is the most honest second on this page."
 };
   var DICT_TR = {
- "Breeze": "Breeze",
+ "凉径 CoolPath": "CoolPath",
  "演示数据 · 合成": "DEMO VERİ · SENTETİK",
  "评审速览": "JÜRİ GÖRÜNÜMÜ",
  "进入模拟世界": "Simülasyon dünyasına gir",
@@ -4503,15 +4514,15 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 };
   var HTML_EN = {
  "cp-heroH1": "The hottest <span class=\"hot\">300 meters</span>,<br>deserve a <em><span class=\"cool\">cooler path</span></em>",
- "cp-heroLead": "Extreme heat is the quietest killer in a city. It doesn't tear roofs off — it just keeps an older person on the way to the market, one afternoon at a time. <b>Breeze</b> turns heat risk into an executable route: a <b>lowest-exposure walk</b> for vulnerable people, and a door-to-door list of who to check on first for community workers.",
- "cp-careP1": "A grid worker has about three hours on foot each day. Breeze stacks building heat, time of day and population structure into a ranked visiting list — putting scarce capacity where something is most likely to happen.",
+ "cp-heroLead": "Extreme heat is the quietest killer in a city. It doesn't tear roofs off — it just keeps an older person on the way to the market, one afternoon at a time. <b>CoolPath</b> turns heat risk into an executable route: a <b>lowest-exposure walk</b> for vulnerable people, and a door-to-door list of who to check on first for community workers.",
+ "cp-careP1": "A grid worker has about three hours on foot each day. CoolPath stacks building heat, time of day and population structure into a ranked visiting list — putting scarce capacity where something is most likely to happen.",
  "cp-judgeP1": "Focused on <strong>adaptation</strong> to extreme heat, with users you can name: elderly people living alone, delivery riders, families with infants. The impact path is computable: outdoor exposure minutes avoided × people reached.",
  "cp-judgeP3": "Not another heat map, but a <strong>decision</strong>: which path to take, whose door to knock on first. One model serving two roles."
 };
   var HTML_TR = {
  "cp-heroH1": "En sıcak <span class=\"hot\">300 metre</span>,<br>daha <em><span class=\"cool\">serin bir yol</span></em> hak ediyor",
- "cp-heroLead": "Aşırı sıcaklık bir şehrin en sessiz katilidir. Çatıları uçurmaz — sadece yaşlı bir insanı pazara giderken tutar, öğleden sonra öğleden sonra. <b>Breeze</b> ısı riskini yürütülebilir bir rotaya dönüştürür: kırılgan insanlar için <b>en düşük maruziyetli yürüyüş</b>, toplum çalışanları için önce kimin kapısını çalacağına dair kapıdan kapıya liste.",
- "cp-careP1": "Bir ağ çalışanının günde yaklaşık üç saat yürüyüşü var. Breeze bina ısısını, günün saatini ve nüfus yapısını sıralı bir ziyaret listesinde birleştirir — kısıtlı kapasiteyi en çok şey olma olasılığı olan yere koyar.",
+ "cp-heroLead": "Aşırı sıcaklık bir şehrin en sessiz katilidir. Çatıları uçurmaz — sadece yaşlı bir insanı pazara giderken tutar, öğleden sonra öğleden sonra. <b>CoolPath</b> ısı riskini yürütülebilir bir rotaya dönüştürür: kırılgan insanlar için <b>en düşük maruziyetli yürüyüş</b>, toplum çalışanları için önce kimin kapısını çalacağına dair kapıdan kapıya liste.",
+ "cp-careP1": "Bir ağ çalışanının günde yaklaşık üç saat yürüyüşü var. CoolPath bina ısısını, günün saatini ve nüfus yapısını sıralı bir ziyaret listesinde birleştirir — kısıtlı kapasiteyi en çok şey olma olasılığı olan yere koyar.",
  "cp-judgeP1": "Aşırı sıcaklığa <strong>uyum</strong> üzerine odaklanır, adlandırabileceğiniz kullanıcılarla: yalnız yaşayan yaşlılar, teslimat sürücüleri, bebekli aileler. Etki yolu hesaplanabilir: kaçınılan dış mekan maruziyet dakikası × ulaşılan insan sayısı.",
  "cp-judgeP3": "Başka bir ısı haritası değil, bir <strong>karar</strong>: hangi rota alınır, önce kimin kapısı çalınır. Tek model, iki rol."
 };
@@ -4566,10 +4577,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     cpLang = lang;
     document.documentElement.lang = lang === "en" ? "en" : (lang === "tr" ? "tr" : "zh-CN");
     document.title = lang === "en"
-      ? "Breeze · a cooler way through the hottest 300 metres"
+      ? "CoolPath · a cooler way through the hottest 300 metres"
       : (lang === "tr"
-        ? "Breeze · en sıcak 300 metrede daha serin bir yol"
-        : "Breeze · 让最热的三百米，有一条更凉的路");
+        ? "CoolPath · en sıcak 300 metrede daha serin bir yol"
+        : "凉径 CoolPath · 让最热的三百米，有一条更凉的路");
     cpApplyStatic(lang);
     var bEn = document.getElementById("cp-langEn"), bZh = document.getElementById("cp-langZh");
     if(bEn && bZh){
@@ -4922,7 +4933,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 
   // reveal
   var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("cp-in"); io.unobserve(en.target); } });
   }, {threshold:0.08});
   document.querySelectorAll(".cp-reveal").forEach(function(el){ io.observe(el); });
 
@@ -5076,6 +5087,9 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
         if(y === 8 && x >= 11 && x <= 15){ t = 4; hh = 0.52; }          /* 社区医院 */
         else if(y === 11 && x >= 5 && x <= 9){ t = 1; hh = 0.6; }       /* 沿街商铺 */
         else if(y === 6 && x >= 5 && x <= 9){ t = 1; hh = 0.58; }
+        else if(y >= 3 && y <= 6 && x <= 3){ t = 1; hh = 0.32 + (hb % 3) * 0.02; }   /* 便民菜场 · 低矮棚屋 */
+        else if(y >= 3 && y <= 5 && x >= 5 && x <= 9){ t = 3; hh = 0.50 + (hb % 3) * 0.03; } /* 老城住宅A · 砖楼 */
+        else if(y >= 3 && y <= 6 && x >= 17){ t = 1; hh = 0.44 + (hb % 3) * 0.02; }  /* 快递驿站 · 沿街 */
         else if(y <= 2){ t = 2; hh = 0.74 + (hb % 4) * 0.045; }         /* 北侧公寓 */
         else if(y === 8 && x <= 3){ t = 5; hh = 0.80; }                 /* 住宅C · 2号楼（6层板楼） */
         else if(y === 10 && x === 1){ t = 6; hh = 0.66; }               /* 住宅C · 3号楼（5层） */
@@ -5197,12 +5211,27 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       var rot = Math.atan2(y2-y1, x2-x1);
       var mx = (x1+x2)/2, my = (y1+y2)/2;
       var c = C("#5A6663");
-      box(mx, my, 0.046, 0.051, len/2, 0.0022, rot, c);
-      box(mx, my, 0.012, 0.017, len/2, 0.0022, rot, c);
+      /* 混凝土基座（接地，立体感的根） */
+      box(mx, my, 0, 0.010, len/2, 0.011, rot, C("#9AA09A"));
+      box(mx, my, 0.010, 0.0125, len/2, 0.0095, rot, C("#8C918B"));
+      /* 三根横杆：各有截面厚度，顶杆最粗 */
+      box(mx, my, 0.054, 0.066, len/2, 0.0034, rot, c);
+      box(mx, my, 0.017, 0.025, len/2, 0.0026, rot, c);
+      box(mx, my, 0.036, 0.040, len/2, 0.0020, rot, C("#525E5B"));
+      /* 方柱 + 柱帽 */
       var n = Math.max(3, Math.round(len/0.16));
       for(var i=0;i<=n;i++){
         var t = i/n;
-        box(x1 + (x2-x1)*t, y1 + (y2-y1)*t, 0, 0.058, 0.0036, 0.0036, rot, c);
+        var px = x1 + (x2-x1)*t, py = y1 + (y2-y1)*t;
+        box(px, py, 0, 0.070, 0.0050, 0.0050, rot, C("#4E5A57"));
+        box(px, py, 0.070, 0.0745, 0.0064, 0.0064, rot, C("#6B7572"));
+      }
+      /* 竖向栏杆：拉出围栏的进深 */
+      var m = Math.max(2, Math.round(len/0.062));
+      for(var j=1;j<m;j++){
+        var t2 = j/m;
+        box(x1 + (x2-x1)*t2, y1 + (y2-y1)*t2,
+            0.013, 0.062, 0.0020, 0.0020, rot, C("#5E6A67"));
       }
     }
     function addGate(x, y, rot, wide, hi, pillar, leaf){
@@ -5212,6 +5241,9 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       box(a[0], a[1], 0, hi, 0.016, 0.016, rot, pillar);
       box(b[0], b[1], 0, hi, 0.016, 0.016, rot, pillar);
       box(x, y, hi, hi+0.014, 0.013, wide/2, rot + Math.PI/2, pillar);
+      /* 柱帽 */
+      box(a[0], a[1], hi+0.014, hi+0.021, 0.020, 0.020, rot, pillar);
+      box(b[0], b[1], hi+0.014, hi+0.021, 0.020, 0.020, rot, pillar);
       /* 门楣横匾（大门敞开，可穿行） */
       box(x, y, hi*0.62, hi*0.80, 0.011, wide*0.30, rot + Math.PI/2, leaf);
     }
@@ -5246,25 +5278,55 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       addFence(1.05, 11.86, 2.20, 11.86);       /* 南围栏（西段，贴西楼东墙） */
       addFence(3.00, 11.86, 3.85, 11.86);       /* 南围栏（东段） */
       addGate(2.60, 11.86, 0, 0.80, 0.098, C("#8C8375"), C("#D8D2C4"));
-      /* 非机动车棚（贴 2 号楼南墙） */
-      box(2.40, 9.30, 0.086, 0.094, 0.26, 0.10, 0, C("#7C8A84"));
-      var cp = [[2.16,9.22],[2.64,9.22],[2.16,9.38],[2.64,9.38]];
-      for(i=0;i<cp.length;i++) box(cp[i][0], cp[i][1], 0, 0.088, 0.005, 0.005, 0, C("#66726D"));
+      /* 非机动车棚（贴 2 号楼南墙，真实比例 3.4m×2.2m，有圈梁边梁） */
+      box(2.40, 9.30, 0.078, 0.084, 0.075, 0.048, 0, C("#7C8A84"));
+      box(2.40, 9.30, 0.0745, 0.078, 0.078, 0.051, 0, C("#6E7A76"));
+      var cp = [[2.145,9.258],[2.655,9.258],[2.145,9.342],[2.655,9.342]];
+      for(i=0;i<cp.length;i++){
+        box(cp[i][0], cp[i][1], 0, 0.0745, 0.0055, 0.0055, 0, C("#66726D"));
+      }
+      /* 四条边梁连接柱顶，棚顶不再悬空 */
+      box(2.40, 9.258, 0.070, 0.0745, 0.075, 0.0038, 0, C("#5F6B67"));
+      box(2.40, 9.342, 0.070, 0.0745, 0.075, 0.0038, 0, C("#5F6B67"));
+      box(2.145, 9.30, 0.070, 0.0745, 0.0038, 0.042, 0, C("#5F6B67"));
+      box(2.655, 9.30, 0.070, 0.0745, 0.0038, 0.042, 0, C("#5F6B67"));
+      /* 棚下两辆自行车（双轮+斜梁+座杆） */
+      var bk = [[2.26,9.272],[2.54,9.328]];
+      for(i=0;i<bk.length;i++){
+        ball(bk[i][0]-0.0210, bk[i][1], 0.0090, 0.0090, C("#3C4642"));
+        ball(bk[i][0]+0.0210, bk[i][1], 0.0090, 0.0090, C("#3C4642"));
+        box(bk[i][0], bk[i][1], 0.006, 0.026, 0.018, 0.0015, 0, C(i ? "#B4593E" : "#4E7A8C"));
+        box(bk[i][0]+0.009, bk[i][1], 0.026, 0.031, 0.0028, 0.0015, 0, C("#565E5A"));
+        box(bk[i][0]-0.018, bk[i][1], 0.020, 0.024, 0.0045, 0.0015, 0, C("#8C8375"));
+      }
       /* 2 号楼单元门雨棚（贴南墙，与贴图单元门对位） */
       var uc2 = [0.75, 1.95, 3.15];
       for(i=0;i<uc2.length;i++){
-        box(uc2[i], 9.06, 0.095, 0.104, 0.13, 0.060, 0, C("#B7B2A4"));
-        box(uc2[i]-0.115, 9.05, 0, 0.095, 0.007, 0.007, 0, C("#6E6A5E"));
-        box(uc2[i]+0.115, 9.05, 0, 0.095, 0.007, 0.007, 0, C("#6E6A5E"));
+        box(uc2[i], 9.06, 0.095, 0.102, 0.058, 0.042, 0, C("#B7B2A4"));
+        box(uc2[i], 9.05, 0.102, 0.106, 0.062, 0.046, 0, C("#A9A396"));
+        box(uc2[i]-0.052, 9.062, 0, 0.095, 0.006, 0.006, 0, C("#6E6A5E"));
+        box(uc2[i]+0.052, 9.062, 0, 0.095, 0.006, 0.006, 0, C("#6E6A5E"));
       }
       /* 3 号楼单元门雨棚（贴北墙） */
-      box(1.19, 9.95, 0.088, 0.097, 0.10, 0.050, 0, C("#B7B2A4"));
-      box(1.10, 9.94, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
-      box(1.28, 9.94, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
-      /* 晾衣架 */
-      box(2.90, 9.62, 0.058, 0.062, 0.09, 0.004, 0, C("#9AA3A0"));
-      box(2.81, 9.62, 0, 0.060, 0.004, 0.004, 0, C("#8A9390"));
-      box(2.99, 9.62, 0, 0.060, 0.004, 0.004, 0, C("#8A9390"));
+      box(1.19, 9.95, 0.088, 0.096, 0.055, 0.038, 0, C("#B7B2A4"));
+      box(1.19, 9.95, 0.096, 0.100, 0.059, 0.042, 0, C("#A9A396"));
+      box(1.142, 9.948, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
+      box(1.238, 9.948, 0, 0.088, 0.006, 0.006, 0, C("#6E6A5E"));
+      /* 晾衣架（双层横杆 + 吊柱 + 底脚撑 + 晾晒衣物） */
+      box(2.90, 9.62, 0.058, 0.062, 0.09, 0.0035, 0, C("#9AA3A0"));
+      box(2.90, 9.62, 0.038, 0.042, 0.086, 0.0035, 0, C("#98A09B"));
+      box(2.86, 9.62, 0.038, 0.058, 0.0022, 0.0022, 0, C("#8A9390"));
+      box(2.90, 9.62, 0.038, 0.058, 0.0022, 0.0022, 0, C("#8A9390"));
+      box(2.94, 9.62, 0.038, 0.058, 0.0022, 0.0022, 0, C("#8A9390"));
+      box(2.81, 9.62, 0, 0.062, 0.005, 0.005, 0, C("#8A9390"));
+      box(2.99, 9.62, 0, 0.062, 0.005, 0.005, 0, C("#8A9390"));
+      box(2.81, 9.62, 0.002, 0.008, 0.005, 0.018, 0, C("#8A9390"));
+      box(2.99, 9.62, 0.002, 0.008, 0.005, 0.018, 0, C("#8A9390"));
+      /* 晾晒的衣物 */
+      box(2.845, 9.62, 0.044, 0.058, 0.008, 0.0006, 0, C("#AFC4CE"));
+      box(2.878, 9.62, 0.046, 0.058, 0.006, 0.0006, 0, C("#E8E2D2"));
+      box(2.912, 9.62, 0.044, 0.056, 0.007, 0.0006, 0, C("#D9A48C"));
+      box(2.946, 9.62, 0.046, 0.058, 0.006, 0.0006, 0, C("#B9C0AE"));
       /* 院内绿化与歇脚处 */
       addTree(1.35, 9.52, 310);
       addTree(3.50, 10.48, 347);
@@ -5336,14 +5398,24 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
           else if(x+1 < W && grid[y][x+1] !== "#") { dirx = 1; }
           else if(x-1 >= 0 && grid[y][x-1] !== "#") { dirx = -1; }
           if(dirx || diry){
-            var reach = 0.05;
-            var ax = x + 0.5 + dirx*(reach/2), ay = y + 0.5 + diry*(0.5 + reach/2);
-            var w2 = diry ? 0.17 : reach/2, d2 = diry ? reach/2 : 0.17;
-            box(ax, ay, 0.054, 0.062, w2, d2, 0, C("#D8D0BA"), x, y);
-            var pxa = ax + (diry ? w2*0.85 : 0), pya = ay + (diry ? reach/2 : 0);
-            var pxb = ax - (diry ? w2*0.85 : 0), pyb = ay - (diry ? 0 : reach/2);
-            box(pxa, pya, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
-            box(pxb, pyb, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
+            /* 三维雨棚：板体 + 檐口封板 + 均布支撑柱（约 2.3~2.6 m 高） */
+            var reach = 0.045, az0 = 0.104, az1 = 0.116;
+            var ax, ay, w2, d2;
+            if(diry){ ay = y + 0.5 + diry*(0.5 + reach/2); ax = x + 0.5; w2 = 0.17; d2 = reach/2; }
+            else    { ax = x + 0.5 + dirx*(0.5 + reach/2); ay = y + 0.5; w2 = reach/2; d2 = 0.17; }
+            box(ax, ay, az0, az1, w2, d2, 0, C("#D8D0BA"), x, y);
+            /* 檐口封板：沿外缘一圈，略下垂 */
+            var fax = diry ? ax : ax + dirx*(w2 + 0.003);
+            var fay = diry ? ay + diry*(d2 + 0.003) : ay;
+            box(fax, fay, az0 - 0.010, az1 + 0.003,
+                diry ? w2 : 0.004, diry ? 0.004 : d2, 0, C("#B9B1A0"), x, y);
+            /* 支撑柱：5 根均布在外缘 */
+            for(var k2=0;k2<5;k2++){
+              var t2 = (k2/4 - 0.5)*2;
+              var sx3 = diry ? ax + t2*w2*0.92 : ax + dirx*(w2 - 0.003);
+              var sy3 = diry ? ay + diry*(d2 - 0.003) : ay + t2*d2*0.92;
+              box(sx3, sy3, 0, az0, 0.005, 0.005, 0, C("#6E6A5E"), x, y);
+            }
           }
         }
       }
@@ -5979,31 +6051,25 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
         segs.push({x:pts[i][0], y:pts[i][1], dx:dx/len, dy:dy/len, len:len});
         total += len;
       }
-      var step = 0.24, acc = 0;
-      ctx.save();
+      var step = 0.30, acc = 0;
       for(var i=0;i<segs.length;i++){
         var sg = segs[i], t = 0;
         while(t < sg.len){
           var s = t;
           var wx = sg.x + sg.dx*s, wy = sg.y + sg.dy*s;
           t += step;
-          var pr = proj(wx, wy, 0.012);
+          var pr = proj(wx, wy, 0.006);
           if(!pr || pr.d < 1.2 || pr.d > 34) continue;
           if(pr.d > zAt(pr.x) + 0.05) continue;
-          var rr = Math.max(1.2, Math.min(13, focal*0.033/pr.d));
-          var a = 0.5 * (1 - Math.min(1, (pr.d-6)/22));
           var dg = Math.hypot(wx-GOAL.x, wy-GOAL.y);
-          if(dg < 1.1) a *= Math.max(0, (dg-0.5)/0.6);
-          if(a <= 0.02) continue;
-          ctx.globalAlpha = a;
-          ctx.fillStyle = "#7DF0D4";
-          ctx.beginPath();
-          ctx.ellipse(pr.x, pr.y, rr, rr*0.42, 0, 0, Math.PI*2);
-          ctx.fill();
+          if(dg < 1.0) continue;
+          /* 三维立体路桩：带光照的小方桩（替代贴地椭圆） */
+          var k = 0.55 * (1 - Math.min(1, (pr.d-6)/24));
+          if(k <= 0.03) continue;
+          var cA = Math.round(58 + 66*k), cB = Math.round(190 + 42*k), cC = Math.round(168 + 48*k);
+          boxN(wx, wy, 0.004, 0.013, 0.009, 0.009, sg.dx ? 0 : Math.PI/4, [cA, cB, cC]);
         }
       }
-      ctx.globalAlpha = 1;
-      ctx.restore();
     }
 
     /* ---------------- 终点标签 ---------------- */
@@ -6309,7 +6375,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
         L.summary(Math.round(walked*MPT), Math.round(elapsed), Math.round(sunSec), peak.toFixed(1));
       document.getElementById("cp-lblDone").textContent = L.lbl.done;
       document.getElementById("cp-lblAgain").textContent = L.lbl.again;
-      document.getElementById("cp-simDone").classList.add("cp-on");
+      document.getElementById("cp-simDone").classList.add("on");
       document.getElementById("cp-simNavText").textContent = L.lbl.done;
     }
 
@@ -6432,8 +6498,8 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       sunSec = 0; peak = 0; walked = 0; elapsed = 0; done = false; wpIdx = 0;
       keys = {}; drag = null;
       cancelAnimationFrame(raf);              /* 防止“再走一次”后叠加第二条渲染循环 */
-      document.getElementById("cp-simDone").classList.remove("cp-on");
-      document.getElementById("cp-sim").classList.add("cp-on");
+      document.getElementById("cp-simDone").classList.remove("on");
+      document.getElementById("cp-sim").classList.add("on");
       document.getElementById("cp-sim").setAttribute("aria-hidden","false");
       document.body.style.overflow = "hidden";
       open = true;
@@ -6445,7 +6511,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     function closeSim(){
       open = false;
       cancelAnimationFrame(raf);
-      document.getElementById("cp-sim").classList.remove("cp-on");
+      document.getElementById("cp-sim").classList.remove("on");
       document.getElementById("cp-sim").setAttribute("aria-hidden","true");
       document.body.style.overflow = "";
     }
