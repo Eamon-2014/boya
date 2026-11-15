@@ -3757,6 +3757,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   ];
   var globeRot = 0;
   var globeWeather = {}; // keyed by city index: {temp, code, hum}
+  var globeNewsHasRss = false;
   var globeRAF = null;
 
   function wmoToKind(code){
@@ -3903,6 +3904,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
           globeWeather[i] = { temp: cur.temperature_2m, hum: cur.relative_humidity_2m, code: cur.weather_code };
         }
       });
+      refreshLiveBulletin();
     }).catch(function(){ /* keep existing markers */ });
   }
 
@@ -3970,6 +3972,15 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     return out;
   }
   // Build a real-time weather bulletin from live city data (always available)
+  function refreshLiveBulletin(){
+    if(globeNewsHasRss) return;
+    var bulletin = buildLiveBulletin();
+    if(!bulletin || !bulletin.length) return;
+    renderGlobeNews(bulletin);
+    var upEl = document.getElementById("globeUpdated");
+    if(upEl) upEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }
+  // Build a real-time weather bulletin from live city data (always available)
   function buildLiveBulletin(){
     var i = uiIdx();
     var rows = [];
@@ -3993,6 +4004,11 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     storms.slice(0,3).forEach(function(r){
       out.push({ title: cityName(r.c)+": "+WCODE_TEXT[wmoToKind(r.w.code)][i]+" · "+r.w.temp.toFixed(1)+"°C", date: new Date(), source: "Open-Meteo", link: null });
     });
+    // Fill the rest with live conditions so the panel is never sparse.
+    rows.slice(1, 12).forEach(function(r){
+      var kind = wmoToKind(r.w.code);
+      out.push({ title: cityName(r.c)+": "+WCODE_TEXT[kind][i]+" · "+r.w.temp.toFixed(1)+"°C", date: new Date(), source: "Open-Meteo", link: null });
+    });
     return out;
   }
   function fetchGlobeNews(){
@@ -4009,11 +4025,9 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
 
     // Show the live weather bulletin immediately (always available) so the panel
     // is never empty while we try to upgrade to real RSS headlines.
-    var bulletin = buildLiveBulletin();
-    if(bulletin && bulletin.length){
-      renderGlobeNews(bulletin);
-      if(upEl) upEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-    }
+    refreshLiveBulletin();
+    // If the weather call hasn't landed yet, retry the bulletin shortly.
+    if(!buildLiveBulletin()) setTimeout(refreshLiveBulletin, 2500);
 
     function tryProxy(idx){
       if(idx >= proxies.length) return; // keep the live bulletin
@@ -4026,6 +4040,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       }).then(function(txt){
         var items = parseRss(txt);
         if(items && items.length){
+          globeNewsHasRss = true;
           renderGlobeNews(items);
           if(upEl) upEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
         } else {
