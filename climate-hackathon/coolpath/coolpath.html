@@ -132,6 +132,29 @@ svg.map{display:block;width:100%;height:auto}
   background:rgba(8,13,12,.74);border:1px solid rgba(95,227,192,.3);border-radius:999px;padding:6px 16px;
   box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .simnav-s{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:#9FB6AC;white-space:nowrap}
+.simspd{position:absolute;right:16px;bottom:58px;display:flex;align-items:center;gap:6px;
+  pointer-events:auto;background:rgba(8,13,12,.74);border:1px solid rgba(233,240,236,.16);
+  border-radius:999px;padding:5px 7px 5px 12px;transition:border-color .2s,box-shadow .2s;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.simspd.hot{border-color:rgba(95,227,192,.45);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 3px rgba(95,227,192,.08)}
+.simspd-l{font-size:10.5px;letter-spacing:.06em;color:#93A49C;margin-right:2px}
+.simspd-b{width:23px;height:23px;border-radius:50%;border:1px solid rgba(233,240,236,.22);
+  background:rgba(255,255,255,.045);color:#E7EEE9;font:inherit;font-size:13px;line-height:1;
+  cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;
+  user-select:none;transition:border-color .15s,color .15s,background .15s}
+.simspd-b:hover{border-color:rgba(95,227,192,.55);color:#8CF2D8;background:rgba(95,227,192,.1)}
+.simspd-b:active{transform:scale(.93)}
+.simspd-w{display:flex;align-items:center;gap:3px;background:rgba(0,0,0,.36);
+  border:1px solid rgba(233,240,236,.12);border-radius:999px;padding:3px 8px 3px 7px}
+.simspd-w i{font-style:normal;font-size:10px;color:var(--cool);font-family:var(--mono)}
+.simspd-i{width:30px;border:none;background:none;color:#F2F6F3;font-family:var(--mono);
+  font-size:12.5px;text-align:center;padding:0;outline:none;line-height:1.2}
+.simspd-i::selection{background:rgba(95,227,192,.3)}
+.simspd-i::-webkit-outer-spin-button,.simspd-i::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+@media (max-width:620px){
+  .simspd{right:12px;bottom:56px;padding:4px 6px 4px 10px}
+  .simspd-l{display:none}
+}
 .simmap{position:absolute;left:16px;bottom:58px;width:172px;height:129px;border-radius:11px;display:block;
   border:1px solid rgba(233,240,236,.14);background:rgba(6,10,9,.66);pointer-events:none;
   box-shadow:0 10px 30px rgba(0,0,0,.4)}
@@ -933,7 +956,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
              parent:"林女士 · 看坡道、台阶与能停下的地方"},
       sim:{
         who:{elder:"陈阿姨 78", rider:"阿哲 26", parent:"林女士 34"},
-        lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ",
+        lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ", spd:"速度",
              tip:"WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出",
              done:"到达 · 医院门诊大厅", again:"再走一次"},
         nav:{straight:"继续直行", left:"左转", right:"右转", now:"前方", arrive:"即将到达 · 社区医院",
@@ -961,7 +984,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
              parent:"Lin · watching ramps, steps and places to stop"},
       sim:{
         who:{elder:"Chen, 78", rider:"Zhe, 26", parent:"Lin, 34"},
-        lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ",
+        lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ", spd:"speed",
              tip:"WASD to move · Space to jump · Shift to run · drag to look · ESC to exit",
              done:"Arrived · clinic lobby", again:"Walk again"},
         nav:{straight:"Keep straight", left:"Turn left", right:"Turn right", now:"Ahead:",
@@ -1644,6 +1667,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
     var Wcv = 0, Hcv = 0, focal = 900, hz = 0, gsf = 3, CSW = 3;
     var open = false, raf = 0, last = 0, hudT = 0, keys = {}, drag = null;
     var done = false, sunSec = 0, peak = 0, walked = 0, elapsed = 0, wpIdx = 0;
+    var spdMul = 1;                    /* 速度倍率：整体时间缩放，默认 1 */
     var zbd = [], zbh = [];
     var cam = {x:0, y:0, back:CAM_BACK};
     var pl = {x:START.x, y:START.y, a:0, pitch:-0.06, z:0, vz:0, ph:0};
@@ -3075,16 +3099,53 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       }
     }
 
+    /* ---------------- 速度倍率 ---------------- */
+    function setSpd(v, rewrite){
+      var n = parseFloat(v);
+      if(!isFinite(n) || n <= 0) n = 1;
+      n = Math.round(n*100)/100;
+      n = Math.max(0.25, Math.min(10, n));
+      spdMul = n;
+      var inp = document.getElementById("spdInput");
+      if(inp && rewrite !== false) inp.value = String(n);
+      var box = document.getElementById("simSpd");
+      if(box) box.classList.toggle("hot", n > 1.001);
+    }
+    function bindSpd(){
+      var inp = document.getElementById("spdInput");
+      var up = document.getElementById("spdUp");
+      var dn = document.getElementById("spdDown");
+      if(!inp || !up || !dn || inp.getAttribute("data-bound")) return;
+      inp.setAttribute("data-bound","1");
+      up.addEventListener("click", function(){ setSpd(spdMul + 1); });
+      dn.addEventListener("click", function(){ setSpd(spdMul - 1); });
+      inp.addEventListener("input", function(){
+        var v = parseFloat(inp.value);
+        if(isFinite(v) && v > 0) setSpd(v, false);
+      });
+      inp.addEventListener("change", function(){ setSpd(inp.value); });
+      inp.addEventListener("blur", function(){ setSpd(inp.value); });
+      inp.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){ setSpd(inp.value); inp.blur(); e.preventDefault(); }
+        if(e.key === "Escape"){ inp.blur(); e.preventDefault(); }
+        if(e.key === "+" || e.key === "="){ e.preventDefault(); setSpd(spdMul + 1); }
+        if(e.key === "-" || e.key === "_"){ e.preventDefault(); setSpd(spdMul - 1); }
+      });
+      setSpd(spdMul);
+    }
+
     function labels(){
       var L = COPY[LANG].sim;
       document.getElementById("lblTemp").textContent = L.lbl.temp;
       document.getElementById("lblDist").textContent = L.lbl.dist;
       document.getElementById("lblSun").textContent = L.lbl.sun;
       document.getElementById("lblExit").textContent = L.lbl.exit;
+      document.getElementById("lblSpd").textContent = L.lbl.spd;
       document.getElementById("lblTip").textContent = L.lbl.tip;
       document.getElementById("lblAgain").textContent = L.lbl.again;
       document.getElementById("lblDone").textContent = L.lbl.done;
       document.getElementById("simNavDest").textContent = COPY[LANG].dest[state.persona].replace(/^.*·\s*/, "");
+      bindSpd();
       hud(true);
     }
 
@@ -3106,7 +3167,12 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       if(!open) return;
       var dt = Math.min(0.05, (t - (last || t))/1000);
       last = t;
-      step(dt); draw(); hud();
+      /* 倍率作用在整段模拟时间上：走得更快，计时/暴晒同步加速，结算数据不因倍率而变。
+         高倍率拆成多个子步，避免单帧位移过大穿过墙体。 */
+      var sdt = dt * spdMul;
+      var n = Math.max(1, Math.min(24, Math.ceil(sdt / 0.034)));
+      for(var i=0;i<n;i++) step(sdt/n);
+      draw(); hud();
       raf = requestAnimationFrame(frame);
     }
 
@@ -3159,6 +3225,8 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
 
     window.addEventListener("keydown", function(e){
       if(!open) return;
+      /* 焦点在倍率输入框里时，按键只作用于输入框，不驱动角色 */
+      if(e.target && e.target.id === "spdInput") return;
       if(e.code === "Escape"){ closeSim(); return; }
       keys[e.code] = true;
       if(e.code === "Space"){
@@ -3213,6 +3281,12 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       <div class="simnav-s"><span id="simNavSub">剩余 231 m</span> · <span id="simNavDest">社区医院</span></div>
     </div>
     <canvas class="simmap" id="simmap" width="344" height="258"></canvas>
+    <div class="simspd" id="simSpd">
+      <span class="simspd-l" id="lblSpd">速度</span>
+      <button class="simspd-b" id="spdDown" type="button" aria-label="减速">−</button>
+      <span class="simspd-w"><i>×</i><input class="simspd-i" id="spdInput" type="text" inputmode="decimal" value="1" aria-label="速度倍率" autocomplete="off" spellcheck="false"></span>
+      <button class="simspd-b" id="spdUp" type="button" aria-label="加速">+</button>
+    </div>
     <div class="simtip" id="lblTip">WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出</div>
     <div class="simdone" id="simDone">
       <h4 id="lblDone">到达 · 社区医院</h4>
