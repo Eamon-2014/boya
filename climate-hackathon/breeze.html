@@ -900,46 +900,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
   .cp-brand small{display:none}
 }
 
-/* ============ GLOBE ============ */
-.globe-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:stretch;margin-top:28px}
-.globe-stage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#0c1e30 0%,#06121f 70%);border:1px solid rgba(120,190,255,.15);border-radius:18px;padding:18px;min-height:420px;overflow:hidden}
-.globe{position:relative;width:100%;max-width:380px;aspect-ratio:1/1}
-.globe-svg{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 24px rgba(0,140,255,.18))}
-#globeCities circle{cursor:pointer;transition:r .15s ease}
-#globeCities circle:hover{r:4}
-.globe-legend{position:absolute;left:14px;bottom:10px;display:flex;gap:12px;font-size:11px;color:#9fc0dc;letter-spacing:.3px}
-.globe-legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
-.globe-city-card{position:absolute;background:rgba(8,20,34,.92);border:1px solid rgba(120,190,255,.3);border-radius:10px;padding:10px 14px;min-width:140px;pointer-events:none;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.5);backdrop-filter:blur(6px)}
-.gcc-name{font-size:14px;font-weight:700;color:#e8f2fb}
-.gcc-temp{font-size:22px;font-weight:800;margin-top:2px}
-.gcc-cond{font-size:12px;color:#9fc0dc;margin-top:1px}
-.gcc-meta{font-size:11px;color:#6f8aa6;margin-top:4px}
-.globe-news{display:flex;flex-direction:column;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;min-height:420px}
-.globe-news-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.globe-news-head h3{margin:0;font-size:16px;color:#e8f2fb}
-.globe-news-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:#7fa0c0;white-space:nowrap}
-.globe-dot{width:8px;height:8px;border-radius:50%;background:#3ecf8e;box-shadow:0 0 0 0 rgba(62,207,142,.6);animation:globePulse 1.8s infinite}
-@keyframes globePulse{0%{box-shadow:0 0 0 0 rgba(62,207,142,.6)}70%{box-shadow:0 0 0 8px rgba(62,207,142,0)}100%{box-shadow:0 0 0 0 rgba(62,207,142,0)}}
-.globe-news-list{list-style:none;margin:0;padding:0;flex:1;overflow-y:auto;max-height:340px}
-.globe-news-list li{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:4px}
-.globe-news-list li:last-child{border-bottom:none}
-.globe-news-list a{color:#cfe3f7;text-decoration:none;font-size:13.5px;line-height:1.45}
-.globe-news-list a:hover{color:#7fc7ff}
-.gn-time{font-size:11px;color:#6f8aa6}
-.gn-src{font-size:10.5px;color:#4f6f8f;text-transform:uppercase;letter-spacing:.5px}
-.globe-news-loading,.globe-news-err{color:#7fa0c0;font-size:13px;padding:18px 0}
-.globe-news-foot{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:#5f7e9c}
-@media (max-width:860px){
-  .globe-wrap{grid-template-columns:1fr}
-  .globe-stage{min-height:340px}
-  .globe-news{min-height:auto}
-}
-@media (max-width:480px){
-  .globe-legend{font-size:10px;gap:8px}
-  .globe-news{padding:16px}
-}
-
-
 </style>
 </head>
 <body>
@@ -1297,10 +1257,10 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             </g>
 
             <!-- heat layer -->
-            <g id="cp-heatLayer" filter="url(#soften)" opacity=".92"></g>
+            <g id="cp-heatLayer" filter="url(#cp-soften)" opacity=".92"></g>
 
             <!-- park base -->
-            <rect x="446" y="124" width="200" height="180" rx="16" fill="url(#parkG)" stroke="rgba(95,227,192,.16)"/>
+            <rect x="446" y="124" width="200" height="180" rx="16" fill="url(#cp-parkG)" stroke="rgba(95,227,192,.16)"/>
 
             <!-- blocks -->
             <g id="cp-blocks">
@@ -1337,7 +1297,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             </g>
 
             <!-- shade layer -->
-            <g id="cp-shadeLayer" opacity="0"></g>
+            <g id="cp-shadeLayer" opacity="1"></g>
 
             <!-- trees -->
             <g id="cp-treeLayer"></g>
@@ -1358,7 +1318,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
             <g id="cp-personaLayer"></g>
 
             <!-- water points -->
-            <g id="cp-waterLayer"></g>
+            <g id="cp-waterLayer" opacity="0"></g>
 
             <!-- POI -->
             <g>
@@ -1381,7 +1341,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
                   <stop offset="0" stop-color="#2E8B78"/><stop offset=".5" stop-color="#FFC15E"/><stop offset="1" stop-color="#FF4B2B"/>
                 </linearGradient>
               </defs>
-              <rect x="0" y="0" width="112" height="6" rx="3" fill="url(#lg)"/>
+              <rect x="0" y="0" width="112" height="6" rx="3" fill="url(#cp-lg)"/>
               <text x="0" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">低</text>
               <text x="96" y="20" font-size="9" fill="#5E6964" font-family="var(--mono)">高</text>
             </g>
@@ -1828,68 +1788,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       </div>
     </div>
   </section>
-  <section class="section" id="globe" aria-labelledby="globeTitle">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow"><i></i><span data-i18n="globe.eyebrow">05 · Live global pulse</span></span>
-        <h2 id="globeTitle" data-i18n="globe.title">A live globe of heat and climate news.</h2>
-        <p data-i18n="globe.desc">Real-time conditions from cities around the world, plus the latest climate and extreme-weather headlines — updating every few minutes.</p>
-      </div>
-
-      <div class="globe-wrap">
-        <div class="globe-stage">
-          <div class="globe" id="globeSphere" aria-label="Interactive globe with live city weather">
-            <svg class="globe-svg" viewBox="-110 -110 220 220" preserveAspectRatio="xMidYMid meet">
-              <defs>
-                <radialGradient id="globeFill" cx="35%" cy="30%" r="75%">
-                  <stop offset="0%" stop-color="#1a3a5c"/>
-                  <stop offset="55%" stop-color="#0d2137"/>
-                  <stop offset="100%" stop-color="#050d18"/>
-                </radialGradient>
-                <radialGradient id="globeAtm" cx="50%" cy="50%" r="50%">
-                  <stop offset="82%" stop-color="rgba(80,180,255,0)"/>
-                  <stop offset="92%" stop-color="rgba(80,180,255,0.18)"/>
-                  <stop offset="100%" stop-color="rgba(80,180,255,0)"/>
-                </radialGradient>
-              </defs>
-              <circle r="100" fill="url(#globeAtm)"/>
-              <circle r="92" fill="url(#globeFill)" stroke="rgba(120,190,255,0.25)" stroke-width="0.5"/>
-              <g id="globeGrid" fill="none" stroke="rgba(120,190,255,0.14)" stroke-width="0.5"></g>
-              <g id="globeCities"></g>
-            </svg>
-            <div class="globe-legend">
-              <span class="globe-legend-dot" style="background:#3ecf8e"></span><span data-i18n="globe.cool">Cool</span>
-              <span class="globe-legend-dot" style="background:#f5c542"></span><span data-i18n="globe.warm">Warm</span>
-              <span class="globe-legend-dot" style="background:#ff6b6b"></span><span data-i18n="globe.hot">Hot</span>
-            </div>
-          </div>
-          <div class="globe-city-card" id="globeCityCard" hidden>
-            <div class="gcc-name" id="gccName"></div>
-            <div class="gcc-temp" id="gccTemp"></div>
-            <div class="gcc-cond" id="gccCond"></div>
-            <div class="gcc-meta" id="gccMeta"></div>
-          </div>
-        </div>
-
-        <div class="globe-news">
-          <div class="globe-news-head">
-            <h3 data-i18n="globe.newsTitle">Latest climate &amp; weather news</h3>
-            <div class="globe-news-meta">
-              <span class="globe-dot" id="globeLiveDot"></span>
-              <span id="globeUpdated" data-i18n="globe.updating">updating…</span>
-            </div>
-          </div>
-          <ul class="globe-news-list" id="globeNewsList">
-            <li class="globe-news-loading" data-i18n="globe.loading">Fetching latest headlines…</li>
-          </ul>
-          <div class="globe-news-foot">
-            <span data-i18n="globe.source">Source: Google News RSS · refreshed every 5 min</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
@@ -2049,18 +1947,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     "d2.li3": ["<b>Next pilot:</b> two weeks with one municipality; validate surface temperature against 10 low-cost sensors; A/B test alert formats with community health workers.", "<b>下一步试点：</b>与一个市政部门开展两周试点；用 10 个低成本传感器校验地表温度；与社区健康工作者 A/B 测试预警形式。"],
     "d2.li4": ["<b>Open by design:</b> publish the scoring spec so other cities can reuse and challenge it.", "<b>开放设计：</b>公开评分规范，让其他城市复用并提出质疑。"],
     "footer.para": ["Built for ATOX · AI for Climate Youth Hackathon, 14–15 November 2026. Prototype with simulated data — not for operational use.", "为 ATOX · AI for Climate 青年气候黑客松（2026 年 11 月 14–15 日）而作。原型使用模拟数据——不可用于实际运营。"],
-    "footer.tagline": ["Problem → evidence → allocation → last-mile message. One tool, three decisions.", "问题 → 证据 → 分配 → 最后一公里信息。一个工具，三个决策。"],
-    "globe.eyebrow": ["05 · Live global pulse", "05 · 全球实时脉动"],
-    "globe.title": ["A live globe of heat and climate news.", "一个展示高温与气候新闻的实时地球。"],
-    "globe.desc": ["Real-time conditions from cities around the world, plus the latest climate and extreme-weather headlines — updating every few minutes.", "来自全球城市的实时天气，以及最新的气候与极端天气新闻——每隔几分钟自动更新。"],
-    "globe.cool": ["Cool", "凉爽"],
-    "globe.warm": ["Warm", "温暖"],
-    "globe.hot": ["Hot", "炎热"],
-    "globe.newsTitle": ["Latest climate & weather news", "最新气候与天气新闻"],
-    "globe.updating": ["updating…", "更新中…"],
-    "globe.loading": ["Fetching latest headlines…", "正在获取最新头条…"],
-    "globe.source": ["Source: Google News RSS · refreshed every 5 min", "来源：Google News RSS · 每 5 分钟刷新"],
-    "globe.newsErr": ["Couldn't load headlines right now.", "暂时无法加载新闻头条。"]
+    "footer.tagline": ["Problem → evidence → allocation → last-mile message. One tool, three decisions.", "问题 → 证据 → 分配 → 最后一公里信息。一个工具，三个决策。"]
   };
   var T_TR = {
     "brand.tag": "sıcaklık eşitliği yardımcısı",
@@ -2187,18 +2074,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     "d2.li3": "<b>Sonraki pilot:</b> bir belediye ile iki hafta; yüzey sıcaklığını 10 düşük maliyetli sensörle doğrulama; uyarı biçimlerini toplum sağlığı çalışanlarıyla A/B testi.",
     "d2.li4": "<b>Tasarımı gereği açık:</b> puanlama spesifikasyonunu yayımlayın; böylece diğer kentler yeniden kullanıp sorgulayabilir.",
     "footer.para": "ATOX · AI for Climate Gençlik İklim Hackathonu için geliştirildi, 14–15 Kasım 2026. Simüle veri kullanan prototip — operasyonel kullanım için değildir.",
-    "footer.tagline": "Sorun → kanıt → dağıtım → son adım mesajı. Tek araç, üç karar.",
-    "globe.eyebrow": "05 · Canlı küresel nabız",
-    "globe.title": "Sıcaklık ve iklim haberlerinin canlı küresi.",
-    "globe.desc": "Dünya genelindeki şehirlerden canlı koşullar ve en son iklim ile aşırı hava durumu başlıkları — her birkaç dakikada bir güncellenir.",
-    "globe.cool": "Serin",
-    "globe.warm": "Ilık",
-    "globe.hot": "Sıcak",
-    "globe.newsTitle": "En son iklim ve hava durumu haberleri",
-    "globe.updating": "güncelleniyor…",
-    "globe.loading": "En son başlıklar alınıyor…",
-    "globe.source": "Kaynak: Google News RSS · her 5 dakikada bir yenilenir",
-    "globe.newsErr": "Şu an başlıklar yüklenemiyor."
+    "footer.tagline": "Sorun → kanıt → dağıtım → son adım mesajı. Tek araç, üç karar."
   };
   function uiIdx() { return state.uiLang === "zh" ? 1 : state.uiLang === "tr" ? 2 : 0; }
   function t(key) {
@@ -3733,320 +3609,6 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
     });
   }, { threshold: 0.12 });
   $$(".reveal").forEach(function (el) { observer.observe(el); });
-
-  /* ============ GLOBE (live world weather + climate news) ============ */
-  var GLOBE_CITIES = [
-    { en:"Reykjavík", zh:"雷克雅未克", tr:"Reykjavik", lat:64.1466, lon:-21.9426 },
-    { en:"London", zh:"伦敦", tr:"Londra", lat:51.5074, lon:-0.1278 },
-    { en:"Moscow", zh:"莫斯科", tr:"Moskova", lat:55.7558, lon:37.6173 },
-    { en:"New York", zh:"纽约", tr:"New York", lat:40.7128, lon:-74.0060 },
-    { en:"Tokyo", zh:"东京", tr:"Tokyo", lat:35.6762, lon:139.6503 },
-    { en:"Beijing", zh:"北京", tr:"Pekin", lat:39.9042, lon:116.4074 },
-    { en:"Shanghai", zh:"上海", tr:"Şanghay", lat:31.2304, lon:121.4737 },
-    { en:"Istanbul", zh:"伊斯坦布尔", tr:"İstanbul", lat:41.0082, lon:28.9784 },
-    { en:"Antalya", zh:"安塔利亚", tr:"Antalya", lat:36.8969, lon:30.7133 },
-    { en:"Cairo", zh:"开罗", tr:"Kahire", lat:30.0444, lon:31.2357 },
-    { en:"Dubai", zh:"迪拜", tr:"Dubai", lat:25.2048, lon:55.2708 },
-    { en:"New Delhi", zh:"新德里", tr:"Yeni Delhi", lat:28.6139, lon:77.2090 },
-    { en:"Singapore", zh:"新加坡", tr:"Singapur", lat:1.3521, lon:103.8198 },
-    { en:"Sydney", zh:"悉尼", tr:"Sydney", lat:-33.8688, lon:151.2093 },
-    { en:"São Paulo", zh:"圣保罗", tr:"São Paulo", lat:-23.5505, lon:-46.6333 },
-    { en:"Mexico City", zh:"墨西哥城", tr:"Meksika", lat:19.4326, lon:-99.1332 },
-    { en:"Lagos", zh:"拉各斯", tr:"Lagos", lat:6.5244, lon:3.3792 },
-    { en:"Cape Town", zh:"开普敦", tr:"Cape Town", lat:-33.9249, lon:18.4241 }
-  ];
-  var globeRot = 0;
-  var globeWeather = {}; // keyed by city index: {temp, code, hum}
-  var globeRAF = null;
-
-  function wmoToKind(code){
-    code = code|0;
-    if(code===0) return "clear";
-    if(code===1||code===2) return "partly";
-    if(code===3) return "cloudy";
-    if(code===45||code===48) return "fog";
-    if(code>=51&&code<=57) return "drizzle";
-    if(code>=61&&code<=67) return "rain";
-    if(code>=71&&code<=77) return "snow";
-    if(code>=80&&code<=82) return "showers";
-    if(code>=85&&code<=86) return "snow";
-    if(code>=95) return "storm";
-    return "partly";
-  }
-  function tempColor(t){
-    if(t<15) return "#3ecf8e";
-    if(t<=30) return "#f5c542";
-    return "#ff6b6b";
-  }
-  function project(lat, lon, rot, cx, cy, r){
-    var la = lat*Math.PI/180, lo = (lon-rot)*Math.PI/180;
-    var x = cx + r*Math.cos(la)*Math.sin(lo);
-    var y = cy - r*Math.sin(la);
-    var z = Math.cos(la)*Math.cos(lo); // frontal factor
-    return {x:x, y:y, z:z};
-  }
-  function drawGlobeGrid(){
-    var g = document.getElementById("globeGrid");
-    if(!g) return;
-    g.innerHTML = "";
-    var cx=0, cy=0, r=92;
-    // meridians
-    for(var lon=-180; lon<180; lon+=30){
-      var pts=[];
-      for(var lat=-90; lat<=90; lat+=5){
-        var p = project(lat, lon, globeRot, cx, cy, r);
-        if(p.z>0) pts.push(p.x.toFixed(2)+","+p.y.toFixed(2));
-      }
-      if(pts.length>1){
-        var pl = document.createElementNS(NS,"polyline");
-        pl.setAttribute("points", pts.join(" "));
-        g.appendChild(pl);
-      }
-    }
-    // parallels
-    for(var plat=-60; plat<=60; plat+=30){
-      var pts2=[];
-      for(var lon2=-180; lon2<=180; lon2+=5){
-        var p2 = project(plat, lon2, globeRot, cx, cy, r);
-        if(p2.z>0) pts2.push(p2.x.toFixed(2)+","+p2.y.toFixed(2));
-      }
-      if(pts2.length>1){
-        var pl2 = document.createElementNS(NS,"polyline");
-        pl2.setAttribute("points", pts2.join(" "));
-        g.appendChild(pl2);
-      }
-    }
-  }
-  function renderGlobeCities(){
-    var g = document.getElementById("globeCities");
-    if(!g) return;
-    g.innerHTML = "";
-    var cx=0, cy=0, r=92;
-    GLOBE_CITIES.forEach(function(c, i){
-      var p = project(c.lat, c.lon, globeRot, cx, cy, r);
-      if(p.z<=0) return; // back hemisphere
-      var w = globeWeather[i];
-      var color = w ? tempColor(w.temp) : "#7fa0c0";
-      var rad = 2 + p.z*1.6;
-      var circle = document.createElementNS(NS,"circle");
-      circle.setAttribute("cx", p.x.toFixed(2));
-      circle.setAttribute("cy", p.y.toFixed(2));
-      circle.setAttribute("r", rad.toFixed(2));
-      circle.setAttribute("fill", color);
-      circle.setAttribute("opacity", (0.45+0.55*p.z).toFixed(2));
-      circle.setAttribute("stroke", "rgba(255,255,255,.6)");
-      circle.setAttribute("stroke-width", "0.5");
-      circle.style.cursor = "pointer";
-      (function(city, idx, wx){
-        circle.addEventListener("mouseenter", function(e){ showGlobeCard(city, wx, e); });
-        circle.addEventListener("mousemove", function(e){ moveGlobeCard(e); });
-        circle.addEventListener("mouseleave", hideGlobeCard);
-      })(c, i, w);
-      g.appendChild(circle);
-    });
-  }
-  function showGlobeCard(city, wx, e){
-    var card = document.getElementById("globeCityCard");
-    if(!card) return;
-    var i = uiIdx();
-    document.getElementById("gccName").textContent = i===1?city.zh:i===2?city.tr:city.en;
-    if(wx){
-      var tEl = document.getElementById("gccTemp");
-      tEl.textContent = wx.temp.toFixed(1)+"°C";
-      tEl.style.color = tempColor(wx.temp);
-      document.getElementById("gccCond").textContent = WCODE_TEXT[wmoToKind(wx.code)][i];
-      document.getElementById("gccMeta").textContent = "💧 "+wx.hum+"%";
-    } else {
-      document.getElementById("gccTemp").textContent = "—";
-      document.getElementById("gccTemp").style.color = "#7fa0c0";
-      document.getElementById("gccCond").textContent = "";
-      document.getElementById("gccMeta").textContent = "";
-    }
-    card.hidden = false;
-    moveGlobeCard(e);
-  }
-  function moveGlobeCard(e){
-    var card = document.getElementById("globeCityCard");
-    if(!card||card.hidden) return;
-    var stage = card.parentElement;
-    var rect = stage.getBoundingClientRect();
-    var x = e.clientX - rect.left + 14;
-    var y = e.clientY - rect.top + 14;
-    if(x + 160 > rect.width) x = rect.width - 160;
-    if(y + 90 > rect.height) y = rect.height - 90;
-    card.style.left = x+"px";
-    card.style.top = y+"px";
-  }
-  function hideGlobeCard(){
-    var card = document.getElementById("globeCityCard");
-    if(card) card.hidden = true;
-  }
-  function globeTick(){
-    globeRot += 0.12;
-    if(globeRot>=360) globeRot -= 360;
-    drawGlobeGrid();
-    renderGlobeCities();
-    globeRAF = requestAnimationFrame(globeTick);
-  }
-  function fetchGlobeWeather(){
-    var params = "latitude="+GLOBE_CITIES.map(function(c){return c.lat;}).join(",")+
-                 "&longitude="+GLOBE_CITIES.map(function(c){return c.lon;}).join(",")+
-                 "&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto&forecast_days=1";
-    var url = "https://api.open-meteo.com/v1/forecast?"+params;
-    fetch(url).then(function(r){ return r.json(); }).then(function(data){
-      if(!data) return;
-      // Comma-separated bulk -> array of per-location response objects.
-      var arr = Array.isArray(data) ? data : [data];
-      arr.forEach(function(d, i){
-        var cur = d.current || {};
-        if(cur.temperature_2m != null){
-          globeWeather[i] = { temp: cur.temperature_2m, hum: cur.relative_humidity_2m, code: cur.weather_code };
-        }
-      });
-    }).catch(function(){ /* keep existing markers */ });
-  }
-
-  /* ---- globe news ---- */
-  function fmtTimeAgo(d){
-    var diff = (Date.now()-d.getTime())/1000;
-    var i = uiIdx();
-    var units = [
-      {s:60, en:"sec", zh:"秒", tr:"sn"},
-      {s:3600, en:"min", zh:"分钟", tr:"dk"},
-      {s:86400, en:"h", zh:"小时", tr:"sa"}
-    ];
-    var last = {s:86400, en:"d", zh:"天", tr:"g"};
-    for(var k=0;k<units.length;k++){
-      if(diff<units[k].s){
-        var prev = k===0?1:units[k-1].s;
-        var n = Math.floor(diff/prev);
-        return n+" "+(i===1?units[k].zh:i===2?units[k].tr:units[k].en);
-      }
-    }
-    var n = Math.floor(diff/86400);
-    return n+" "+(i===1?last.zh:i===2?last.tr:last.en);
-  }
-  function cityName(c){ var i=uiIdx(); return i===1?c.zh:i===2?c.tr:c.en; }
-  function renderGlobeNews(items){
-    var list = document.getElementById("globeNewsList");
-    if(!list) return;
-    if(!items || !items.length){
-      list.innerHTML = '<li class="globe-news-err">'+t("globe.newsErr")+'</li>';
-      return;
-    }
-    list.innerHTML = "";
-    items.slice(0,12).forEach(function(it){
-      var li = document.createElement("li");
-      var a = document.createElement("a");
-      if(it.link){ a.href = it.link; a.target = "_blank"; a.rel = "noopener noreferrer"; }
-      a.textContent = it.title;
-      var meta = document.createElement("div");
-      meta.style.display="flex"; meta.style.justifyContent="space-between"; meta.style.gap="8px";
-      var tm = document.createElement("span"); tm.className="gn-time"; tm.textContent = fmtTimeAgo(it.date);
-      var src = document.createElement("span"); src.className="gn-src"; src.textContent = it.source || "";
-      meta.appendChild(tm); if(it.source) meta.appendChild(src);
-      li.appendChild(a); li.appendChild(meta);
-      list.appendChild(li);
-    });
-  }
-  function parseRss(xml){
-    var doc = new DOMParser().parseFromString(xml, "text/xml");
-    var items = doc.getElementsByTagName("item");
-    var out = [];
-    for(var i=0;i<items.length;i++){
-      var it = items[i];
-      var titleEl = it.getElementsByTagName("title")[0];
-      var linkEl = it.getElementsByTagName("link")[0];
-      var pubEl = it.getElementsByTagName("pubDate")[0];
-      var srcEl = it.getElementsByTagName("source")[0];
-      if(!titleEl||!linkEl) continue;
-      out.push({
-        title: titleEl.textContent,
-        link: linkEl.textContent,
-        date: pubEl? new Date(pubEl.textContent) : new Date(),
-        source: srcEl? srcEl.textContent : ""
-      });
-    }
-    return out;
-  }
-  // Build a real-time weather bulletin from live city data (always available)
-  function buildLiveBulletin(){
-    var i = uiIdx();
-    var rows = [];
-    GLOBE_CITIES.forEach(function(c, idx){
-      var w = globeWeather[idx];
-      if(w) rows.push({c:c, w:w});
-    });
-    if(!rows.length) return null;
-    rows.sort(function(a,b){ return b.w.temp - a.w.temp; });
-    var hottest = rows[0], coldest = rows[rows.length-1];
-    var storms = rows.filter(function(r){ var k=wmoToKind(r.w.code); return k==="storm"||k==="rain"||k==="showers"; });
-    var labels = {
-      en:{hot:"Hottest city right now", cold:"Coldest city right now", storm:"Active rain or storms"},
-      zh:{hot:"当前最热城市", cold:"当前最冷城市", storm:"当前降雨或雷暴"},
-      tr:{hot:"Şu an en sıcak şehir", cold:"Şu an en soğuk şehir", storm:"Yağmur veya fırtına aktif"}
-    };
-    var L = i===1?labels.zh:i===2?labels.tr:labels.en;
-    var out = [];
-    out.push({ title: L.hot+": "+cityName(hottest.c)+" "+hottest.w.temp.toFixed(1)+"°C", date: new Date(), source: "Open-Meteo", link: null });
-    out.push({ title: L.cold+": "+cityName(coldest.c)+" "+coldest.w.temp.toFixed(1)+"°C", date: new Date(), source: "Open-Meteo", link: null });
-    storms.slice(0,3).forEach(function(r){
-      out.push({ title: cityName(r.c)+": "+WCODE_TEXT[wmoToKind(r.w.code)][i]+" · "+r.w.temp.toFixed(1)+"°C", date: new Date(), source: "Open-Meteo", link: null });
-    });
-    return out;
-  }
-  function fetchGlobeNews(){
-    var rss = "https://news.google.com/rss/search?q=climate+OR+%22extreme+weather%22+OR+heatwave+OR+flood+OR+cyclone&hl=en&gl=US&ceid=US:en";
-    var enc = encodeURIComponent(rss);
-    // Chain of CORS proxies; try each until one returns valid RSS items.
-    var proxies = [
-      "https://api.allorigins.win/raw?url="+enc,
-      "https://corsproxy.io/?url="+enc,
-      "https://api.codetabs.com/v1/proxy/?quest="+enc
-    ];
-    var upEl = document.getElementById("globeUpdated");
-    if(upEl) upEl.textContent = t("globe.updating");
-
-    // Show the live weather bulletin immediately (always available) so the panel
-    // is never empty while we try to upgrade to real RSS headlines.
-    var bulletin = buildLiveBulletin();
-    if(bulletin && bulletin.length){
-      renderGlobeNews(bulletin);
-      if(upEl) upEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-    }
-
-    function tryProxy(idx){
-      if(idx >= proxies.length) return; // keep the live bulletin
-      var ctrl = new AbortController();
-      var to = setTimeout(function(){ ctrl.abort(); }, 9000);
-      fetch(proxies[idx], { signal: ctrl.signal }).then(function(r){
-        clearTimeout(to);
-        if(!r.ok) throw new Error("http "+r.status);
-        return r.text();
-      }).then(function(txt){
-        var items = parseRss(txt);
-        if(items && items.length){
-          renderGlobeNews(items);
-          if(upEl) upEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-        } else {
-          tryProxy(idx+1);
-        }
-      }).catch(function(){ clearTimeout(to); tryProxy(idx+1); });
-    }
-    tryProxy(0);
-  }
-
-  // boot globe
-  if(document.getElementById("globe")){
-    drawGlobeGrid();
-    renderGlobeCities();
-    globeTick();
-    fetchGlobeWeather();
-    // give weather a moment to populate, then fetch news (bulletin fallback uses live data)
-    setTimeout(fetchGlobeNews, 1500);
-    setInterval(fetchGlobeWeather, 10*60*1000);
-    setInterval(fetchGlobeNews, 5*60*1000);
-  }
 })();
 
 /* ===== CoolPath module (namespaced) ===== */
@@ -4733,7 +4295,7 @@ footer{border-top:1px solid var(--cp-line);padding:44px 0 60px;margin-top:30px}
       var halo = document.createElementNS(NS,"circle");
       halo.setAttribute("cx",w.x); halo.setAttribute("cy",w.y); halo.setAttribute("r",13);
       halo.setAttribute("fill","#5FE3C0"); halo.setAttribute("opacity",".22");
-      halo.setAttribute("filter","url(#pinGlow)");
+      halo.setAttribute("filter","url(#cp-pinGlow)");
       var c = document.createElementNS(NS,"circle");
       c.setAttribute("cx",w.x); c.setAttribute("cy",w.y); c.setAttribute("r",5.5);
       c.setAttribute("fill","#0A0E0D"); c.setAttribute("stroke","#5FE3C0"); c.setAttribute("stroke-width","2");
