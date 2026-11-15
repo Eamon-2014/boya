@@ -2023,14 +2023,24 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
           else if(x+1 < W && grid[y][x+1] !== "#") { dirx = 1; }
           else if(x-1 >= 0 && grid[y][x-1] !== "#") { dirx = -1; }
           if(dirx || diry){
-            var reach = 0.05;
-            var ax = x + 0.5 + dirx*(reach/2), ay = y + 0.5 + diry*(0.5 + reach/2);
-            var w2 = diry ? 0.17 : reach/2, d2 = diry ? reach/2 : 0.17;
-            box(ax, ay, 0.054, 0.062, w2, d2, 0, C("#D8D0BA"), x, y);
-            var pxa = ax + (diry ? w2*0.85 : 0), pya = ay + (diry ? reach/2 : 0);
-            var pxb = ax - (diry ? w2*0.85 : 0), pyb = ay - (diry ? 0 : reach/2);
-            box(pxa, pya, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
-            box(pxb, pyb, 0, 0.054, 0.004, 0.004, 0, C("#6E6A5E"), x, y);
+            /* 三维雨棚：板体 + 檐口封板 + 均布支撑柱（约 2.3~2.6 m 高） */
+            var reach = 0.045, az0 = 0.104, az1 = 0.116;
+            var ax, ay, w2, d2;
+            if(diry){ ay = y + 0.5 + diry*(0.5 + reach/2); ax = x + 0.5; w2 = 0.17; d2 = reach/2; }
+            else    { ax = x + 0.5 + dirx*(0.5 + reach/2); ay = y + 0.5; w2 = reach/2; d2 = 0.17; }
+            box(ax, ay, az0, az1, w2, d2, 0, C("#D8D0BA"), x, y);
+            /* 檐口封板：沿外缘一圈，略下垂 */
+            var fax = diry ? ax : ax + dirx*(w2 + 0.003);
+            var fay = diry ? ay + diry*(d2 + 0.003) : ay;
+            box(fax, fay, az0 - 0.010, az1 + 0.003,
+                diry ? w2 : 0.004, diry ? 0.004 : d2, 0, C("#B9B1A0"), x, y);
+            /* 支撑柱：5 根均布在外缘 */
+            for(var k2=0;k2<5;k2++){
+              var t2 = (k2/4 - 0.5)*2;
+              var sx3 = diry ? ax + t2*w2*0.92 : ax + dirx*(w2 - 0.003);
+              var sy3 = diry ? ay + diry*(d2 - 0.003) : ay + t2*d2*0.92;
+              box(sx3, sy3, 0, az0, 0.005, 0.005, 0, C("#6E6A5E"), x, y);
+            }
           }
         }
       }
@@ -2666,31 +2676,25 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
         segs.push({x:pts[i][0], y:pts[i][1], dx:dx/len, dy:dy/len, len:len});
         total += len;
       }
-      var step = 0.24, acc = 0;
-      ctx.save();
+      var step = 0.30, acc = 0;
       for(var i=0;i<segs.length;i++){
         var sg = segs[i], t = 0;
         while(t < sg.len){
           var s = t;
           var wx = sg.x + sg.dx*s, wy = sg.y + sg.dy*s;
           t += step;
-          var pr = proj(wx, wy, 0.012);
+          var pr = proj(wx, wy, 0.006);
           if(!pr || pr.d < 1.2 || pr.d > 34) continue;
           if(pr.d > zAt(pr.x) + 0.05) continue;
-          var rr = Math.max(1.2, Math.min(13, focal*0.033/pr.d));
-          var a = 0.5 * (1 - Math.min(1, (pr.d-6)/22));
           var dg = Math.hypot(wx-GOAL.x, wy-GOAL.y);
-          if(dg < 1.1) a *= Math.max(0, (dg-0.5)/0.6);
-          if(a <= 0.02) continue;
-          ctx.globalAlpha = a;
-          ctx.fillStyle = "#7DF0D4";
-          ctx.beginPath();
-          ctx.ellipse(pr.x, pr.y, rr, rr*0.42, 0, 0, Math.PI*2);
-          ctx.fill();
+          if(dg < 1.0) continue;
+          /* 三维立体路桩：带光照的小方桩（替代贴地椭圆） */
+          var k = 0.55 * (1 - Math.min(1, (pr.d-6)/24));
+          if(k <= 0.03) continue;
+          var cA = Math.round(58 + 66*k), cB = Math.round(190 + 42*k), cC = Math.round(168 + 48*k);
+          boxN(wx, wy, 0.004, 0.013, 0.009, 0.009, sg.dx ? 0 : Math.PI/4, [cA, cB, cC]);
         }
       }
-      ctx.globalAlpha = 1;
-      ctx.restore();
     }
 
     /* ---------------- 终点标签 ---------------- */
