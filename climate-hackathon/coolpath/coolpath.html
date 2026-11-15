@@ -589,10 +589,6 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
             <div class="why" id="advWhy">判断依据：树荫 71% / 补水点 2 / 多走 121m（+2.6min）/ 体感差 5.6℃</div>
           </div>
 
-          <div class="btns">
-            <button class="btn" id="shareBtn" type="button">生成分享链接</button>
-            <button class="btn pri" id="pushBtn" type="button">推送给家属</button>
-          </div>
         </div>
       </div>
     </div>
@@ -939,13 +935,13 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
         who:{elder:"陈阿姨 78", rider:"阿哲 26", parent:"林女士 34"},
         lbl:{temp:"体感", dist:"到医院", sun:"暴晒", exit:"退出 ESC", from:"起点 · ",
              tip:"WASD 移动 · 空格 跳跃 · Shift 快走 · 拖动鼠标转向 · ESC 退出",
-             done:"到达 · 社区医院", again:"再走一次"},
+             done:"到达 · 医院门诊大厅", again:"再走一次"},
         nav:{straight:"继续直行", left:"左转", right:"右转", now:"前方", arrive:"即将到达 · 社区医院",
              mAfter:"米后", remain:"剩余"},
         summary:function(m,s,su,pk){ return "步行 "+m+" 米 · 用时 "+s+" 秒 · 其中在太阳下 "+su
           +" 秒。体感峰值 "+pk+"℃ —— 这就是这条路的代价。"; }
       },
-      air:"气温 ", water:"处", linkDone:"已生成链接 ✓", pushDone:"已推送给家属 ✓"
+      air:"气温 ", water:"处"
     },
     en:{
       tagNormal:"RULE + MODEL",
@@ -967,13 +963,13 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
         who:{elder:"Chen, 78", rider:"Zhe, 26", parent:"Lin, 34"},
         lbl:{temp:"felt", dist:"to clinic", sun:"in sun", exit:"EXIT ESC", from:"From · ",
              tip:"WASD to move · Space to jump · Shift to run · drag to look · ESC to exit",
-             done:"Arrived · clinic", again:"Walk again"},
+             done:"Arrived · clinic lobby", again:"Walk again"},
         nav:{straight:"Keep straight", left:"Turn left", right:"Turn right", now:"Ahead:",
              arrive:"Almost there · clinic", mAfter:"m then ", remain:"Left"},
         summary:function(m,s,su,pk){ return m+" m walked in "+s+" s, "+su
           +" s of it in direct sun. Peak felt temperature "+pk+"°C — that is the price of this route."; }
       },
-      air:"AIR ", water:"stops", linkDone:"Link copied ✓", pushDone:"Sent ✓"
+      air:"AIR ", water:"stops"
     }
   };
 
@@ -1544,12 +1540,6 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
   document.getElementById("langEn").addEventListener("click", function(){ setLang("en"); });
   document.getElementById("langZh").addEventListener("click", function(){ setLang("zh"); });
 
-  document.getElementById("shareBtn").addEventListener("click", function(){
-    this.textContent = COPY[LANG].linkDone;
-  });
-  document.getElementById("pushBtn").addEventListener("click", function(){
-    this.textContent = COPY[LANG].pushDone;
-  });
 
   /* 窗口尺寸变化后重新校准双语锁定高度 */
   var _rsT;
@@ -1643,7 +1633,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
     var W = 20, H = 15, MPT = 22;
     var EYE = 0.075, CAM_BACK = 0.34, FOV = 66 * Math.PI / 180;
     var START = {x:2.5, y:12.5};
-    var GOAL  = {x:13.0, y:9.45};
+    var GOAL  = {x:13.0, y:8.90};      /* 医院门诊大厅内（玻璃门内侧 2 m） */
     var WPTS  = [[4.5,12.5],[4.5,7.5],[10.5,7.5],[10.5,5.5],[15.5,5.5],[15.5,9.5],[13.0,9.45]];
     var SPEED = {elder:1.45, rider:3.3, parent:1.75};
     var BEAM_H = 1.62;                 /* 天柱 ≈ 36 m，全城最高楼 18.5 m */
@@ -2930,9 +2920,12 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
         pl.vz -= 0.45*dt; pl.z += pl.vz*dt;
         if(pl.z <= 0){ pl.z = 0; pl.vz = 0; }
       }
-      elapsed += dt;
-      sunSec += dt * sunFactor();
-      peak = Math.max(peak, felt());
+      /* 到达后计时与暴晒累计一起冻结 */
+      if(!done){
+        elapsed += dt;
+        sunSec += dt * sunFactor();
+        peak = Math.max(peak, felt());
+      }
       while(wpIdx < WPTS.length && Math.hypot(WPTS[wpIdx][0]-pl.x, WPTS[wpIdx][1]-pl.y) < 0.55) wpIdx++;
       if(wpIdx < WPTS.length){
         var bd = Math.hypot(WPTS[wpIdx][0]-pl.x, WPTS[wpIdx][1]-pl.y), best = wpIdx;
@@ -2942,7 +2935,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
         }
         wpIdx = best;
       }
-      if(!done && Math.hypot(GOAL.x-pl.x, GOAL.y-pl.y) < 0.16) arrive();
+      if(!done && Math.hypot(GOAL.x-pl.x, GOAL.y-pl.y) < 0.22) arrive();
     }
 
     function arrive(){
@@ -3074,6 +3067,7 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
       camA = 0;
       sunSec = 0; peak = 0; walked = 0; elapsed = 0; done = false; wpIdx = 0;
       keys = {}; drag = null;
+      cancelAnimationFrame(raf);              /* 防止“再走一次”后叠加第二条渲染循环 */
       document.getElementById("simDone").classList.remove("on");
       document.getElementById("sim").classList.add("on");
       document.getElementById("sim").setAttribute("aria-hidden","false");
@@ -3108,9 +3102,21 @@ footer{border-top:1px solid var(--line);padding:44px 0 60px;margin-top:30px}
     return { open:openSim, close:closeSim, labels:labels, isOpen:function(){ return open; } };
   })();
 
-  document.getElementById("simBtn").addEventListener("click", SIM.open);
-  document.getElementById("simX").addEventListener("click", SIM.close);
-  document.getElementById("simAgain").addEventListener("click", SIM.open);
+  /* 模拟层 DOM 在本脚本之后才解析，必须等解析完成再绑定，
+     否则 simX / simAgain 取到 null 会抛错，两个按钮全部失效 */
+  function bindSimUI(){
+    var bOpen = document.getElementById("simBtn");
+    var bExit = document.getElementById("simX");
+    var bAgain = document.getElementById("simAgain");
+    if(bOpen) bOpen.addEventListener("click", SIM.open);
+    if(bExit) bExit.addEventListener("click", SIM.close);
+    if(bAgain) bAgain.addEventListener("click", SIM.open);
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", bindSimUI);
+  }else{
+    bindSimUI();
+  }
 })();
 </script>
 <!-- first-person simulation -->
