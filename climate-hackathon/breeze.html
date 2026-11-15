@@ -613,6 +613,7 @@
     <div class="lang-switch" role="group" aria-label="Interface language">
       <button class="lang-btn active" data-ui-lang="en" aria-pressed="true" type="button">EN</button>
       <button class="lang-btn" data-ui-lang="zh" aria-pressed="false" type="button">中文</button>
+      <button class="lang-btn" data-ui-lang="tr" aria-pressed="false" type="button" title="Türkçe" aria-label="Türkçe">TR</button>
     </div>
   </div>
 </header>
@@ -839,14 +840,6 @@
               <button class="seg-btn" data-audience="schools" aria-pressed="false" data-i18n="alert.schools">Schools</button>
             </div>
           </div>
-          <div class="field">
-            <span class="field-label" data-i18n="alert.language">Language</span>
-            <div class="seg" id="langSeg" role="group" aria-label="Alert language">
-              <button class="seg-btn active" data-lang="en" aria-pressed="true">English</button>
-              <button class="seg-btn" data-lang="zh" aria-pressed="false">中文</button>
-              <button class="seg-btn" data-lang="tr" aria-pressed="false">Türkçe</button>
-            </div>
-          </div>
           <div class="alert-facts" id="alertFacts"></div>
           <p class="fineprint" data-i18n="alert.fineprint">Draft only. A community health worker reviews tone, local context and cooling-centre availability before sending. No personal data is used for targeting.</p>
         </div>
@@ -1046,6 +1039,7 @@
     "metric.costPer": ["cost per person", "人均成本"],
     "opt.allocation": ["Allocation", "分配方案"],
     "opt.empty": ["No plan yet. Set a budget and press “Optimize allocation”.", "暂无方案。设置预算后点击“优化预算分配”。"],
+    "opt.runMeta": ["Run the optimizer to see a plan", "运行优化器以查看方案"],
     "opt.equityLabel": ["Share of spend reaching the most vulnerable quartile", "流向最脆弱四分位的支出占比"],
     "opt.baseline": ["Baseline for comparison: an equal split across all 24 blocks would put 25% of spend in the vulnerable quartile.", "对照基线：若 24 个街区平均分配，脆弱四分位仅获得 25% 的支出。"],
     "opt.preview": ["Preview plan on the map", "在地图上预览方案"],
@@ -1099,8 +1093,147 @@
     "footer.para": ["Built for ATOX · AI for Climate Youth Hackathon, 14–15 November 2026. Prototype with simulated data — not for operational use.", "为 ATOX · AI for Climate 青年气候黑客松（2026 年 11 月 14–15 日）而作。原型使用模拟数据——不可用于实际运营。"],
     "footer.tagline": ["Problem → evidence → allocation → last-mile message. One tool, three decisions.", "问题 → 证据 → 分配 → 最后一公里信息。一个工具，三个决策。"]
   };
-  function t(key) { var v = T[key]; return v ? v[state.uiLang === "zh" ? 1 : 0] : key; }
-  function L(en, zh) { return state.uiLang === "zh" ? zh : en; }
+  var T_TR = {
+    "brand.tag": "sıcaklık eşitliği yardımcısı",
+    "nav.command": "Komuta merkezi",
+    "nav.weather": "Canlı hava durumu",
+    "nav.budget": "Bütçe",
+    "nav.alerts": "Uyarılar",
+    "nav.method": "Yöntem",
+    "common.prototype": "Prototip",
+    "hero.eyebrow": "ATOX · AI for Climate · Gençlik İklim Hackathonu 2026",
+    "hero.title": "Bir sonraki serinletme bütçesini <em>en çok hayat kurtaran yere harcayın.</em>",
+    "hero.lede": "Breeze, mahalle ölçeğinde sıcaklık eylemi için bir yapay zekâ yardımcısıdır. Açık uydu, ağaç örtüsü ve nüfus sayımı verilerini risk sırasına göre bir sıcaklık eşitliği haritasına, optimize edilmiş bir serinletme bütçesine ve en kırılgan kişilere ulaşan uyarılara dönüştürür — aylar değil, dakikalar içinde.",
+    "hero.cta1": "Komuta merkezini aç",
+    "hero.cta2": "Yapay zekâ nasıl çalışır",
+    "stat.blocks": "yüksek risk grubundaki mahalle",
+    "stat.residents": "bugün ısıya maruz kalan kişi",
+    "stat.peak": "zirve yüzey sıcaklığı",
+    "stat.canopy": "ortalama ağaç örtüsü",
+    "why.eyebrow": "Neden bu, neden şimdi",
+    "why.title": "Sıcaklık eşit dağılmıyor. Müdahale de dağılmamalı.",
+    "why.lede": "Kentlerin serinletme bütçeleri küçük, zaman kısa. Zor olan sıcaklığı ölçmek değil — önce kime yardım edileceğine karar vermek ve bu kararı savunabilmek.",
+    "fact1.big": "1.5°C",
+    "fact1.p": "2024, küresel ısınmanın 1.5°C'yi aştığı ilk takvim yılı oldu. Kentler artık sıcaklığı istisna değil, rutin bir işletme koşulu olarak planlıyor.",
+    "fact1.cite": "Dünya Meteoroloji Örgütü",
+    "fact2.big": "1 numara",
+    "fact2.p": "Sıcaklık, Avrupa'da iklimle bağlantılı ölümlerin bir numaralı nedeni. Risk; yaşlılarda, açık alanda çalışanlarda ve düşük gelirli hanelerde yoğunlaşıyor.",
+    "fact2.cite": "Avrupa Çevre Ajansı",
+    "fact3.cite": "Breeze demo modeli",
+    "weather.eyebrow": "Canlı hava durumu · gerçek kentler",
+    "weather.title": "Şu anda hava kaç derece?",
+    "weather.lede": "Kentsel sıcaklık krizinin ön saflarındaki altı gerçek kentten canlı koşullar. Aşağıdaki mahalle haritası, bilinçli olarak bu gözlem verisinden ayrı tutulan simüle bir yaz senaryosudur.",
+    "weather.refresh": "Yenile",
+    "weather.source": "Canlı gözlemler ve 7 günlük tahmin: Open-Meteo (CC BY 4.0). Saatler her kentin yerel saatidir. Aşağıdaki sıcaklık eşitliği haritası simüle veri kullanır.",
+    "impacts.eyebrow": "Canlı etkiler",
+    "impacts.title": "Bu hava günlük yaşamı nasıl etkiliyor?",
+    "impacts.lede": "Bir kent seçin; canlı koşullardan hesaplanan ulaşım, tarım ve hayvan etkilerini görün.",
+    "impacts.note": "Etki düzeyleri, canlı Open-Meteo koşullarına şeffaf eşikler uygular. Gösterge niteliğindedir, bilimsel tahmin değildir.",
+    "cmd.eyebrow": "01 · Sıcaklık eşitliği komuta merkezi",
+    "cmd.title": "Sıcaklığı bir sağlık çalışanının gözünden görün.",
+    "cmd.lede": "Gün içinde gezinin, kanıt katmanlarını değiştirin ve herhangi bir mahalleye tıklayın. Harita mahalleleri yalnızca asfaltın ne kadar ısındığına göre değil, kimin maruz kaldığına göre sıralar.",
+    "layer.heat": "Sıcaklık",
+    "layer.equity": "Kırılganlık",
+    "layer.canopy": "Ağaç örtüsü",
+    "layer.assets": "Serin alanlar",
+    "map.note": "Simüle yaz günü · 15 Ağu · 24 mahalle",
+    "scenario.clear": "Senaryoyu temizle",
+    "inspector.title": "Mahalle incelemesi",
+    "inspector.badge": "bir mahalleye tıklayın",
+    "inspector.empty": "Sıcaklık, kırılganlık ve ağaç örtüsü profilini görmek için bir mahalleye tıklayın — veya Tab ile odaklanıp Enter'a basın.",
+    "copilot.sub": "Sıcaklık eşitliği analisti",
+    "copilot.stub": "YZ demosu",
+    "copilot.greeting": "Ben Breeze. Bugünün sıcaklık riskini sıralayabilir, serinletme planı taslağı hazırlayabilir ve uyarıları sokak diline çevirebilirim.\n“Bugünü önceliklendir” ile başlayın.",
+    "copilot.p1": "Bugünü önceliklendir",
+    "copilot.p2": "Bütçe planı taslağı",
+    "copilot.p3": "Eşitlik açığını açıkla",
+    "copilot.fineprint": "Bu prototipte yanıtlar şablondur. Sayılar sayfadaki puanlama modeliyle hesaplanır — canlı LLM çağrısı yok, kişisel veri yok.",
+    "opt.eyebrow": "02 · Bütçe optimize edici",
+    "opt.title": "Yardımcıya bir bütçe verin. Savunulabilir bir plan alın.",
+    "opt.lede": "Breeze, serinletme yatırımını dolar başına en fazla önlenen ısı maruziyeti için dağıtır ve en kırılgan çeyreğe 1.6× ağırlık verir. Her ödünleşim görünür kalır.",
+    "opt.budgetLabel": "Serinletme bütçesi",
+    "opt.season": "bu sezon",
+    "opt.available": "kullanılabilir",
+    "action.trees": "Cadde ağaçları",
+    "action.roofs": "Serin çatılar",
+    "action.mist": "Sisleme istasyonları",
+    "action.shade": "Duraklarda gölge",
+    "opt.run": "Dağıtımı optimize et",
+    "opt.fineprint": "Dolar başına önlenen ısı maruziyetinde açgözlü eniyileme. Birim maliyetler ve serinletme etkileri örnek demo parametreleridir.",
+    "metric.spend": "ayrılan bütçe",
+    "metric.people": "rahatlama sağlanan kişi",
+    "metric.relief": "ağırlıklı zirve serinleme",
+    "metric.costPer": "kişi başı maliyet",
+    "opt.allocation": "Dağıtım",
+    "opt.empty": "Henüz plan yok. Bir bütçe belirleyip “Dağıtımı optimize et”e basın.",
+    "opt.runMeta": "Planı görmek için optimize edin",
+    "opt.equityLabel": "Harcamanın en kırılgan çeyreğe ulaşan payı",
+    "opt.baseline": "Karşılaştırma temeli: 24 mahalleye eşit dağıtım, harcamanın %25'ini kırılgan çeyreğe koyar.",
+    "opt.preview": "Planı haritada önizle",
+    "alert.eyebrow": "03 · Topluluk uyarı stüdyosu",
+    "alert.title": "Aynı kanıt, insanların harekete geçebileceği sözcüklerle.",
+    "alert.lede": "Sıcaklık planları son adımda tıkanır. Breeze, aynı sıralı kanıttan yola çıkarak farklı kitleler için İngilizce, Çince ve Türkçe uyarı taslakları hazırlar — bir insanın gözden geçirip göndermesine hazır.",
+    "alert.audience": "Kitle",
+    "alert.residents": "Sakinler",
+    "alert.workers": "Açık alan çalışanları",
+    "alert.schools": "Okullar",
+    "alert.language": "Dil",
+    "alert.fineprint": "Yalnızca taslak. Göndermeden önce bir toplum sağlığı çalışanı tonu, yerel bağlamı ve serinleme merkezlerinin durumunu kontrol eder. Hedeflemede kişisel veri kullanılmaz.",
+    "alert.phone": "Breeze uyarı önizlemesi",
+    "alert.copy": "Mesajı kopyala",
+    "method.eyebrow": "04 · Yöntem ve sınırlar",
+    "method.title": "Yapay zekânın yardım ettiği yer — ve durduğu yer.",
+    "method.lede": "Jüri ve kent ortakları akıl yürütmeyi denetleyebilmeli. Breeze kanıtı, dağıtımı ve iletişimi üç açıklanabilir katmana ayırır.",
+    "m1.step": "Katman 1 · Kanıt",
+    "m1.title": "Açık veri girer, sıralı risk çıkar",
+    "m1.p": "Uydu yüzey sıcaklığı, ağaç örtüsü, tesisler ve nüfus sayımı ızgaraları mahalle düzeyinde birleştirilir. Tescilli veri gerekmez; her kent aynı analizi yeniden çalıştırabilir.",
+    "m1.li1": "Landsat 9 TIRS — 30 m yüzey sıcaklığı",
+    "m1.li2": "Sentinel-2 NDVI — ağaç örtüsü vekili",
+    "m1.li3": "OpenStreetMap — serinleme tesisleri",
+    "m1.li4": "Izgaralı nüfus sayımı — yaş ve gelir payları",
+    "m2.step": "Katman 2 · Karar",
+    "m2.title": "Bir belediye meclisinin savunabileceği puan",
+    "m2.p": "Sıcaklık, kırılganlık, ağaç örtüsü açığı ve nüfus maruziyeti sabit ve kamuya açık ağırlıklarla birleştirilir. Ardından optimize edici, dolar başına en büyük risk azaltımını satın alır.",
+    "m2.li1": "En kırılgan çeyrek için 1.6× ağırlık",
+    "m2.li2": "Her dağıtım maliyeti, °C serinlemeyi ve ulaşılan kişiyi gösterir",
+    "m2.li3": "İnsan her satırı geçersiz kılabilir",
+    "m3.step": "Katman 3 · İletişim",
+    "m3.title": "Yapay zekâ yazar, insan gönderir",
+    "m3.p": "Dil katmanı sıralamaları, her kitle ve dil için kısa ve sade uyarılara dönüştürür. Bu prototipte bilinçli olarak şablonludur.",
+    "m3.li1": "İngilizce, Çince ve Türkçe çıktılar",
+    "m3.li2": "Genel tavsiye değil, kitleye özel eylemler",
+    "m3.li3": "Toplum sağlığı çalışanı tarafından gözden geçirilir",
+    "m3.li4": "Her mesaj bir serin alana işaret eder",
+    "d1.title": "Yapay zekâ ne yapar / ne yapmaz",
+    "d1.li1": "<b>Yapar:</b> mahalleleri sıralar, ödünleşimleri ölçer, mesaj taslakları yazar ve çevirir, manuel planlamanın kaçırdığı eşitlik açıklarını ortaya çıkarır.",
+    "d1.li2": "<b>Yapmaz:</b> saha doğrulamasının yerini almaz, bireysel ısı yükünü ölçmez, nedensel etki iddia etmez veya insan incelemesi olmadan kimin yardım alacağına karar vermez.",
+    "d1.li3": "<b>Kullanmaz:</b> kişisel veri, hareket izleri veya hane tanımlayıcıları. Hedefleme mahalle toplamı düzeyinde kalır.",
+    "tag.nodata": "Kişisel veri yok",
+    "tag.human": "İnsan denetiminde",
+    "tag.audit": "Denetlenebilir ağırlıklar",
+    "tag.open": "Açık girdiler",
+    "d2.title": "Sınırlar ve sonraki doğrulama",
+    "d2.li1": "<b>Simüle demo:</b> 24 örnek mahalle ve 48,8 bin sakin. Tüm sıcaklıklar, maliyetler ve etkiler sentetiktir.",
+    "d2.li2": "<b>Ağırlıklar öncüldür:</b> ambulans çağrıları ve sıcaklığa bağlı acil başvurularla kalibre edilmelidir.",
+    "d2.li3": "<b>Sonraki pilot:</b> bir belediye ile iki hafta; yüzey sıcaklığını 10 düşük maliyetli sensörle doğrulama; uyarı biçimlerini toplum sağlığı çalışanlarıyla A/B testi.",
+    "d2.li4": "<b>Tasarımı gereği açık:</b> puanlama spesifikasyonunu yayımlayın; böylece diğer kentler yeniden kullanıp sorgulayabilir.",
+    "footer.para": "ATOX · AI for Climate Gençlik İklim Hackathonu için geliştirildi, 14–15 Kasım 2026. Simüle veri kullanan prototip — operasyonel kullanım için değildir.",
+    "footer.tagline": "Sorun → kanıt → dağıtım → son adım mesajı. Tek araç, üç karar."
+  };
+  function uiIdx() { return state.uiLang === "zh" ? 1 : state.uiLang === "tr" ? 2 : 0; }
+  function t(key) {
+    var v = T[key];
+    if (!v) return key;
+    if (state.uiLang === "tr") return T_TR[key] || v[0];
+    return state.uiLang === "zh" ? v[1] : v[0];
+  }
+  function L(en, zh, tr) {
+    if (state.uiLang === "zh") return zh;
+    if (state.uiLang === "tr") return tr == null ? en : tr;
+    return en;
+  }
+  function cityName(c) { return state.uiLang === "zh" ? c.zh : state.uiLang === "tr" ? c.tr : c.en; }
+  function countryName(c) { return state.uiLang === "zh" ? c.countryZh : state.uiLang === "tr" ? c.countryTr : c.countryEn; }
 
   /* ---------- demo data ---------- */
   var RAW = [
@@ -1179,9 +1312,9 @@
   }
   var medianPeak = median(BLOCKS.map(function (b) { return b.peak; }));
   function tierText(tier) {
-    return tier === "high" ? L("High risk", "高风险")
-      : tier === "elevated" ? L("Elevated", "较高风险")
-      : L("Moderate", "中等风险");
+    return tier === "high" ? L("High risk", "高风险", "Yüksek risk")
+      : tier === "elevated" ? L("Elevated", "较高风险", "Artan risk")
+      : L("Moderate", "中等风险", "Orta risk");
   }
 
   /* ---------- color ramps ---------- */
@@ -1213,10 +1346,10 @@
   }
 
   var LEGENDS = {
-    heat: { title: ["Surface temperature", "地表温度"], stops: HEAT_STOPS, labels: ["33°C","41°C","47°C"] },
-    assets: { title: ["Surface temp + cool spaces", "地表温度 + 纳凉点"], stops: HEAT_STOPS, labels: ["33°C","41°C","47°C"] },
-    equity: { title: ["Vulnerability index", "脆弱性指数"], stops: EQ_STOPS, labels: [["Low","Medium","High"], ["低","中","高"]] },
-    canopy: { title: ["Tree canopy cover", "树冠覆盖率"], stops: CANOPY_STOPS, labels: ["0%","22%","45%"] }
+    heat: { title: ["Surface temperature", "地表温度", "Yüzey sıcaklığı"], stops: HEAT_STOPS, labels: ["33°C","41°C","47°C"] },
+    assets: { title: ["Surface temp + cool spaces", "地表温度 + 纳凉点", "Yüzey sıcaklığı + serin alanlar"], stops: HEAT_STOPS, labels: ["33°C","41°C","47°C"] },
+    equity: { title: ["Vulnerability index", "脆弱性指数", "Kırılganlık indeksi"], stops: EQ_STOPS, labels: [["Low","Medium","High"], ["低","中","高"], ["Düşük","Orta","Yüksek"]] },
+    canopy: { title: ["Tree canopy cover", "树冠覆盖率", "Ağaç örtüsü oranı"], stops: CANOPY_STOPS, labels: ["0%","22%","45%"] }
   };
 
   /* ---------- state ---------- */
@@ -1233,17 +1366,17 @@
 
   /* ---------- live weather ---------- */
   var CITIES = [
-    { en: "Antalya", zh: "安塔利亚", countryEn: "Türkiye", countryZh: "土耳其", lat: 36.8969, lon: 30.7133 },
-    { en: "Athens", zh: "雅典", countryEn: "Greece", countryZh: "希腊", lat: 37.9838, lon: 23.7275 },
-    { en: "Seville", zh: "塞维利亚", countryEn: "Spain", countryZh: "西班牙", lat: 37.3891, lon: -5.9845 },
-    { en: "New Delhi", zh: "新德里", countryEn: "India", countryZh: "印度", lat: 28.6139, lon: 77.2090 },
-    { en: "Cairo", zh: "开罗", countryEn: "Egypt", countryZh: "埃及", lat: 30.0444, lon: 31.2357 },
-    { en: "Shanghai", zh: "上海", countryEn: "China", countryZh: "中国", lat: 31.2304, lon: 121.4737 }
+    { en: "Antalya", zh: "安塔利亚", tr: "Antalya", countryEn: "Türkiye", countryZh: "土耳其", countryTr: "Türkiye", lat: 36.8969, lon: 30.7133 },
+    { en: "Athens", zh: "雅典", tr: "Atina", countryEn: "Greece", countryZh: "希腊", countryTr: "Yunanistan", lat: 37.9838, lon: 23.7275 },
+    { en: "Seville", zh: "塞维利亚", tr: "Sevilla", countryEn: "Spain", countryZh: "西班牙", countryTr: "İspanya", lat: 37.3891, lon: -5.9845 },
+    { en: "New Delhi", zh: "新德里", tr: "Yeni Delhi", countryEn: "India", countryZh: "印度", countryTr: "Hindistan", lat: 28.6139, lon: 77.2090 },
+    { en: "Cairo", zh: "开罗", tr: "Kahire", countryEn: "Egypt", countryZh: "埃及", countryTr: "Mısır", lat: 30.0444, lon: 31.2357 },
+    { en: "Shanghai", zh: "上海", tr: "Şanghay", countryEn: "China", countryZh: "中国", countryTr: "Çin", lat: 31.2304, lon: 121.4737 }
   ];
   var WCODE_TEXT = {
-    clear: ["Clear sky", "晴"], partly: ["Partly cloudy", "少云"], cloudy: ["Overcast", "多云"],
-    fog: ["Fog", "有雾"], drizzle: ["Drizzle", "毛毛雨"], rain: ["Rain", "有雨"],
-    showers: ["Showers", "阵雨"], snow: ["Snow", "降雪"], storm: ["Thunderstorm", "雷暴"]
+    clear: ["Clear sky", "晴", "Açık"], partly: ["Partly cloudy", "少云", "Parçalı bulutlu"], cloudy: ["Overcast", "多云", "Kapalı"],
+    fog: ["Fog", "有雾", "Sisli"], drizzle: ["Drizzle", "毛毛雨", "Çisenti"], rain: ["Rain", "有雨", "Yağmurlu"],
+    showers: ["Showers", "阵雨", "Sağanak"], snow: ["Snow", "降雪", "Kar"], storm: ["Thunderstorm", "雷暴", "Gök gürültülü fırtına"]
   };
   var weatherState = { status: "loading", loading: false, updated: null, data: null };
   var WEATHER_CACHE_KEY = "breeze-weather-v2";
@@ -1303,17 +1436,17 @@
     var el = $("#weatherStatus"), txt = $("#weatherStatusText"), cls = "weather-status";
     var text;
     if (weatherState.loading && !weatherState.data) {
-      text = L("Connecting to live weather…", "正在连接实时天气…");
+      text = L("Connecting to live weather…", "正在连接实时天气…", "Canlı hava durumuna bağlanılıyor…");
     } else if (weatherState.loading && weatherState.data) {
-      text = L("Refreshing live weather…", "正在刷新实时天气…");
+      text = L("Refreshing live weather…", "正在刷新实时天气…", "Canlı hava durumu yenileniyor…");
     } else if (weatherState.status === "live") {
-      text = L("Live · updated " + weatherTime(weatherState.updated), "实时 · 更新于 " + weatherTime(weatherState.updated));
+      text = L("Live · updated " + weatherTime(weatherState.updated), "实时 · 更新于 " + weatherTime(weatherState.updated), "Canlı · güncellendi " + weatherTime(weatherState.updated));
       cls += " live";
     } else if (weatherState.status === "cached") {
-      text = L("Cached snapshot · " + weatherTime(weatherState.updated), "缓存快照 · " + weatherTime(weatherState.updated));
+      text = L("Cached snapshot · " + weatherTime(weatherState.updated), "缓存快照 · " + weatherTime(weatherState.updated), "Önbellek görüntüsü · " + weatherTime(weatherState.updated));
       cls += " cached";
     } else {
-      text = L("Offline · live data unavailable", "离线 · 实时数据不可用");
+      text = L("Offline · live data unavailable", "离线 · 实时数据不可用", "Çevrimdışı · canlı veri yok");
       cls += " offline";
     }
     el.className = cls;
@@ -1325,8 +1458,8 @@
     var data = weatherState.data;
     if (!data || !data.length) {
       var msg = weatherState.status === "offline"
-        ? L("Live weather is unavailable right now. Check your connection and press Refresh.", "实时天气暂不可用。请检查网络后点击刷新。")
-        : L("Loading live conditions…", "正在加载实时天气…");
+        ? L("Live weather is unavailable right now. Check your connection and press Refresh.", "实时天气暂不可用。请检查网络后点击刷新。", "Canlı hava durumu şu anda kullanılamıyor. Bağlantınızı kontrol edip Yenile'ye basın.")
+        : L("Loading live conditions…", "正在加载实时天气…", "Canlı koşullar yükleniyor…");
       grid.innerHTML = '<div class="weather-empty">' + msg + '</div>';
       updateWeatherChrome();
       renderImpacts();
@@ -1336,29 +1469,29 @@
       var d = data[i];
       if (!d) return "";
       var kind = weatherKind(d.code);
-      var cond = WCODE_TEXT[kind][state.uiLang === "zh" ? 1 : 0];
+      var cond = WCODE_TEXT[kind][uiIdx()];
       var badge = weatherState.status === "live" ? "live" : weatherState.status === "cached" ? "cached" : "offline";
-      var badgeText = badge === "live" ? L("Live", "实时") : badge === "cached" ? L("Cached", "缓存") : L("Offline", "离线");
-      var city = state.uiLang === "zh" ? c.zh : c.en;
-      var country = state.uiLang === "zh" ? c.countryZh : c.countryEn;
+      var badgeText = badge === "live" ? L("Live", "实时", "Canlı") : badge === "cached" ? L("Cached", "缓存", "Önbellek") : L("Offline", "离线", "Çevrimdışı");
+      var city = cityName(c);
+      var country = countryName(c);
       var meta = "";
-      if (d.high != null) meta += '<span>' + L("High", "最高") + ' <b>' + Math.round(d.high) + '°</b></span>';
-      if (d.low != null) meta += '<span>' + L("Low", "最低") + ' <b>' + Math.round(d.low) + '°</b></span>';
-      if (d.humidity != null) meta += '<span>' + L("Humidity", "湿度") + ' <b>' + Math.round(d.humidity) + '%</b></span>';
+      if (d.high != null) meta += '<span>' + L("High", "最高", "En yüksek") + ' <b>' + Math.round(d.high) + '°</b></span>';
+      if (d.low != null) meta += '<span>' + L("Low", "最低", "En düşük") + ' <b>' + Math.round(d.low) + '°</b></span>';
+      if (d.humidity != null) meta += '<span>' + L("Humidity", "湿度", "Nem") + ' <b>' + Math.round(d.humidity) + '%</b></span>';
       var range = (d.min7 != null && d.max7 != null)
         ? '<span>' + Math.round(d.min7) + '°–' + Math.round(d.max7) + '°</span>'
         : "";
       return '<article class="weather-card">' +
         '<div class="wc-top">' +
-          '<div class="wc-city">' + city + '<span>' + country + ' · ' + (d.localTime || "—") + ' ' + L("local", "当地") + '</span></div>' +
+          '<div class="wc-city">' + city + '<span>' + country + ' · ' + (d.localTime || "—") + ' ' + L("local", "当地", "yerel") + '</span></div>' +
           '<span class="wc-badge ' + badge + '">' + badgeText + '</span>' +
         '</div>' +
         '<div class="wc-main"><div class="wc-temp">' + Math.round(d.temp) + '°</div>' +
           '<div class="wc-icon ' + kind + '">' + weatherIcon(kind) + '</div></div>' +
-        '<div class="wc-cond">' + cond + ' · ' + L("feels like", "体感") + ' <b>' + Math.round(d.feels) + '°C</b></div>' +
+        '<div class="wc-cond">' + cond + ' · ' + L("feels like", "体感", "hissedilen") + ' <b>' + Math.round(d.feels) + '°C</b></div>' +
         '<div class="wc-meta">' + meta + '</div>' +
         sparkline(d.maxes) +
-        '<div class="wc-foot"><span>' + L("Next 7 days", "未来 7 天") + '</span>' + range + '</div>' +
+        '<div class="wc-foot"><span>' + L("Next 7 days", "未来 7 天", "Önümüzdeki 7 gün") + '</span>' + range + '</div>' +
       '</article>';
     }).join("");
     updateWeatherChrome();
@@ -1457,25 +1590,26 @@
   /* ---------- live impacts ---------- */
   var RISK_EN = ["Low", "Moderate", "High", "Severe"];
   var RISK_ZH = ["低", "中等", "高", "极高"];
+  var RISK_TR = ["Düşük", "Orta", "Yüksek", "Çok yüksek"];
   var IMPACT_ICONS = {
     travel: '<svg viewBox="0 0 24 24"><path d="M5 16h14M6 16V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8M6 11h12M9 19v-3M15 19v-3"/><circle cx="9" cy="14" r=".7"/><circle cx="15" cy="14" r=".7"/></svg>',
     agri: '<svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 12c-3 0-5-2-5-5 3 0 5 2 5 5zM12 12c3 0 5-2 5-5-3 0-5 2-5 5zM12 17c-3 0-5-2-5-5 3 0 5 2 5 5zM12 17c3 0 5-2 5-5-3 0-5 2-5 5z"/></svg>',
     animals: '<svg viewBox="0 0 24 24"><circle cx="7.5" cy="9" r="1.8"/><circle cx="12" cy="7" r="1.8"/><circle cx="16.5" cy="9" r="1.8"/><path d="M8.8 15.2c0-2 1.4-3.2 3.2-3.2s3.2 1.2 3.2 3.2c0 2.1-1.4 4-3.2 4s-3.2-1.9-3.2-4z"/></svg>'
   };
 
-  function riskLabel(l) { return L(RISK_EN[l] || RISK_EN[0], RISK_ZH[l] || RISK_ZH[0]); }
+  function riskLabel(l) { return L(RISK_EN[l] || RISK_EN[0], RISK_ZH[l] || RISK_ZH[0], RISK_TR[l] || RISK_TR[0]); }
   function riskClass(l) { return "l" + Math.max(0, Math.min(3, l)); }
 
   function uvText(uv) {
     if (uv == null) return "—";
-    if (uv >= 8) return L("Very high", "很强");
-    if (uv >= 6) return L("High", "强");
-    if (uv >= 3) return L("Moderate", "中等");
-    return L("Low", "弱");
+    if (uv >= 8) return L("Very high", "很强", "Çok yüksek");
+    if (uv >= 6) return L("High", "强", "Yüksek");
+    if (uv >= 3) return L("Moderate", "中等", "Orta");
+    return L("Low", "弱", "Düşük");
   }
 
   function pavementText(p) {
-    return p === "hot" ? L("Hot", "烫") : p === "wet" ? L("Wet", "湿滑") : L("Safe", "正常");
+    return p === "hot" ? L("Hot", "烫", "Sıcak") : p === "wet" ? L("Wet", "湿滑", "Islak") : L("Safe", "正常", "Güvenli");
   }
 
   function impactsFor(d) {
@@ -1514,6 +1648,13 @@
       if (imp.travel >= 1) return "体感 " + f + "°C，偏热但可出行。较长路程请带水，并优先走遮阴路线。";
       return "当前体感 " + f + "°C，适合步行与公共交通出行。";
     }
+    if (state.uiLang === "tr") {
+      if (imp.rain && f < 30) return "Sıcaklık " + Math.round(d.temp) + "°C iken yağış sürüyor. Yollar ve bekleme alanları ıslak — ek süre ayırın, raylı sistemi veya kapalı güzergâhları tercih edin.";
+      if (imp.travel >= 3) return "Hissedilen " + f + "°C, nem %" + h + ". Öğlen yürüyüş, bisiklet ve açık alanda bekleme yüksek riskli — yolculukları sabah erken saate veya gün batımından sonraya alın.";
+      if (imp.travel >= 2) return "Hissedilen " + f + "°C. 11:00–17:00 arasında uzun açık hava yolculuklarını sınırlayın ve su molaları ekleyin.";
+      if (imp.travel >= 1) return "Hissedilen " + f + "°C — sıcak ama ulaşım için uygun. Su taşıyın, uzun yolculuklarda gölgeli güzergâhları seçin.";
+      return "Hissedilen " + f + "°C — şu anda yürüyüş ve toplu taşıma için rahat.";
+    }
     if (imp.rain && f < 30) return "Rain is active at " + Math.round(d.temp) + "°C. Roads and waiting areas are wet — allow extra time and prefer rail or covered routes.";
     if (imp.travel >= 3) return "Feels like " + f + "°C at " + h + "% humidity. Midday walking, cycling and outdoor waiting are high-risk — move trips to early morning or after sunset.";
     if (imp.travel >= 2) return "Feels like " + f + "°C. Limit long outdoor trips between 11:00 and 17:00, and add water stops.";
@@ -1525,16 +1666,22 @@
     if (imp.travel >= 2) {
       return state.uiLang === "zh"
         ? ["长途优先地铁或空调公交", "11:00–17:00 避免骑行", imp.rain ? "为降雨延误预留时间" : "随身带水，规划遮阴候车点"]
-        : ["Use metro or air-conditioned buses for long trips", "Avoid cycling between 11:00 and 17:00", imp.rain ? "Allow extra time for rain delays" : "Carry water and plan shaded waiting spots"];
+        : state.uiLang === "tr"
+          ? ["Uzun yolculuklarda metro veya klimalı otobüsü tercih edin", "11:00–17:00 arasında bisikletten kaçının", imp.rain ? "Yağış gecikmeleri için ek süre ayırın" : "Su taşıyın ve gölgeli bekleme noktaları planlayın"]
+          : ["Use metro or air-conditioned buses for long trips", "Avoid cycling between 11:00 and 17:00", imp.rain ? "Allow extra time for rain delays" : "Carry water and plan shaded waiting spots"];
     }
     if (imp.rain) {
       return state.uiLang === "zh"
         ? ["预留至少 15 分钟余量", "优先轨道而非道路", "带一件轻便雨具"]
-        : ["Allow at least 15 extra minutes", "Prefer rail over road", "Carry a light rain layer"];
+        : state.uiLang === "tr"
+          ? ["En az 15 dakika ek süre ayırın", "Karayolu yerine raylı sistemi tercih edin", "Hafif bir yağmurluk alın"]
+          : ["Allow at least 15 extra minutes", "Prefer rail over road", "Carry a light rain layer"];
     }
     return state.uiLang === "zh"
       ? ["步行和骑行条件良好", "较长路程随身带水", "长时间户外注意防晒"]
-      : ["Walking and cycling are fine", "Carry water on longer trips", "Use sun protection for long exposure"];
+      : state.uiLang === "tr"
+        ? ["Yürüyüş ve bisiklet koşulları iyi", "Uzun yolculuklarda su taşıyın", "Uzun süre açık alanda güneş koruması kullanın"]
+        : ["Walking and cycling are fine", "Carry water on longer trips", "Use sun protection for long exposure"];
   }
 
   function agriText(d, imp) {
@@ -1542,9 +1689,9 @@
     var high = d.high != null ? Math.round(d.high) : null;
     var crop = "";
     if (high != null && imp.cropLvl >= 1) {
-      crop = state.uiLang === "zh"
-        ? "今日最高 " + high + "°C，对敏感作物构成" + riskLabel(imp.cropLvl) + "热应激。"
-        : " Today's high of " + high + "°C adds " + riskLabel(imp.cropLvl).toLowerCase() + " crop heat stress.";
+      crop = L(" Today's high of " + high + "°C adds " + riskLabel(imp.cropLvl).toLowerCase() + " crop heat stress.",
+        "今日最高 " + high + "°C，对敏感作物构成" + riskLabel(imp.cropLvl) + "热应激。",
+        " Bugünün en yüksek sıcaklığı " + high + "°C, hassas ürünlerde " + riskLabel(imp.cropLvl).toLowerCase() + " düzeyde sıcaklık stresi yaratıyor.");
     }
     if (state.uiLang === "zh") {
       var rainZh = rain7 < 1 ? "几乎无降水" : "降水 " + rain7 + " mm";
@@ -1552,6 +1699,13 @@
       if (imp.agri >= 2) return "牲畜热应激偏高（THI " + imp.thi + "）。未来 7 天" + rainZh + "，请检查遮阴、通风与饮水。" + crop;
       if (imp.agri >= 1) return "牲畜有轻度热应激（THI " + imp.thi + "）。未来 7 天" + rainZh + "，注意补水并避开正午劳作。" + crop;
       return "牲畜热应激较低（THI " + imp.thi + "）。未来 7 天降水 " + rain7 + " mm，可按常规安排农事。";
+    }
+    if (state.uiLang === "tr") {
+      var rainTr = rain7 < 1 ? "neredeyse hiç yağış yok" : rain7 + " mm yağış var";
+      if (imp.agri >= 3) return "Hayvanlarda ısı stresi ciddi düzeyde (THI " + imp.thi + "). 7 günlük tahmin: " + rainTr + ". Gölge, havalandırma ve sabah erken sulama acil." + crop;
+      if (imp.agri >= 2) return "Hayvanlarda ısı stresi yüksek (THI " + imp.thi + "). Gölge, havalandırma ve suyu kontrol edin. 7 günlük tahmin: " + rainTr + "." + crop;
+      if (imp.agri >= 1) return "Hayvanlarda hafif ısı stresi (THI " + imp.thi + "). Suyu izleyin ve öğlen tarla işinden kaçının. 7 günlük tahmin: " + rainTr + "." + crop;
+      return "Hayvanlarda ısı stresi düşük (THI " + imp.thi + "). 7 günlük tahminde " + rain7 + " mm yağış var; normal tarla işleri yapılabilir.";
     }
     var rainEn = rain7 < 1 ? "essentially no rain" : rain7 + " mm of rain";
     if (imp.agri >= 3) return "Livestock heat stress is severe (THI " + imp.thi + "). With " + rainEn + " expected in 7 days, shade, ventilation and early irrigation are urgent." + crop;
@@ -1564,16 +1718,22 @@
     if (imp.agri >= 2) {
       return state.uiLang === "zh"
         ? ["09:00 前或 18:00 后灌溉", "为牲畜提供遮阴与通风", "把田间作业移到清晨"]
-        : ["Irrigate before 09:00 or after 18:00", "Provide shade and ventilation for livestock", "Shift field work to early morning"];
+        : state.uiLang === "tr"
+          ? ["09:00'dan önce veya 18:00'den sonra sulayın", "Hayvanlara gölge ve havalandırma sağlayın", "Tarla işlerini sabah erken saate kaydırın"]
+          : ["Irrigate before 09:00 or after 18:00", "Provide shade and ventilation for livestock", "Shift field work to early morning"];
     }
     if (imp.agri >= 1) {
       return state.uiLang === "zh"
         ? ["检查牲畜饮水与遮阴", "避开正午施肥或喷药", "关注未来 7 天降水变化"]
-        : ["Check livestock water and shade", "Avoid midday fertilising or spraying", "Watch the 7-day rainfall outlook"];
+        : state.uiLang === "tr"
+          ? ["Hayvanların suyunu ve gölgesini kontrol edin", "Öğlen gübreleme veya ilaçlamadan kaçının", "7 günlük yağış görünümünü izleyin"]
+          : ["Check livestock water and shade", "Avoid midday fertilising or spraying", "Watch the 7-day rainfall outlook"];
     }
     return state.uiLang === "zh"
       ? ["按常规安排农事", "保持现有灌溉计划", "关注短期高温预警"]
-      : ["Keep the normal field schedule", "Maintain the irrigation plan", "Watch short-term heat alerts"];
+      : state.uiLang === "tr"
+        ? ["Normal tarla takvimini sürdürün", "Mevcut sulama planını koruyun", "Kısa vadeli sıcaklık uyarılarını izleyin"]
+        : ["Keep the normal field schedule", "Maintain the irrigation plan", "Watch short-term heat alerts"];
   }
 
   function animalText(d, imp) {
@@ -1585,6 +1745,12 @@
       if (imp.animal >= 1) return "体感 " + f + "°C。缩短遛狗时间，留意扁脸犬种的呼吸状况。";
       return "当前对动物较温和，但仍需提供清水与遮阴。";
     }
+    if (state.uiLang === "tr") {
+      if (imp.animal >= 3) return "Hissedilen " + f + "°C ve kaldırım " + pv.toLowerCase() + ". Evcil hayvan yürüyüşlerini 09:00'dan önce veya 20:00'den sonra yapın; sokak hayvanları ve kuşlar için su bırakın.";
+      if (imp.animal >= 2) return "Hissedilen " + f + "°C, güneş güçlü; kaldırım " + pv.toLowerCase() + ". Yürüyüşleri kısaltın, gölge ve su sağlayın.";
+      if (imp.animal >= 1) return "Hissedilen " + f + "°C. Yürüyüşleri kısa tutun, yassı yüzlü ırklarda solunum zorluğunu izleyin.";
+      return "Hayvanlar için koşullar ılıman, ancak temiz su ve gölge yine de önemli.";
+    }
     if (imp.animal >= 3) return "Feels like " + f + "°C and pavement is " + pv.toLowerCase() + ". Walk pets before 09:00 or after 20:00, and leave water out for strays and birds.";
     if (imp.animal >= 2) return "Feels like " + f + "°C with strong sun; pavement is " + pv.toLowerCase() + ". Shorten walks and provide shade and water.";
     if (imp.animal >= 1) return "Feels like " + f + "°C. Keep walks short and watch flat-faced breeds for breathing strain.";
@@ -1595,16 +1761,22 @@
     if (imp.animal >= 2) {
       return state.uiLang === "zh"
         ? ["用手背测试路面温度", "09:00 前或 20:00 后遛狗", "为流浪动物和鸟类留浅水"]
-        : ["Test asphalt with the back of your hand", "Walk dogs before 09:00 or after 20:00", "Leave shallow water for strays and birds"];
+        : state.uiLang === "tr"
+          ? ["Asfalt sıcaklığını elinizin tersiyle test edin", "Köpekleri 09:00'dan önce veya 20:00'den sonra gezdirin", "Sokak hayvanları ve kuşlar için sığ su bırakın"]
+          : ["Test asphalt with the back of your hand", "Walk dogs before 09:00 or after 20:00", "Leave shallow water for strays and birds"];
     }
     if (imp.animal >= 1) {
       return state.uiLang === "zh"
         ? ["缩短遛狗时间", "随身带水", "提供遮阴处"]
-        : ["Keep walks short", "Carry water", "Provide a shaded spot"];
+        : state.uiLang === "tr"
+          ? ["Yürüyüşleri kısa tutun", "Yanınıza su alın", "Gölgeli bir yer sağlayın"]
+          : ["Keep walks short", "Carry water", "Provide a shaded spot"];
     }
     return state.uiLang === "zh"
       ? ["提供新鲜饮水", "保留遮阴处", "不要将动物留在车内"]
-      : ["Provide fresh water", "Keep shade available", "Never leave animals in a parked car"];
+      : state.uiLang === "tr"
+        ? ["Temiz su sağlayın", "Gölgeyi koruyun", "Hayvanları park hâlindeki araçta bırakmayın"]
+        : ["Provide fresh water", "Keep shade available", "Never leave animals in a parked car"];
   }
 
   function impactMetric(value, label) {
@@ -1628,7 +1800,7 @@
     var data = weatherState.data;
     if (!data || !data.length) {
       chips.innerHTML = "";
-      grid.innerHTML = '<div class="impact-empty">' + L("Impacts will appear when live weather loads.", "实时天气加载后将显示影响分析。") + '</div>';
+      grid.innerHTML = '<div class="impact-empty">' + L("Impacts will appear when live weather loads.", "实时天气加载后将显示影响分析。", "Canlı hava durumu yüklendiğinde etkiler görünecek.") + '</div>';
       return;
     }
     if (state.focusCity == null || !data[state.focusCity]) {
@@ -1649,37 +1821,37 @@
       var imp = impactsFor(dd);
       var lvl = Math.max(imp.travel, imp.agri, imp.animal);
       return '<button class="city-chip' + (i === idx ? " active" : "") + '" data-city="' + i + '" type="button" aria-pressed="' + (i === idx) + '">' +
-        '<i class="' + riskClass(lvl) + '"></i>' + (state.uiLang === "zh" ? city.zh : city.en) +
+        '<i class="' + riskClass(lvl) + '"></i>' + cityName(city) +
         ' <b>' + Math.round(dd.temp) + '°</b></button>';
     }).join("");
 
     var imp = impactsFor(d);
-    var cityName = state.uiLang === "zh" ? c.zh : c.en;
-    var sub = cityName + " · " + (d.localTime || "—") + " " + L("local", "当地") + " · " + L("live conditions", "实时天气");
+    var cityLabel = cityName(c);
+    var sub = cityLabel + " · " + (d.localTime || "—") + " " + L("local", "当地", "yerel") + " · " + L("live conditions", "实时天气", "canlı koşullar");
     var rain7 = d.rain7 != null ? d.rain7 : 0;
     var f = d.feels != null ? Math.round(d.feels) : "—";
     var high = d.high != null ? Math.round(d.high) : "—";
 
     var travelMetrics =
-      impactMetric(f + "°C", L("feels like", "体感")) +
-      impactMetric(imp.rain ? L("Yes", "有") : L("No", "无"), L("rain now", "当前降水")) +
-      impactMetric(high + "°", L("today's high", "今日最高"));
+      impactMetric(f + "°C", L("feels like", "体感", "hissedilen")) +
+      impactMetric(imp.rain ? L("Yes", "有", "Var") : L("No", "无", "Yok"), L("rain now", "当前降水", "şu an yağış")) +
+      impactMetric(high + "°", L("today's high", "今日最高", "bugünün en yükseği"));
 
     var agriMetrics =
       impactMetric(imp.thi, "THI · " + riskLabel(imp.thiLvl)) +
-      impactMetric(rain7 + " mm", L("7-day rain", "7 天降水")) +
-      impactMetric(riskLabel(imp.cropLvl), L("crop heat", "作物热应激"));
+      impactMetric(rain7 + " mm", L("7-day rain", "7 天降水", "7 günlük yağış")) +
+      impactMetric(riskLabel(imp.cropLvl), L("crop heat", "作物热应激", "ürün ısı stresi"));
 
     var uv = d.uv == null ? "—" : Math.round(d.uv);
     var animalMetrics =
-      impactMetric(f + "°C", L("feels like", "体感")) +
-      impactMetric(pavementText(imp.pavement), L("pavement", "路面")) +
+      impactMetric(f + "°C", L("feels like", "体感", "hissedilen")) +
+      impactMetric(pavementText(imp.pavement), L("pavement", "路面", "kaldırım")) +
       impactMetric(uv, "UV · " + uvText(d.uv));
 
     grid.innerHTML =
-      impactCard(IMPACT_ICONS.travel, L("Travel & mobility", "气候与出行"), sub, imp.travel, travelText(d, imp), travelMetrics, travelActions(imp)) +
-      impactCard(IMPACT_ICONS.agri, L("Agriculture & livestock", "气候与农业"), sub, imp.agri, agriText(d, imp), agriMetrics, agriActions(imp)) +
-      impactCard(IMPACT_ICONS.animals, L("Animals & wildlife", "气候与动物"), sub, imp.animal, animalText(d, imp), animalMetrics, animalActions(imp));
+      impactCard(IMPACT_ICONS.travel, L("Travel & mobility", "气候与出行", "Ulaşım ve hareketlilik"), sub, imp.travel, travelText(d, imp), travelMetrics, travelActions(imp)) +
+      impactCard(IMPACT_ICONS.agri, L("Agriculture & livestock", "气候与农业", "Tarım ve hayvancılık"), sub, imp.agri, agriText(d, imp), agriMetrics, agriActions(imp)) +
+      impactCard(IMPACT_ICONS.animals, L("Animals & wildlife", "气候与动物", "Hayvanlar ve yaban hayatı"), sub, imp.animal, animalText(d, imp), animalMetrics, animalActions(imp));
   }
 
   $("#cityChips").addEventListener("click", function (e) {
@@ -1707,7 +1879,7 @@
     '<rect width="740" height="470" fill="#0a1211"/>' +
     '<rect width="740" height="470" fill="url(#gridPat)"/>' +
     '<path d="M0 428 C120 414, 240 438, 370 426 S620 410, 740 430 L740 470 L0 470 Z" fill="url(#seaGrad)"/>' +
-    '<text class="sea-label" x="590" y="454">MEDITERRANEAN</text>' +
+    '<text class="sea-label" id="seaLabel" x="590" y="454">MEDITERRANEAN</text>' +
     '<g id="gBlocks"></g>' +
     '<g id="gMarkers"></g>';
 
@@ -1720,7 +1892,9 @@
     g.dataset.id = b.id;
     g.setAttribute("tabindex", "0");
     g.setAttribute("role", "button");
-    g.setAttribute("aria-label", b.name + ": peak " + b.peak.toFixed(1) + " degrees, risk " + Math.round(b.risk) + " of 100");
+    g.setAttribute("aria-label", b.name + L(": peak " + b.peak.toFixed(1) + " degrees, risk " + Math.round(b.risk) + " of 100",
+      "：峰值 " + b.peak.toFixed(1) + " 度，风险 " + Math.round(b.risk) + "（满分 100）",
+      ": zirve " + b.peak.toFixed(1) + " derece, risk 100 üzerinden " + Math.round(b.risk)));
     g.innerHTML =
       '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '" rx="10"/>' +
       '<text class="blk-id" x="' + (b.x + 10) + '" y="' + (b.y + 18) + '">B' + (b.idx + 1) + '</text>' +
@@ -1750,9 +1924,9 @@
 
   function updateLegend() {
     var cfg = LEGENDS[state.layer];
-    $("#legendTitle").textContent = cfg.title[state.uiLang === "zh" ? 1 : 0];
+    $("#legendTitle").textContent = cfg.title[uiIdx()];
     $("#legendBar").style.background = rampGradient(cfg.stops);
-    var labels = Array.isArray(cfg.labels[0]) ? cfg.labels[state.uiLang === "zh" ? 1 : 0] : cfg.labels;
+    var labels = Array.isArray(cfg.labels[0]) ? cfg.labels[uiIdx()] : cfg.labels;
     $("#legendLabels").innerHTML = labels.map(function (l) { return "<span>" + l + "</span>"; }).join("");
   }
 
@@ -1779,19 +1953,21 @@
       }
       var sub = g.querySelector(".blk-sub");
       if (state.scenario && state.scenario.alloc[b.id]) {
-        sub.textContent = "−" + state.scenario.alloc[b.id].dt.toFixed(2) + L("°C plan", "°C 方案");
+        sub.textContent = "−" + state.scenario.alloc[b.id].dt.toFixed(2) + L("°C plan", "°C 方案", "°C plan");
         sub.setAttribute("fill", "rgba(255,255,255,.95)");
       } else if (state.layer === "canopy") {
-        sub.textContent = L("canopy cover", "树冠覆盖");
+        sub.textContent = L("canopy cover", "树冠覆盖", "ağaç örtüsü");
         sub.setAttribute("fill", "rgba(255,255,255,.72)");
       } else if (state.layer === "equity") {
         sub.textContent = tierText(b.tier);
         sub.setAttribute("fill", "rgba(255,255,255,.72)");
       } else {
-        sub.textContent = L("risk ", "风险 ") + Math.round(b.risk);
+        sub.textContent = L("risk ", "风险 ", "risk ") + Math.round(b.risk);
         sub.setAttribute("fill", "rgba(255,255,255,.72)");
       }
     });
+    var sea = $("#seaLabel");
+    if (sea) sea.textContent = L("MEDITERRANEAN", "MEDITERRANEAN", "AKDENİZ");
     renderMarkers();
     updateLegend();
   }
@@ -1844,14 +2020,24 @@
   function showTip(b, x, y) {
     var temp = effectiveTemp(b);
     $("#tipName").textContent = b.name + " · B" + (b.idx + 1);
-    var assetText = b.assets.length ? b.assets.join(", ") : L("no cool space", "无纳凉点");
-    $("#tipMeta").innerHTML = state.uiLang === "zh"
-      ? temp.toFixed(1) + "°C 当前 · 风险 " + Math.round(b.risk) + "<br>" +
+    var assetText = b.assets.length
+      ? b.assets.map(function (a) {
+          return state.uiLang === "zh" ? (ASSET_ZH[a] || a) : state.uiLang === "tr" ? (ASSET_TR[a] || a) : a;
+        }).join(", ")
+      : L("no cool space", "无纳凉点", "serin alan yok");
+    if (state.uiLang === "zh") {
+      $("#tipMeta").innerHTML = temp.toFixed(1) + "°C 当前 · 风险 " + Math.round(b.risk) + "<br>" +
         fmt(b.pop) + " 名居民 · " + b.elderly + "% 为 65 岁以上<br>" +
-        b.canopy + "% 树冠 · " + assetText
-      : temp.toFixed(1) + "°C now · risk " + Math.round(b.risk) + "<br>" +
+        b.canopy + "% 树冠 · " + assetText;
+    } else if (state.uiLang === "tr") {
+      $("#tipMeta").innerHTML = temp.toFixed(1) + "°C şu an · risk " + Math.round(b.risk) + "<br>" +
+        fmt(b.pop) + " sakin · %" + b.elderly + " 65 yaş üstü<br>" +
+        "%" + b.canopy + " ağaç örtüsü · " + assetText;
+    } else {
+      $("#tipMeta").innerHTML = temp.toFixed(1) + "°C now · risk " + Math.round(b.risk) + "<br>" +
         fmt(b.pop) + " residents · " + b.elderly + "% aged 65+<br>" +
         b.canopy + "% canopy · " + assetText;
+    }
     mapTip.hidden = false;
     var rect = mapWrap.getBoundingClientRect();
     var left = clamp(x - rect.left + 14, 8, rect.width - mapTip.offsetWidth - 8);
@@ -1892,14 +2078,17 @@
   function recommendation(b) {
     if (b.canopy < 12) {
       return L("<strong>Street trees + a misting station</strong> — about $30k for an estimated 1.95°C relief, mainly for people outdoors.",
-        "<strong>行道树 + 喷雾降温站</strong>——约 3 万美元，预计降温 1.95°C，主要惠及户外人群。");
+        "<strong>行道树 + 喷雾降温站</strong>——约 3 万美元，预计降温 1.95°C，主要惠及户外人群。",
+        "<strong>Cadde ağaçları + sisleme istasyonu</strong> — yaklaşık 30 bin $, tahmini 1,95°C serinleme; ağırlıklı olarak açık alandaki kişiler için.");
     }
     if (b.elderly > 24) {
       return L("<strong>Cool roofs + door-to-door check-ins</strong> — about $30k, mostly indoor relief for older residents.",
-        "<strong>冷屋顶 + 上门探访</strong>——约 3 万美元，主要为老年居民提供室内降温。");
+        "<strong>冷屋顶 + 上门探访</strong>——约 3 万美元，主要为老年居民提供室内降温。",
+        "<strong>Serin çatılar + kapı kapı ziyaret</strong> — yaklaşık 30 bin $, çoğunlukla yaşlı sakinler için iç mekân serinlemesi.");
     }
     return L("<strong>Shade at transit stops + a public water point</strong> — about $9k, focused on outdoor exposure.",
-      "<strong>公交站遮阳 + 公共饮水点</strong>——约 9000 美元，聚焦户外暴露。");
+      "<strong>公交站遮阳 + 公共饮水点</strong>——约 9000 美元，聚焦户外暴露。",
+      "<strong>Toplu taşıma duraklarında gölge + kamu su noktası</strong> — yaklaşık 9 bin $, açık alan maruziyetine odaklı.");
   }
 
   function renderInspector() {
@@ -1913,10 +2102,10 @@
     var b = byId[state.selectedId];
     var temp = effectiveTemp(b);
     var rows = [
-      { label: L("Land-surface temp", "地表温度"), value: temp.toFixed(1) + "°C", pct: norm(temp, 33, 48) * 100, warm: true },
-      { label: L("Vulnerability index", "脆弱性指数"), value: Math.round(b.vuln) + " / 100", pct: b.vuln, warm: true },
-      { label: L("Canopy deficit", "树冠缺口"), value: (100 - Math.round(norm(b.canopy, 0, 45) * 100)) + " / 100", pct: b.canopyScore, warm: true },
-      { label: L("Population exposure", "人口暴露"), value: fmt(b.pop) + L(" residents", " 名居民"), pct: b.popScore, warm: false }
+      { label: L("Land-surface temp", "地表温度", "Yüzey sıcaklığı"), value: temp.toFixed(1) + "°C", pct: norm(temp, 33, 48) * 100, warm: true },
+      { label: L("Vulnerability index", "脆弱性指数", "Kırılganlık indeksi"), value: Math.round(b.vuln) + " / 100", pct: b.vuln, warm: true },
+      { label: L("Canopy deficit", "树冠缺口", "Ağaç örtüsü açığı"), value: (100 - Math.round(norm(b.canopy, 0, 45) * 100)) + " / 100", pct: b.canopyScore, warm: true },
+      { label: L("Population exposure", "人口暴露", "Nüfus maruziyeti"), value: fmt(b.pop) + L(" residents", " 名居民", " kişi"), pct: b.popScore, warm: false }
     ];
     var bars = rows.map(function (r) {
       return '<div class="bar-row">' +
@@ -1928,16 +2117,16 @@
     var scn = "";
     if (state.scenario && state.scenario.alloc[b.id]) {
       var a = state.scenario.alloc[b.id];
-      scn = '<div class="scn-note">' + L("Plan applied", "已应用方案") + ': −' + a.dt.toFixed(2) + '°C · ' + money(a.cost) + ' · ' + a.actions.length +
-        L(' intervention' + (a.actions.length > 1 ? "s" : ""), ' 项干预') + '</div>';
+      scn = '<div class="scn-note">' + L("Plan applied", "已应用方案", "Plan uygulandı") + ': −' + a.dt.toFixed(2) + '°C · ' + money(a.cost) + ' · ' + a.actions.length +
+        L(' intervention' + (a.actions.length > 1 ? "s" : ""), ' 项干预', ' müdahale') + '</div>';
     }
 
     el.innerHTML =
       '<div class="insp-head">' +
-        '<div><div class="insp-id">B' + (b.idx + 1) + ' · ' + L("demo block", "示范街区") + '</div><div class="insp-name">' + b.name + '</div></div>' +
+        '<div><div class="insp-id">B' + (b.idx + 1) + ' · ' + L("demo block", "示范街区", "örnek mahalle") + '</div><div class="insp-name">' + b.name + '</div></div>' +
         '<span class="tier ' + b.tier + '">' + tierText(b.tier) + '</span>' +
       '</div>' +
-      '<div class="risk-line"><b>' + Math.round(b.risk) + '</b><span>' + L("heat-equity risk<br>of 100", "高温公平风险<br>满分 100") + '</span></div>' +
+      '<div class="risk-line"><b>' + Math.round(b.risk) + '</b><span>' + L("heat-equity risk<br>of 100", "高温公平风险<br>满分 100", "sıcaklık eşitliği riski<br>100 üzerinden") + '</span></div>' +
       bars +
       '<div class="insp-reco">' + recommendation(b) + '</div>' +
       scn;
@@ -2020,6 +2209,15 @@
         " 名 75 岁以上居民上门探访；将道路施工调整到 11:00 前。\n\n" +
         "置信度：中等。基于模拟卫星与普查图层；投入运营前需用热相关急救呼叫记录校准。";
     }
+    if (state.uiLang === "tr") {
+      return "24 mahalle tarandı (" + hh + "). En yüksek yüzey sıcaklığı " + hottest.name + " mahallesinde " +
+        hottest.peak.toFixed(1) + "°C — kent ortalamasının " + (hottest.peak - avgPeak).toFixed(1) + "°C üzerinde.\n\n" +
+        "Isı maruziyeti yoğunlaşmış: 4 mahalle bu bölgedeki sakinlerin %" + share + "'ini barındırıyor. Şimdi öncelik: " + names +
+        ". Ortak nedenler: %10'un altında ağaç örtüsü, yoğun kiralık konut, 65 yaş üstü nüfusun yüksek payı.\n\n" +
+        "Önümüzdeki 48 saat: öncelikli mahallelerde " + coolCount + " ek serin alan açın, 75 yaş üstü yaklaşık " + fmt(topPop * 0.09) +
+        " sakine kapı kapı ziyaret yapın ve cadde çalışmalarını 11:00 öncesine alın.\n\n" +
+        "Güven düzeyi: orta. Simüle uydu ve nüfus sayımı katmanlarına dayanır; operasyonel kullanımdan önce sıcaklığa bağlı ambulans çağrılarıyla doğrulayın.";
+    }
     return "Scanned 24 blocks at " + hh + ". Peak surface temperature is " +
       hottest.peak.toFixed(1) + "°C in " + hottest.name + " — " + (hottest.peak - avgPeak).toFixed(1) +
       "°C above the city average.\n\n" +
@@ -2040,9 +2238,17 @@
         $("#previewScenario").disabled = false;
       }
     }
-    if (!r) return L("Run the optimizer first with at least one intervention type selected.", "请先运行优化器，并至少选择一种干预类型。");
+    if (!r) return L("Run the optimizer first with at least one intervention type selected.", "请先运行优化器，并至少选择一种干预类型。", "Önce en az bir müdahale türü seçiliyken optimize ediciyi çalıştırın.");
     var blocks = Object.keys(r.alloc).length;
     var topItems = r.top.map(function (x) { return x.b.name + " (" + money(x.cost) + ")"; }).slice(0, 3).join(", ");
+    if (state.uiLang === "tr") {
+      return "Plan toplamı " + money(r.spent) + ": " + blocks + " mahalle, " + fmt(r.people) +
+        " sakin, ağırlıklı zirve serinleme " + r.relief.toFixed(2) + "°C.\n\n" +
+        "En büyük kalemler: " + topItems + ".\n\n" +
+        "Eşitlik kontrolü: harcamanın %" + Math.round(r.equityShare * 100) + "'i en kırılgan çeyreğe ulaşıyor (eşit dağıtım temeli %25). " +
+        r.trees + " ağaç dikildi, " + r.equip + " gölge veya sisleme noktası kuruldu; ulaşılan kişi başı maliyet " + money(r.costPer) + ".\n\n" +
+        "Ödünleşim: bu plan yoğun nüfuslu, ağaç örtüsü düşük mahalleleri önceliyor. Kıyı parkları bilinçli olarak dışarıda bırakıldı çünkü sakinleri zaten daha düşük maruziyetle karşı karşıya.";
+    }
     if (state.uiLang === "zh") {
       return "方案总额 " + money(r.spent) + "：覆盖 " + blocks + " 个街区、" + fmt(r.people) +
         " 名居民，加权峰值降温 " + r.relief.toFixed(2) + "°C。\n\n" +
@@ -2064,6 +2270,14 @@
     var tqPop = tq.reduce(function (s, b) { return s + b.pop; }, 0);
     var elders = tq.reduce(function (s, b) { return s + b.pop * b.elderly / 100; }, 0);
     var tqRisk = Math.round(tq.reduce(function (s, b) { return s + b.risk; }, 0) / tq.length);
+    if (state.uiLang === "tr") {
+      return "En kırılgan çeyrek — " + tq.length + " mahalle, " + fmt(tqPop) + " sakin — zirve sıcaklıkta bölgenin geri kalanından " +
+        equityGap.toFixed(1) + "°C daha sıcak ve ağaç örtüsü " + Math.round(canopyGap) + " puan daha az.\n\n" +
+        "Burada yaklaşık " + fmt(elders) + " sakin 65 yaş ve üzerinde; hanelerin %" + Math.round(avg(tq, "lowIncome")) +
+        "'i düşük gelirli. Bu bileşim ortalama riski " + tqRisk + " düzeyine çıkarıyor; diğer mahallelerde bu değer " + Math.round(avg(restBlocks, "risk")) + ".\n\n" +
+        "Neden önemli: aynı sıcaklık dalgası mahalle mahalle farklı sonuçlar doğuruyor. Yalnızca en sıcak asfalta yatırım yapan bir kent, ölme olasılığı en yüksek kişileri yine de kaçırabilir. Breeze bu açığı görünür kılmak için tasarlandı." +
+        "\n\nKişisel veri kullanılmaz — yalnızca mahalle toplamları.";
+    }
     if (state.uiLang === "zh") {
       return "最脆弱四分位——" + tq.length + " 个街区、" + fmt(tqPop) + " 名居民——峰值温度比其余街区高 " +
         equityGap.toFixed(1) + "°C，树冠覆盖率少 " + Math.round(canopyGap) + " 个百分点。\n\n" +
@@ -2118,7 +2332,7 @@
     var budget = +budgetInput.value;
     var types = Array.from(enabledTypes);
     if (!types.length) {
-      if (!silent) toast("Select at least one intervention type");
+      if (!silent) toast(L("Select at least one intervention type", "请至少选择一种干预类型", "En az bir müdahale türü seçin"));
       return null;
     }
     var cut = vulnCut;
@@ -2184,15 +2398,15 @@
     if (!silent) {
       renderResult(result);
       $("#previewScenario").disabled = false;
-      toast(L("Allocation ready — preview it on the map", "方案已生成——可在地图上预览"));
+      toast(L("Allocation ready — preview it on the map", "方案已生成——可在地图上预览", "Dağıtım hazır — haritada önizleyin"));
     }
     return result;
   }
 
   function renderResult(r) {
     var shortMap = {
-      trees: L("Trees", "树"), roofs: L("Roofs", "屋顶"),
-      mist: L("Mist", "喷雾"), shade: L("Shade", "遮阳")
+      trees: L("Trees", "树", "Ağaç"), roofs: L("Roofs", "屋顶", "Çatı"),
+      mist: L("Mist", "喷雾", "Sisleme"), shade: L("Shade", "遮阳", "Gölge")
     };
     $("#metricSpend").textContent = money(r.spent);
     $("#metricPeople").textContent = fmt(r.people);
@@ -2202,7 +2416,9 @@
     $("#equityFill").style.width = Math.round(r.equityShare * 100) + "%";
     $("#allocMeta").textContent = state.uiLang === "zh"
       ? r.top.length + " 个街区 · " + r.trees + " 棵树 · " + r.equip + " 处遮阳/喷雾点"
-      : r.top.length + " blocks · " + r.trees + " trees · " + r.equip + " shade/mist points";
+      : state.uiLang === "tr"
+        ? r.top.length + " mahalle · " + r.trees + " ağaç · " + r.equip + " gölge/sisleme noktası"
+        : r.top.length + " blocks · " + r.trees + " trees · " + r.equip + " shade/mist points";
 
     var rows = r.top.slice(0, 7).map(function (x) {
       var pills = x.actions.map(function (k) {
@@ -2216,7 +2432,7 @@
     }).join("");
 
     if (r.top.length > 7) {
-      rows += '<p class="fineprint" style="padding:4px 2px">' + L("+ " + (r.top.length - 7) + " more blocks in the full plan.", "完整方案中还有 " + (r.top.length - 7) + " 个街区。") + '</p>';
+      rows += '<p class="fineprint" style="padding:4px 2px">' + L("+ " + (r.top.length - 7) + " more blocks in the full plan.", "完整方案中还有 " + (r.top.length - 7) + " 个街区。", "Tam planda " + (r.top.length - 7) + " mahalle daha var.") + '</p>';
     }
     $("#allocList").innerHTML = rows;
   }
@@ -2226,8 +2442,13 @@
     if (r) {
       var blocks = Object.keys(r.alloc).length;
       if (!speaking) {
-        addUserMsg(L("Optimize " + money(+budgetInput.value), "优化 " + money(+budgetInput.value)));
-        aiSay(state.uiLang === "zh"
+        addUserMsg(L("Optimize " + money(+budgetInput.value), "优化 " + money(+budgetInput.value), money(+budgetInput.value) + " bütçeyi optimize et"));
+        aiSay(state.uiLang === "tr"
+          ? money(r.spent) + ", " + blocks + " mahalle arasında dağıtıldı. Ağırlıklı zirve serinleme −" +
+            r.relief.toFixed(2) + "°C; " + fmt(r.people) + " sakine ulaşıldı, kişi başı maliyet " + money(r.costPer) +
+            ". Harcamanın %" + Math.round(r.equityShare * 100) + "'i en kırılgan çeyreğe gidiyor.\n\n" +
+            "Senaryoyu görmek için “Planı haritada önizle”ye basın. Ağaç örtüsü düşük mahallelerde yükü cadde ağaçları taşır; yaşlı sakinlerin yoğun olduğu yerlerde çatılar iç mekân koruması ekler."
+          : state.uiLang === "zh"
           ? "已分配 " + money(r.spent) + "，覆盖 " + blocks + " 个街区。加权峰值降温 −" +
             r.relief.toFixed(2) + "°C，惠及 " + fmt(r.people) + " 名居民，人均成本 " + money(r.costPer) +
             "。" + Math.round(r.equityShare * 100) + "% 的支出流向最脆弱四分位。\n\n" +
@@ -2244,7 +2465,9 @@
     if (!state.scenario) return;
     $("#scenarioText").textContent = state.uiLang === "zh"
       ? "已应用降温方案 · " + money(state.scenario.spent) + " · 加权降温 −" + state.scenario.relief.toFixed(2) + "°C"
-      : "Cooling plan applied · " + money(state.scenario.spent) + " · −" + state.scenario.relief.toFixed(2) + "°C weighted relief";
+      : state.uiLang === "tr"
+        ? "Serinletme planı uygulandı · " + money(state.scenario.spent) + " · ağırlıklı serinleme −" + state.scenario.relief.toFixed(2) + "°C"
+        : "Cooling plan applied · " + money(state.scenario.spent) + " · −" + state.scenario.relief.toFixed(2) + "°C weighted relief";
   }
 
   $("#previewScenario").addEventListener("click", function () {
@@ -2258,7 +2481,7 @@
     setLayer("heat");
     updateMap();
     if (state.selectedId) renderInspector();
-    toast(L("Plan previewed on the map", "已在地图上预览方案"));
+    toast(L("Plan previewed on the map", "已在地图上预览方案", "Plan haritada önizlendi"));
     $("#command").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
@@ -2267,7 +2490,7 @@
     $("#scenarioBar").hidden = true;
     updateMap();
     if (state.selectedId) renderInspector();
-    toast(L("Scenario cleared", "已清除模拟方案"));
+    toast(L("Scenario cleared", "已清除模拟方案", "Senaryo temizlendi"));
   });
 
   /* ---------- alerts ---------- */
@@ -2294,7 +2517,7 @@
 
   function buildAlert() {
     var f = alertFactsData();
-    var lang = state.alertLang;
+    var lang = state.uiLang;
     var aud = state.alertAudience;
     var CITY = CITY_TEXT[lang] || CITY_TEXT.en;
     var peak = hottest.peak;
@@ -2375,19 +2598,19 @@
     var text = buildAlert();
     $("#alertMessage").textContent = text;
     var chip = $("#alertLevel");
-    var levelShort = state.alertLang === "zh"
+    var levelShort = state.uiLang === "zh"
       ? (f.level === "RED" ? "红色" : f.level === "ORANGE" ? "橙色" : "黄色")
-      : state.alertLang === "tr"
+      : state.uiLang === "tr"
         ? (f.level === "RED" ? "KIRMIZI" : f.level === "ORANGE" ? "TURUNCU" : "SARI")
         : f.level;
     chip.textContent = levelShort;
     chip.className = "level-chip" + (f.level === "ORANGE" ? " orange" : f.level === "YELLOW" ? " yellow" : "");
-    $("#alertChars").textContent = text.length + L(" characters", " 字符");
+    $("#alertChars").textContent = text.length + L(" characters", " 字符", " karakter");
     var factItems = [
-      { k: L("Peak / level", "最高温 / 等级"), v: hottest.peak.toFixed(1) + "°C · " + levelShort },
-      { k: L("Priority blocks", "优先街区"), v: String(f.relevant.length) },
-      { k: L("Cool spaces cited", "引用纳凉点"), v: String(f.assets.length) },
-      { k: L("Language", "语言"), v: state.alertLang === "zh" ? "中文" : state.alertLang === "tr" ? "Türkçe" : "English" }
+      { k: L("Peak / level", "最高温 / 等级", "Zirve / seviye"), v: hottest.peak.toFixed(1) + "°C · " + levelShort },
+      { k: L("Priority blocks", "优先街区", "Öncelikli mahalleler"), v: String(f.relevant.length) },
+      { k: L("Cool spaces cited", "引用纳凉点", "Atıfta bulunulan serin alanlar"), v: String(f.assets.length) },
+      { k: L("Language", "语言", "Dil"), v: state.uiLang === "zh" ? "中文" : state.uiLang === "tr" ? "Türkçe" : "English" }
     ];
     $("#alertFacts").innerHTML = factItems.map(function (x) {
       return '<div class="alert-fact"><span>' + x.k + '</span><b>' + x.v + '</b></div>';
@@ -2398,17 +2621,6 @@
     btn.addEventListener("click", function () {
       state.alertAudience = btn.dataset.audience;
       $$("#audienceSeg .seg-btn").forEach(function (b) {
-        var on = b === btn;
-        b.classList.toggle("active", on);
-        b.setAttribute("aria-pressed", on ? "true" : "false");
-      });
-      renderAlert();
-    });
-  });
-  $$("#langSeg .seg-btn").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      state.alertLang = btn.dataset.lang;
-      $$("#langSeg .seg-btn").forEach(function (b) {
         var on = b === btn;
         b.classList.toggle("active", on);
         b.setAttribute("aria-pressed", on ? "true" : "false");
@@ -2435,9 +2647,9 @@
   }
   $("#copyAlert").addEventListener("click", function () {
     copyText($("#alertMessage").textContent).then(function () {
-      toast(L("Alert copied to clipboard", "预警已复制到剪贴板"));
+      toast(L("Alert copied to clipboard", "预警已复制到剪贴板", "Uyarı panoya kopyalandı"));
     }).catch(function () {
-      toast(L("Copy failed — select the text manually", "复制失败，请手动选中文本"));
+      toast(L("Copy failed — select the text manually", "复制失败，请手动选中文本", "Kopyalama başarısız — metni elle seçin"));
     });
   });
 
@@ -2466,7 +2678,9 @@
     if (!el) return;
     el.innerHTML = state.uiLang === "zh"
       ? "在示范城区最脆弱的四分位，这里的温度更高，树冠覆盖率还少 <b>" + Math.round(canopyGap) + "</b> 个百分点。同一座城市，不同的生存条件。"
-      : "hotter in the most vulnerable quartile of our demo district — with <b>" + Math.round(canopyGap) + "</b> points less tree canopy. Same city, different survival conditions.";
+      : state.uiLang === "tr"
+        ? "örnek bölgemizin en kırılgan çeyreğinde daha sıcak — ve <b>" + Math.round(canopyGap) + "</b> puan daha az ağaç örtüsü. Aynı kent, farklı hayatta kalma koşulları."
+        : "hotter in the most vulnerable quartile of our demo district — with <b>" + Math.round(canopyGap) + "</b> points less tree canopy. Same city, different survival conditions.";
   }
 
   function resetCopilot() {
@@ -2484,21 +2698,20 @@
   }
 
   function setUiLang(lang) {
-    state.uiLang = lang === "zh" ? "zh" : "en";
+    state.uiLang = lang === "zh" ? "zh" : lang === "tr" ? "tr" : "en";
     try { localStorage.setItem("breeze-ui-lang", state.uiLang); } catch (e) {}
-    document.documentElement.lang = state.uiLang === "zh" ? "zh-CN" : "en";
+    document.documentElement.lang = state.uiLang === "zh" ? "zh-CN" : state.uiLang === "tr" ? "tr" : "en";
+    document.title = state.uiLang === "zh" ? "Breeze — AI 高温公平助手"
+      : state.uiLang === "tr" ? "Breeze — YZ Destekli Sıcaklık Eşitliği Yardımcısı"
+      : "Breeze — AI Heat Equity Copilot";
     $$(".lang-btn").forEach(function (b) {
       var on = b.dataset.uiLang === state.uiLang;
       b.classList.toggle("active", on);
       b.setAttribute("aria-pressed", on ? "true" : "false");
     });
     state.alertLang = state.uiLang;
-    $$("#langSeg .seg-btn").forEach(function (b) {
-      var on = b.dataset.lang === state.alertLang;
-      b.classList.toggle("active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
     applyStaticLang();
+    if (!lastResult) $("#allocMeta").textContent = t("opt.runMeta");
     renderFact3();
     updateMap();
     renderInspector();
@@ -2516,7 +2729,7 @@
   /* ---------- init ---------- */
   var savedLang = null;
   try { savedLang = localStorage.getItem("breeze-ui-lang"); } catch (e) {}
-  state.uiLang = savedLang === "zh" ? "zh" : "en";
+  state.uiLang = savedLang === "zh" ? "zh" : savedLang === "tr" ? "tr" : "en";
 
   $("#statBlocks").textContent = highBlocks.length;
   $("#statResidents").textContent = fmt(highPop);
